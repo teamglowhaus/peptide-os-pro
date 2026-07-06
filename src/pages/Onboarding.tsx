@@ -101,8 +101,10 @@ export function Onboarding() {
             Begin <ArrowRight size={17} />
           </Button>
           <p className="mt-8 text-xs leading-relaxed text-ink-faint">
-            Your data lives privately on this device. Nothing here is medical advice — this is a
-            planner, and your care always belongs with your own provider.
+            Your data lives privately on this device. <strong className="text-ink-soft">We are not
+            doctors and this is not medical advice</strong> — it's a planner. Always consult your own
+            physician before changing any medication, peptide, hormone, or supplement. Full details
+            live under Legal &amp; Disclaimers.
           </p>
         </div>
       )}

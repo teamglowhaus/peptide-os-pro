@@ -155,6 +155,12 @@ export function SettingsPage() {
             information you and your providers create; it never gives medical advice, suggests
             doses, or replaces care.
           </p>
+          <button
+            onClick={() => (window.location.hash = "/legal")}
+            className="mt-3 text-[0.85rem] font-semibold text-champagne-600 underline underline-offset-2 dark:text-champagne-300"
+          >
+            Read the full Legal &amp; Disclaimers →
+          </button>
         </Card>
       </div>
 

@@ -17,6 +17,7 @@ import { Lifestyle } from "./pages/Lifestyle";
 import { Pets } from "./pages/Pets";
 import { Household } from "./pages/Household";
 import { Printables } from "./pages/Printables";
+import { Legal } from "./pages/Legal";
 import { SettingsPage } from "./pages/Settings";
 
 const PAGES: Record<string, React.ComponentType> = {
@@ -35,6 +36,7 @@ const PAGES: Record<string, React.ComponentType> = {
   pets: Pets,
   household: Household,
   printables: Printables,
+  legal: Legal,
   settings: SettingsPage,
 };
 
