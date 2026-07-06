@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 /* ————————————————————————————————————————————————
@@ -260,7 +261,10 @@ export function Modal({
   }, [open, onClose]);
 
   if (!open) return null;
-  return (
+  // Portal to <body> so the overlay escapes any transformed ancestor
+  // (page transitions apply a CSS transform, which would otherwise trap
+  // position:fixed inside the content column instead of the viewport).
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <div className="absolute inset-0 bg-cocoa-800/40 backdrop-blur-[2px]" onClick={onClose} />
       <div
@@ -283,7 +287,8 @@ export function Modal({
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
