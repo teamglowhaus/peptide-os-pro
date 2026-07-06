@@ -208,7 +208,7 @@ export function Shell({
       </aside>
 
       {/* Mobile top bar */}
-      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-line bg-page/90 px-4 py-3 backdrop-blur-md lg:hidden">
+      <div className="no-print fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-line bg-page/90 px-4 py-3 backdrop-blur-md lg:hidden">
         <Wordmark />
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -224,7 +224,7 @@ export function Shell({
 
       {/* Mobile drawer */}
       {menuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="no-print fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-cocoa-800/40 backdrop-blur-[2px]" onClick={() => setMenuOpen(false)} />
           <div className="fade-up absolute inset-y-0 left-0 flex w-[84%] max-w-xs flex-col bg-page px-5 py-6 shadow-lifted">
             <div className="flex items-center justify-between">
@@ -242,7 +242,7 @@ export function Shell({
       )}
 
       {/* Main */}
-      <main className="min-w-0 flex-1 px-4 pb-24 pt-20 sm:px-8 lg:px-10 lg:pt-10">
+      <main className="min-w-0 flex-1 px-4 pb-24 pt-20 sm:px-8 lg:px-10 lg:pt-10 print:p-0 print:pt-0">
         {children}
       </main>
     </div>
