@@ -150,9 +150,10 @@ export function SettingsPage() {
             <SectionTitle>About</SectionTitle>
           </div>
           <p className="text-[0.85rem] leading-relaxed text-ink-soft">
-            The Ultimate Biohacker Operating System™ · v1.0 — a private wellness planner for
-            peptides, hormones, supplements and rituals. It organizes information you and your
-            providers create; it never gives medical advice, suggests doses, or replaces care.
+            The Ultimate Biohacker Operating System™ · v1.0 · by GlowHausDigital — a private
+            wellness planner for peptides, hormones, supplements and rituals. It organizes
+            information you and your providers create; it never gives medical advice, suggests
+            doses, or replaces care.
           </p>
         </Card>
       </div>

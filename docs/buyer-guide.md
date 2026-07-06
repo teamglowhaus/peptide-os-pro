@@ -55,4 +55,4 @@ Message us on Etsy anytime — we answer fast and kindly. If something's not wor
 it right.
 
 *With warmth,*
-*Your Shop Name* 🌿
+*GlowHausDigital* 🌿

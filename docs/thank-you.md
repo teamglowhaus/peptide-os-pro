@@ -19,4 +19,4 @@ and personally.
 
 *Consistency over perfection, always.*
 
-— Your Shop Name 🌿
+— GlowHausDigital 🌿

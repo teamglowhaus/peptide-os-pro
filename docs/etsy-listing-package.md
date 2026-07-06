@@ -109,7 +109,7 @@ not diagnose, treat, or prescribe, and is not a substitute for guidance from you
 healthcare provider. It is not affiliated with or endorsed by any pharmaceutical brand or
 provider. Always follow your own provider's and product labels' instructions.
 
-© Your Shop Name. For personal use only — see license page.
+© GlowHausDigital. For personal use only — see license page.
 
 ---
 

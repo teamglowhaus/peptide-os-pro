@@ -19,7 +19,7 @@ Your purchase includes a lifetime, non-transferable license for personal use:
 **Commercial licensing** — practitioners or coaches who'd like to share this system with clients:
 message us for a practitioner license.
 
-All content © Your Shop Name. "The Ultimate Biohacker Operating System" name and design are the
+All content © GlowHausDigital. "The Ultimate Biohacker Operating System" name and design are the
 property of the seller. This product is not affiliated with or endorsed by any pharmaceutical
 brand, supplement company, device maker, or provider named within — names appear solely for the
 buyer's personal organization.
