@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ————————————————————————————————————————————————
-   The Biohacker Operating System™ — design tokens
+   The Biohacker Operating System — design tokens
    Warm cream · taupe · champagne · sage · blush · cocoa
    ———————————————————————————————————————————————— */
 @theme {

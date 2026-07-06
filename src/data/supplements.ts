@@ -120,7 +120,7 @@ export const SUPPLEMENT_LIBRARY: SupplementLibraryEntry[] = [
 ];
 
 /* Seed brand list — a starting point, not a catalog of the world.
-   Users add unlimited custom brands; barcode scan + CSV import cover the rest. */
+   Users add unlimited custom brands; manual barcode entry + CSV import cover the rest. */
 export const BRAND_SEEDS = [
   "Thorne", "Pure Encapsulations", "Life Extension", "NOW Foods", "Designs for Health",
   "Metagenics", "Integrative Therapeutics", "Seeking Health", "Nordic Naturals", "Jarrow Formulas",

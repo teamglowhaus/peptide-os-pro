@@ -18,6 +18,23 @@ export function today(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+/** Whole days between an ISO date and today, or null if iso is empty/invalid. */
+export function daysSince(iso: string): number | null {
+  if (!iso) return null;
+  const then = new Date(iso + "T00:00:00");
+  if (isNaN(then.getTime())) return null;
+  const now = new Date(today() + "T00:00:00");
+  return Math.round((now.getTime() - then.getTime()) / 86_400_000);
+}
+
+/** Triggers a browser download of a backup JSON string as a dated file. */
+export function triggerBackupDownload(json: string): void {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+  a.download = `biohacker-os-backup-${today()}.json`;
+  a.click();
+}
+
 export function fmtDate(iso: string): string {
   if (!iso) return "";
   const d = new Date(iso + (iso.length === 10 ? "T12:00:00" : ""));
@@ -47,6 +64,8 @@ function defaultSettings(): Settings {
       aesthetic: "cream",
     },
     cloud: { provider: "local", email: "", connected: false },
+    calculatorAcknowledged: false,
+    lastBackupAt: "",
   };
 }
 
@@ -124,6 +143,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     adapter.current.save(db);
   }, [db]);
 
+  // Best-effort: ask the browser not to silently evict this origin's storage
+  // (Safari/iOS in particular will clear inactive-site storage over time).
+  // This does not guarantee persistence — it's a mitigation, not a promise —
+  // which is why we still track lastBackupAt and nudge for manual exports.
+  useEffect(() => {
+    navigator.storage?.persist?.().catch(() => {});
+  }, []);
+
   // Theme application
   useEffect(() => {
     const t = db.settings.theme;
@@ -148,7 +175,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       activeProfile,
       setActiveProfile: (id) => update((d) => void (d.settings.activeProfileId = id)),
       resetAll: () => setDb(emptyDatabase()),
-      exportJson: () => JSON.stringify(db, null, 2),
+      exportJson: () => {
+        // Fire-and-forget: record that a backup was taken so the data-safety
+        // reminder can stay quiet. Doesn't block the synchronous return value
+        // the download flow needs.
+        setDb((prev) => ({ ...prev, settings: { ...prev.settings, lastBackupAt: today() } }));
+        return JSON.stringify(db, null, 2);
+      },
       importJson: (raw) => {
         try {
           const parsed = JSON.parse(raw);

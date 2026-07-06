@@ -121,7 +121,7 @@ function Sheet({ children }: { children: React.ReactNode }) {
     <div className="print-page card mx-auto w-full max-w-[720px] !rounded-[14px] bg-white p-8 text-cocoa-700 shadow-soft print:max-w-none print:border-0 print:p-2 print:shadow-none dark:bg-white">
       {children}
       <div className="mt-6 flex items-center justify-between border-t border-taupe-200 pt-3">
-        <p className="text-[0.6rem] uppercase tracking-[0.2em] text-taupe-400">The Biohacker Operating System™</p>
+        <p className="text-[0.6rem] uppercase tracking-[0.2em] text-taupe-400">The Biohacker Operating System</p>
         <p className="text-[0.6rem] text-taupe-400">Not medical advice · doses per your provider</p>
       </div>
     </div>

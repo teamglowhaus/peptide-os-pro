@@ -1,9 +1,14 @@
 import React, { useMemo, useState } from "react";
-import { PageHeader, Card, Field, Input, Disclaimer, SectionTitle } from "../components/ui";
+import { ShieldAlert } from "lucide-react";
+import { useStore } from "../lib/store";
+import { PageHeader, Card, Field, Input, Disclaimer, SectionTitle, Button } from "../components/ui";
 
 /* Reconstitution Studio — pure arithmetic, beautifully presented.
    It never recommends a dose; it only converts the numbers the
-   user's provider already gave them. */
+   user's provider already gave them. Gated behind an explicit
+   one-time acknowledgment: this tool produces a number a person may
+   act on with a needle, so "arithmetic only" needs real informed
+   consent, not just a footnote. */
 
 function parseNum(v: string): number | null {
   const n = parseFloat(v.replace(",", "."));
@@ -11,6 +16,67 @@ function parseNum(v: string): number | null {
 }
 
 export function CalculatorPage() {
+  const { db, update } = useStore();
+  if (!db.settings.calculatorAcknowledged) {
+    return <CalculatorGate onAcknowledge={() => update((d) => void (d.settings.calculatorAcknowledged = true))} />;
+  }
+  return <CalculatorTool />;
+}
+
+function CalculatorGate({ onAcknowledge }: { onAcknowledge: () => void }) {
+  const [checked, setChecked] = useState(false);
+  return (
+    <div className="mx-auto max-w-xl">
+      <PageHeader eyebrow="Studio" title="Before you use the Reconstitution Studio" />
+      <Card className="border-2 !border-blush-300/70 bg-blush-100/40 dark:bg-blush-500/10">
+        <div className="mb-3 flex items-center gap-2.5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blush-200/70 text-blush-500 dark:bg-blush-500/25 dark:text-blush-200">
+            <ShieldAlert size={19} />
+          </span>
+          <SectionTitle>Please read before continuing</SectionTitle>
+        </div>
+        <div className="space-y-3 text-[0.9rem] leading-relaxed text-ink">
+          <p>
+            This tool does <strong className="text-ink-strong">arithmetic only</strong> on numbers
+            you type in. It does not know your prescription, your health history, or what your
+            provider actually told you — it cannot verify that any number here is correct or safe
+            for you.
+          </p>
+          <p>
+            <strong className="text-ink-strong">It is not medical advice and it is not a dosing
+            instruction.</strong> The visual syringe is an illustration of the math above it, not a
+            recommendation to draw to that line. Every dose, mix ratio, and syringe type must come
+            from — and be verified with — your own licensed provider or pharmacist before you use it.
+          </p>
+          <p>
+            Mixing and injecting medication carries real risk. If any number here looks unfamiliar
+            or doesn't match what your provider told you, <strong className="text-ink-strong">stop
+            and call your provider or pharmacist</strong> — do not guess, and do not rely on this
+            calculator to resolve the difference.
+          </p>
+        </div>
+        <label className="mt-5 flex items-start gap-3 rounded-2xl bg-card px-4 py-3.5">
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => setChecked(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[--color-blush-400]"
+          />
+          <span className="text-[0.86rem] text-ink">
+            I understand this tool only performs arithmetic, is not medical advice, and I am
+            solely responsible for verifying every number with my own provider or pharmacist
+            before acting on it.
+          </span>
+        </label>
+        <Button className="mt-5 w-full justify-center" disabled={!checked} onClick={onAcknowledge}>
+          Continue to the studio
+        </Button>
+      </Card>
+    </div>
+  );
+}
+
+function CalculatorTool() {
   const [vialMg, setVialMg] = useState("");
   const [diluentMl, setDiluentMl] = useState("");
   const [doseMg, setDoseMg] = useState("");
@@ -114,7 +180,7 @@ function Syringe({ units }: { units: number }) {
   const bx = 24, bw = 250, by = 24, bh = 26; // barrel
   return (
     <div>
-      <p className="eyebrow mb-2">Visual syringe · U-100</p>
+      <p className="eyebrow mb-2">Illustration of the math above · U-100 syringe</p>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-md" role="img"
         aria-label={`Syringe showing ${trim(fill)} of 100 units`}>
         {/* needle */}

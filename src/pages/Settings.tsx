@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Download, Upload, Cloud, ShieldCheck, Sparkles, Smartphone } from "lucide-react";
-import { useStore } from "../lib/store";
+import { useStore, triggerBackupDownload, daysSince } from "../lib/store";
 import {
   PageHeader, Card, Button, Field, Input, Select, Toggle, Disclaimer, SectionTitle,
 } from "../components/ui";
@@ -27,12 +27,8 @@ export function SettingsPage() {
   const [importMsg, setImportMsg] = useState("");
   const ob = db.settings.onboarding;
 
-  const download = () => {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([exportJson()], { type: "application/json" }));
-    a.download = `biohacker-os-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-  };
+  const download = () => triggerBackupDownload(exportJson());
+  const backupAge = daysSince(db.settings.lastBackupAt);
 
   return (
     <div>
@@ -94,8 +90,12 @@ export function SettingsPage() {
             <SectionTitle>Backups & privacy</SectionTitle>
           </div>
           <p className="mb-4 text-[0.85rem] leading-relaxed text-ink-soft">
-            Everything lives privately on this device. Export a backup anytime — it's a single file
-            you own, restorable on any device.
+            Everything lives only in this browser — there is no server copy. Clearing your browser
+            data, switching devices, or your browser silently evicting storage can erase it for
+            good. Export a backup regularly; it's a single file you own, restorable on any device.
+          </p>
+          <p className={backupAge === null ? "mb-3 text-[0.82rem] font-semibold text-blush-500 dark:text-blush-300" : backupAge >= 14 ? "mb-3 text-[0.82rem] font-semibold text-blush-500 dark:text-blush-300" : "mb-3 text-[0.82rem] font-medium text-sage-600 dark:text-sage-300"}>
+            {backupAge === null ? "You have never backed up." : backupAge === 0 ? "Backed up today. ✓" : `Last backup: ${backupAge} day${backupAge === 1 ? "" : "s"} ago.`}
           </p>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={download}><Download size={15} /> Export backup</Button>
@@ -130,11 +130,11 @@ export function SettingsPage() {
           </div>
           <p className="text-[0.85rem] leading-relaxed text-ink-soft">
             You're in <strong className="text-ink">private device mode</strong> — nothing leaves this
-            device. Cloud accounts with encrypted sync across your phone, iPad and desktop are built
-            into the architecture (see <code className="rounded bg-sunken px-1.5 py-0.5 text-[0.78rem]">docs/supabase-setup.md</code> in
-            your download) and arrive as a free update.
+            device, and there is currently no account or cloud sync feature in this version. Because
+            everything lives only in this browser (see the backup reminder above), this is also why
+            regular exports matter.
           </p>
-          <Field label="Email for updates (optional)" className="mt-4">
+          <Field label="Email for future updates (optional)" className="mt-4">
             <Input
               type="email"
               value={db.settings.cloud.email}
@@ -150,7 +150,7 @@ export function SettingsPage() {
             <SectionTitle>About</SectionTitle>
           </div>
           <p className="text-[0.85rem] leading-relaxed text-ink-soft">
-            The Ultimate Biohacker Operating System™ · v1.0 · by GlowHausDigital — a private
+            The Ultimate Biohacker Operating System · v1.0 · by GlowHausDigital — a private
             wellness planner for peptides, hormones, supplements and rituals. It organizes
             information you and your providers create; it never gives medical advice, suggests
             doses, or replaces care.

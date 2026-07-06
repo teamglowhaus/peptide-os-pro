@@ -27,7 +27,7 @@ Storyboard (15s, ready to hand to HeyGen or any videographer):
 > morning stack), sets the phone in a phone stand showing the cream-colored app. Cut to a
 > close-up of the screen — the dashboard with her Biohacker Score. Text overlays fade in:
 > *"Your whole wellness, finally in one place."* → *"Peptides · Hormones · Supplements."*
-> → *"The Biohacker Operating System™ · GlowHausDigital."* Soft, unhurried, editorial.
+> → *"The Biohacker Operating System · GlowHausDigital."* Soft, unhurried, editorial.
 
 Until then, `02-daily-ritual-mobile-12s.mp4` is the closest stand-in — it reads as a
 woman moving through her day with the app.

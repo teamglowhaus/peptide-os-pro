@@ -3,9 +3,9 @@ import {
   Syringe, Pill, Flower2, Sun, Snowflake, Flame, FlaskConical, CalendarHeart,
   PawPrint, Moon, HeartPulse, Plus,
 } from "lucide-react";
-import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
+import { useStore, byProfile, today, fmtDate, uid, daysSince, triggerBackupDownload } from "../lib/store";
 import {
-  Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx,
+  Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx, BackupBanner,
 } from "../components/ui";
 import { STACK_TIMES } from "../data/supplements";
 import type { DailyLog, StackTime } from "../lib/types";
@@ -19,7 +19,7 @@ function emptyLog(profileId: string): DailyLog {
 }
 
 export function Dashboard() {
-  const { db, update, activeProfile } = useStore();
+  const { db, update, activeProfile, exportJson } = useStore();
   const pid = activeProfile.id;
   const date = today();
   const ob = db.settings.onboarding;
@@ -107,6 +107,10 @@ export function Dashboard() {
 
   return (
     <div>
+      <BackupBanner
+        daysSince={daysSince(db.settings.lastBackupAt)}
+        onExport={() => triggerBackupDownload(exportJson())}
+      />
       <header className="mb-8">
         <p className="eyebrow mb-1.5">
           {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}

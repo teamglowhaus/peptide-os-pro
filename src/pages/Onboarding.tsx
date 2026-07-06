@@ -78,7 +78,7 @@ export function Onboarding() {
           <img src="/icons/icon.svg" alt="" className="mx-auto mb-8 h-20 w-20 rounded-3xl shadow-lifted" />
           <p className="eyebrow mb-3">Welcome to</p>
           <h1 className="font-display text-4xl font-medium leading-tight sm:text-5xl">
-            The Biohacker<br />Operating System™
+            The Biohacker<br />Operating System
           </h1>
           <p className="mx-auto mt-5 max-w-md text-[1.02rem] leading-relaxed text-ink-soft">
             One private, beautiful home for your peptides, hormones, supplements, and every

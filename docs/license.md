@@ -1,4 +1,4 @@
-# License · The Ultimate Biohacker Operating System™
+# License · The Ultimate Biohacker Operating System
 
 **Personal Use License**
 
