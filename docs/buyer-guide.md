@@ -1,4 +1,4 @@
-# 🤍 Welcome to The Ultimate Biohacker Operating System™
+# 🤍 Welcome to The Ultimate Biohacker Operating System
 
 *Thank you for inviting us into your wellness ritual. Here's everything you need — it takes about
 two minutes.*
@@ -35,11 +35,16 @@ Inside the app: **Printable Studio** → tick the pages you want → *Print*.
 - Import that PDF into **GoodNotes** or **Notability** and every page becomes stylus-writable
 - Tick "Pre-fill with my current data" for pages that arrive already filled in ✨
 
-## Backing up
+## Backing up — please actually do this
+
+This app stores everything **only in this browser** — there is no account, and no server copy.
+Clearing your browser's data, switching phones, or your browser quietly clearing storage can erase
+it all permanently. The app will remind you on the dashboard when a backup is overdue, but don't
+wait for the reminder the first time:
 
 Settings → **Export backup** downloads a single file with everything. Keep it somewhere safe
-(iCloud, Google Drive). Restore it on any device with **Restore backup**. Do this monthly — your
-data belongs to you, literally.
+(iCloud, Google Drive). Restore it on any device with **Restore backup**. Do this every couple of
+weeks — your data belongs to you, but only if you keep a copy of it.
 
 ## A few loving reminders
 

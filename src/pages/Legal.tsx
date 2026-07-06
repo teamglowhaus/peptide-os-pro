@@ -28,7 +28,7 @@ export function Legal() {
               We are not doctors, nurses, pharmacists, or any kind of licensed medical professional,
               and this app does not provide medical advice.
             </strong>{" "}
-            The Ultimate Biohacker Operating System™ is a personal organization and journaling tool
+            The Ultimate Biohacker Operating System is a personal organization and journaling tool
             — nothing more. It helps you write down and keep track of information that you and your
             own providers create.
           </p>
@@ -163,7 +163,7 @@ export function Legal() {
       </Card>
 
       <p className="mt-6 text-center text-[0.78rem] text-ink-faint">
-        © GlowHausDigital · The Ultimate Biohacker Operating System™ · For personal use only.
+        © GlowHausDigital · The Ultimate Biohacker Operating System · For personal use only.
         <br />
         This is an organizational tool. It is not medical advice and is not a medical device.
       </p>

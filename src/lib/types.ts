@@ -1,5 +1,5 @@
 /* ————————————————————————————————————————————————
-   Core data model for the Biohacker Operating System™
+   Core data model for the Biohacker Operating System
    All records are profile-scoped and stored via the
    storage adapter (local-first, cloud-sync ready).
    ———————————————————————————————————————————————— */
@@ -319,6 +319,12 @@ export interface Settings {
     email: string;
     connected: boolean;
   };
+  /** User has explicitly acknowledged the Reconstitution Studio's arithmetic-only,
+   *  not-medical-advice disclaimer this install. Gates the calculator's outputs. */
+  calculatorAcknowledged: boolean;
+  /** ISO date of the last successful "Export backup" — drives the data-safety
+   *  reminder banner. Empty string means never backed up. */
+  lastBackupAt: string;
 }
 
 /* —— Root database shape (per install) —— */

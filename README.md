@@ -1,4 +1,4 @@
-# The Ultimate Biohacker Operating System™
+# The Ultimate Biohacker Operating System
 
 A premium, feminine, private wellness tracking system — a luxury Etsy digital planner transformed
 into a powerful installable web app. Peptides & GLP-1, HRT & menopause, supplements, red light,
@@ -23,11 +23,11 @@ installable on iPhone, iPad, Android, and desktop, and works offline.
 
 | Area | Details |
 |------|---------|
-| **Today dashboard** | Biohacker Score™ (7-day consistency ring), protocol cards, mood/energy/sleep/HRV/weight check-in + sparkline trends, reminders |
+| **Today dashboard** | Biohacker Score (7-day consistency ring), protocol cards, mood/energy/sleep/HRV/weight check-in + sparkline trends, reminders, a data-safety banner that nudges backups when they're overdue |
 | **Peptides & injectables** | 37-entry reference library (GLP-1s, recovery & GH-axis peptides, longevity, vitamin shots) + unlimited custom; site-rotation map; vials, storage, inventory, refill reminders; printable travel card; full dose log |
-| **Reconstitution Studio** | mg/mL/units arithmetic with a visual U-100 syringe, multi-syringe warning, mg⇄mcg and mL⇄units converters — math only, never dosing advice |
+| **Reconstitution Studio** | mg/mL/units arithmetic with a visual U-100 syringe, multi-syringe warning, mg⇄mcg and mL⇄units converters — math only, never dosing advice, gated behind a one-time explicit consent screen |
 | **Hormones & menopause** | HRT therapies in 9 delivery forms, 20-symptom daily check-in with severity meters, cycle log, trend charts, refill/lab reminders, provider question list |
-| **Supplement Sanctuary** | 90+ item library, 25 categories, 48 seed brands, barcode scanning (BarcodeDetector API), morning/afternoon/evening/bedtime stacks, with/without-food notes, inventory + reorder reminders, CSV import/export |
+| **Supplement Sanctuary** | 90+ item library, 25 categories, 48 seed brands, manual barcode field, morning/afternoon/evening/bedtime stacks, with/without-food notes, inventory + reorder reminders, CSV import/export (RFC4180-correct parser) |
 | **Body lab** | Biohacking tools (30 rituals), dedicated red light / cold plunge / sauna trackers with before/after mood & energy, labs & biomarker binder with per-marker trends, wearables shelf |
 | **Daily rituals** | Nutrition, body, fitness, sleep, beauty, dental, hair, mindset |
 | **Your world** | Household profiles (fully separated data per person), pet wellness binder (meds, vaccines, vet visits, weight), Printable Studio (15 brand-matched print-to-PDF pages, blank or pre-filled), settings with backup/restore + light/dark luxury themes |
@@ -35,15 +35,28 @@ installable on iPhone, iPad, Android, and desktop, and works offline.
 ## Safety by design
 
 No medical advice anywhere: every dose field records the **user's own provider/label
-instructions**; the calculator performs arithmetic only; the labs AI summary is a placeholder with
-an explicit "organize, never diagnose" rule; disclaimers are rendered in-product.
+instructions**; the calculator performs arithmetic only and is gated behind an explicit one-time
+consent screen (not just a footnote disclaimer); the labs AI summary is a placeholder with an
+explicit "organize, never diagnose" rule; disclaimers are rendered in-product on a dedicated
+Legal & Disclaimers page.
+
+## Data safety
+
+This is a **local-only** app today: all data lives in the browser's storage, with no server copy.
+That means clearing browser data, switching devices, or the browser evicting storage can erase
+everything. The app mitigates this with `navigator.storage.persist()`, a `lastBackupAt` tracker,
+and a recurring on-dashboard reminder banner when a backup is overdue — but it is not a substitute
+for real accounts/cloud sync, which do not exist in this version. Don't advertise this app as
+having cloud sync or accounts until that is actually built.
 
 ## Architecture
 
 - **Local-first**: all data persists on-device via a `SyncAdapter` (`src/lib/store.tsx`);
   export/import backup as a single JSON file.
-- **Cloud-ready**: `docs/supabase-setup.md` + `supabase/schema.sql` provide a drop-in Supabase
-  adapter (magic-link auth, RLS, whole-document sync) without touching any screen.
+- **Cloud sync is not shipped yet.** The shipped app is local-only (browser storage, no server).
+  `docs/supabase-setup.md` + `supabase/schema.sql` are a developer guide + schema for adding a
+  Supabase adapter later (magic-link auth, RLS, whole-document sync) without touching any screen —
+  do not advertise cloud sync/accounts to buyers until this is actually built and enabled.
 - **Design system**: hand-built component kit (`src/components/ui.tsx`) — cream/taupe/champagne/
   sage/blush palette, Fraunces + Figtree, paper grain, validated chart tokens, dark "espresso"
   theme.
@@ -53,8 +66,9 @@ an explicit "organize, never diagnose" rule; disclaimers are rendered in-product
 - `docs/etsy-listing-package.md` — SEO titles, 13 tags, description, FAQ, thumbnail overlays,
   video storyboard, Pinterest/Instagram copy, pricing strategy (from bestseller research)
 - `docs/buyer-guide.md`, `docs/license.md`, `docs/thank-you.md` — the delivered PDFs
-- `docs/printable-companion-guide.md` — producing the hyperlinked/fillable/GoodNotes/Notability/
-  Canva versions from the in-app Printable Studio
+- `docs/printable-companion-guide.md` — producing the hyperlinked-TOC/GoodNotes/Notability/Canva
+  versions from the in-app Printable Studio (see that guide for what "fillable" honestly means here
+  — annotate-in-app, not embedded Acrobat form fields)
 - `marketing/thumbnails/` — 15 HD listing images (2700×2025)
 
 *This software organizes personal wellness information. It is not a medical device and provides

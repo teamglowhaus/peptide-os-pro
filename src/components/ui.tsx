@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { X, ShieldAlert, Download } from "lucide-react";
 
 /* ————————————————————————————————————————————————
    Hand-crafted component kit — shadcn-inspired API,
@@ -458,6 +458,47 @@ export function DoseNote() {
       dose you record should come from <em>your own provider or product label</em>. Questions belong
       with your licensed practitioner.
     </Disclaimer>
+  );
+}
+
+/* —— Data-safety reminder ——
+   Real risk, not hypothetical: this app stores data in browser storage only.
+   Clearing site data, switching devices, or (on iOS Safari) simply not
+   opening the app for a while can silently erase everything. A one-time
+   "Export backup" button that nobody remembers to press isn't a safety
+   net — this banner is, because it resurfaces until a backup actually
+   happens. */
+export function BackupBanner({
+  daysSince,
+  onExport,
+}: {
+  daysSince: number | null; // null = never backed up
+  onExport: () => void;
+}) {
+  const stale = daysSince === null || daysSince >= 14;
+  if (!stale) return null;
+  const never = daysSince === null;
+  return (
+    <div className="fade-up mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-blush-300/70 bg-blush-100/50 px-5 py-4 dark:bg-blush-500/10">
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blush-200/70 text-blush-500 dark:bg-blush-500/25 dark:text-blush-200">
+          <ShieldAlert size={16} />
+        </span>
+        <div>
+          <p className="text-[0.9rem] font-semibold text-ink-strong">
+            {never ? "Your data has never been backed up" : `Your last backup was ${daysSince} days ago`}
+          </p>
+          <p className="mt-0.5 max-w-md text-[0.8rem] leading-relaxed text-ink-soft">
+            Everything here lives only in this browser. Clearing your browser data, switching
+            devices, or your browser quietly clearing storage can erase it permanently — a backup
+            takes ten seconds and protects months of tracking.
+          </p>
+        </div>
+      </div>
+      <Button variant="soft" onClick={onExport} className="shrink-0">
+        <Download size={15} /> Back up now
+      </Button>
+    </div>
   );
 }
 

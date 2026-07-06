@@ -1,6 +1,6 @@
 # GlowHausDigital — Etsy Launch Assets
 
-Everything you need to list **The Ultimate Biohacker Operating System™** on Etsy.
+Everything you need to list **The Ultimate Biohacker Operating System** on Etsy.
 
 ## 📸 Listing images — `marketing/thumbnails/` (15 files, 2700×2025)
 Upload in this order (Etsy shows up to 10 — the first 10 are the strongest; keep the rest for

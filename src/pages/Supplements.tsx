@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import {
-  Plus, Pill, Trash2, Pencil, ScanBarcode, Download, Upload, Sunrise, Sun, Sunset, Moon,
+  Plus, Pill, Trash2, Pencil, Download, Upload, Sunrise, Sun, Sunset, Moon,
 } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
 import {
@@ -16,6 +16,35 @@ const STACK_ICONS: Record<StackTime, React.ReactNode> = {
   evening: <Sunset size={16} />,
   bedtime: <Moon size={16} />,
 };
+
+/* RFC4180-correct CSV parser: handles quoted fields containing commas,
+   escaped "" quotes, and newlines embedded inside quoted fields — a naive
+   split-by-line-then-by-comma approach silently corrupts all three. */
+function parseCsv(text: string): string[][] {
+  const clean = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text; // strip BOM
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let inQuotes = false;
+  let i = 0;
+  while (i < clean.length) {
+    const c = clean[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (clean[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += c; i++; continue;
+    }
+    if (c === '"') { inQuotes = true; i++; continue; }
+    if (c === ",") { row.push(field); field = ""; i++; continue; }
+    if (c === "\r") { i++; continue; }
+    if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; i++; continue; }
+    field += c; i++;
+  }
+  if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+  return rows.filter((r) => !(r.length === 1 && r[0].trim() === ""));
+}
 
 function blankSupplement(profileId: string): Supplement {
   return {
@@ -74,16 +103,14 @@ export function Supplements() {
 
   const importCsv = (file: File) => {
     file.text().then((text) => {
-      const lines = text.split(/\r?\n/).filter(Boolean);
-      const parse = (line: string) =>
-        (line.match(/("([^"]|"")*"|[^,]*)(,|$)/g) ?? [])
-          .map((c) => c.replace(/,$/, "").replace(/^"|"$/g, "").replace(/""/g, '"'));
-      const [header, ...rows] = lines.map(parse);
+      const rows = parseCsv(text);
+      const [header, ...body] = rows;
+      if (!header) return;
       const col = (name: string) => header.findIndex((h) => h.trim().toLowerCase() === name);
       const ni = col("name");
       if (ni < 0) return;
       update((d) => {
-        for (const r of rows) {
+        for (const r of body) {
           if (!r[ni]?.trim()) continue;
           d.supplements.push({
             ...blankSupplement(pid),
@@ -135,7 +162,7 @@ export function Supplements() {
           <EmptyState
             icon={<Pill size={26} />}
             title="Your cabinet is empty"
-            body="Add supplements from the library — or scan a barcode — and your morning, afternoon, evening and bedtime stacks will assemble themselves here."
+            body="Add supplements from the library — or your own — and your morning, afternoon, evening and bedtime stacks will assemble themselves here."
             action={<Button variant="soft" onClick={() => setTab("library")}>Browse the library</Button>}
           />
         ) : (
@@ -290,74 +317,6 @@ export function Supplements() {
   );
 }
 
-/* Barcode capture: uses the native BarcodeDetector where available,
-   with graceful manual entry everywhere else. */
-function BarcodeCapture({ onCode }: { onCode: (code: string) => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [scanning, setScanning] = useState(false);
-  const [unsupported, setUnsupported] = useState(false);
-  const stopRef = useRef<() => void>(() => {});
-
-  const start = async () => {
-    const Detector = (window as any).BarcodeDetector;
-    if (!Detector || !navigator.mediaDevices?.getUserMedia) {
-      setUnsupported(true);
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      setScanning(true);
-      const video = videoRef.current!;
-      video.srcObject = stream;
-      await video.play();
-      const detector = new Detector({ formats: ["ean_13", "upc_a", "upc_e", "ean_8", "code_128"] });
-      let live = true;
-      stopRef.current = () => {
-        live = false;
-        stream.getTracks().forEach((t) => t.stop());
-        setScanning(false);
-      };
-      const tick = async () => {
-        if (!live) return;
-        try {
-          const codes = await detector.detect(video);
-          if (codes.length > 0) {
-            onCode(codes[0].rawValue);
-            stopRef.current();
-            return;
-          }
-        } catch { /* keep trying */ }
-        requestAnimationFrame(tick);
-      };
-      tick();
-    } catch {
-      setUnsupported(true);
-    }
-  };
-
-  return (
-    <div>
-      {!scanning ? (
-        <Button type="button" variant="outline" onClick={start}>
-          <ScanBarcode size={16} /> Scan barcode
-        </Button>
-      ) : (
-        <div className="overflow-hidden rounded-2xl border border-line">
-          <video ref={videoRef} className="h-40 w-full object-cover" muted playsInline />
-          <button type="button" onClick={() => stopRef.current()} className="w-full bg-sunken py-2 text-[0.8rem] font-semibold text-ink-soft">
-            Stop scanning
-          </button>
-        </div>
-      )}
-      {unsupported && (
-        <p className="mt-2 text-[0.75rem] text-ink-faint">
-          Camera scanning isn't available in this browser — type the barcode number instead.
-        </p>
-      )}
-    </div>
-  );
-}
-
 function SupplementEditor({
   initial, onSave, onClose,
 }: { initial: Supplement; onSave: (s: Supplement) => void; onClose: () => void }) {
@@ -384,9 +343,8 @@ function SupplementEditor({
         <Field label="Product name">
           <Input value={form.product} onChange={(e) => set("product", e.target.value)} placeholder="Exact product on the bottle" />
         </Field>
-        <Field label="Barcode">
+        <Field label="Barcode" hint="Type the UPC/EAN printed on the label, if you'd like.">
           <Input value={form.barcode} onChange={(e) => set("barcode", e.target.value)} placeholder="UPC / EAN" inputMode="numeric" />
-          <div className="mt-2"><BarcodeCapture onCode={(c) => set("barcode", c)} /></div>
         </Field>
         <Field label="Dose (from your label or provider)">
           <Input value={form.dose} onChange={(e) => set("dose", e.target.value)} placeholder="per label / provider instructions" />
