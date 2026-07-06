@@ -60,12 +60,21 @@ export function Lifestyle() {
           <p className="mb-5 mt-0.5 text-[0.83rem] italic text-ink-soft">{tracker.tagline}</p>
           <div className="grid gap-4 sm:grid-cols-2">
             {tracker.fields.map((f) => (
-              <Field key={f.key} label={f.label}>
-                <Input
-                  value={todayEntry?.fields[f.key] ?? ""}
-                  onChange={(e) => saveField(f.key, e.target.value)}
-                  placeholder={f.placeholder}
-                />
+              <Field key={f.key} label={f.label} className={f.full ? "sm:col-span-2" : undefined}>
+                {f.multiline ? (
+                  <Textarea
+                    rows={3}
+                    value={todayEntry?.fields[f.key] ?? ""}
+                    onChange={(e) => saveField(f.key, e.target.value)}
+                    placeholder={f.placeholder}
+                  />
+                ) : (
+                  <Input
+                    value={todayEntry?.fields[f.key] ?? ""}
+                    onChange={(e) => saveField(f.key, e.target.value)}
+                    placeholder={f.placeholder}
+                  />
+                )}
               </Field>
             ))}
           </div>

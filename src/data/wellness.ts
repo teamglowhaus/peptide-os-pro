@@ -89,7 +89,7 @@ export interface LifestyleTracker {
   key: string;
   label: string;
   tagline: string;
-  fields: { key: string; label: string; placeholder: string }[];
+  fields: { key: string; label: string; placeholder: string; multiline?: boolean; full?: boolean }[];
 }
 
 export const LIFESTYLE_TRACKERS: LifestyleTracker[] = [
@@ -157,11 +157,21 @@ export const LIFESTYLE_TRACKERS: LifestyleTracker[] = [
     ],
   },
   {
-    key: "mindset", label: "Mindset", tagline: "The inner protocol",
+    key: "mindset", label: "Mindset & Meditation", tagline: "The inner protocol",
     fields: [
+      // — Meditation (premium) —
+      { key: "medMinutes", label: "Meditation · minutes", placeholder: "e.g. 12 min" },
+      { key: "medStyle", label: "Meditation · style", placeholder: "guided · breath · body scan · loving-kindness · mantra · walking" },
+      { key: "medGuide", label: "Guide / app / teacher", placeholder: "Calm · Headspace · Insight Timer · unguided" },
+      { key: "medTime", label: "Time of day", placeholder: "e.g. 6:30 am, before coffee" },
+      { key: "medBeforeAfter", label: "State: before → after", placeholder: "e.g. anxious → settled" },
+      { key: "medStreak", label: "Streak / days this week", placeholder: "e.g. day 5" },
+      { key: "medReflection", label: "How it went — reflection", placeholder: "Calm or restless? What came up? Any insight, image, or feeling to remember…", multiline: true, full: true },
+      // — Wider inner practice —
+      { key: "breathwork", label: "Breathwork / stillness", placeholder: "style · minutes (box, 4-7-8, coherence)" },
       { key: "gratitude", label: "Gratitude", placeholder: "three little things" },
       { key: "intention", label: "Intention", placeholder: "one word for today" },
-      { key: "practice", label: "Practice", placeholder: "journaling, therapy, prayer" },
+      { key: "practice", label: "Other inner practice", placeholder: "journaling, therapy, prayer, visualization" },
       { key: "win", label: "Today's win", placeholder: "celebrate something" },
     ],
   },
