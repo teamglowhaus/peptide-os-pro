@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ————————————————————————————————————————————————
+   The Biohacker Operating System™ — design tokens
+   Warm cream · taupe · champagne · sage · blush · cocoa
+   ———————————————————————————————————————————————— */
+@theme {
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Figtree", "Avenir Next", "Segoe UI", sans-serif;
+
+  --color-cream-50: #FBF8F2;
+  --color-cream-100: #F7F1E8;
+  --color-cream-200: #F0E7D8;
+  --color-cream-300: #E6D9C4;
+
+  --color-taupe-100: #E9E1D6;
+  --color-taupe-200: #D8CCBC;
+  --color-taupe-300: #BFB09D;
+  --color-taupe-400: #A08F7B;
+  --color-taupe-500: #857463;
+  --color-taupe-600: #6B5D4F;
+
+  --color-champagne-200: #EBD9B4;
+  --color-champagne-300: #DCC08C;
+  --color-champagne-400: #C9A96A;
+  --color-champagne-500: #B08D57;
+  --color-champagne-600: #8F7040;
+
+  --color-sage-100: #E4E8DE;
+  --color-sage-200: #CBD4C2;
+  --color-sage-300: #AAB99E;
+  --color-sage-400: #8E9C83;
+  --color-sage-500: #6F7F66;
+  --color-sage-600: #57654F;
+
+  --color-blush-100: #F5E3DC;
+  --color-blush-200: #EBCBBF;
+  --color-blush-300: #DCA994;
+  --color-blush-400: #C98D7D;
+  --color-blush-500: #B0715F;
+
+  --color-cocoa-300: #8C7A6B;
+  --color-cocoa-400: #6E5D50;
+  --color-cocoa-500: #52443A;
+  --color-cocoa-600: #3E332B;
+  --color-cocoa-700: #2E2620;
+  --color-cocoa-800: #211B17;
+  --color-cocoa-900: #17120F;
+
+  --shadow-soft: 0 1px 2px rgb(62 51 43 / 0.05), 0 6px 20px -6px rgb(62 51 43 / 0.12);
+  --shadow-lifted: 0 2px 4px rgb(62 51 43 / 0.06), 0 14px 34px -10px rgb(62 51 43 / 0.20);
+  --shadow-inner-glow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+
+  --radius-card: 1.375rem;
+  --radius-pill: 999px;
+}
+
+/* Semantic surfaces that flip in dark mode */
+:root {
+  --surface-page: var(--color-cream-100);
+  --surface-card: #FFFDF9;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: var(--color-cream-200);
+  --ink-strong: var(--color-cocoa-700);
+  --ink: var(--color-cocoa-600);
+  --ink-soft: var(--color-taupe-500);
+  --ink-faint: var(--color-taupe-400);
+  --line: rgb(133 116 99 / 0.18);
+  --line-strong: rgb(133 116 99 / 0.30);
+  /* chart marks — validated ≥3:1 vs card surface in each mode */
+  --chart-sage: #5A7350;
+  --chart-gold: #96702E;
+  --chart-rose: #B26048;
+}
+.dark {
+  --surface-page: var(--color-cocoa-800);
+  --surface-card: #2A231E;
+  --surface-raised: #332B25;
+  --surface-sunken: var(--color-cocoa-900);
+  --ink-strong: #F3ECE1;
+  --ink: #E4DACB;
+  --ink-soft: #B4A691;
+  --ink-faint: #8F8271;
+  --line: rgb(228 218 203 / 0.14);
+  --line-strong: rgb(228 218 203 / 0.26);
+  --chart-sage: #9FBE85;
+  --chart-gold: #E3B366;
+  --chart-rose: #E39272;
+}
+
+@theme inline {
+  --color-page: var(--surface-page);
+  --color-card: var(--surface-card);
+  --color-raised: var(--surface-raised);
+  --color-sunken: var(--surface-sunken);
+  --color-ink-strong: var(--ink-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+}
+
+@layer base {
+html, body, #root { height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--surface-page);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-size: 16.5px;
+}
+
+/* Subtle handmade paper grain over the whole app */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.dark body::before { opacity: 0.25; }
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+  color: var(--ink-strong);
+}
+
+::selection { background: var(--color-champagne-200); color: var(--color-cocoa-700); }
+.dark ::selection { background: var(--color-champagne-600); color: #fff; }
+
+/* Elegant scrollbars */
+* { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+
+/* Utility: editorial small caps label */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Card treatment */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.card-hover { transition: box-shadow 180ms ease, transform 180ms ease; }
+.card-hover:hover { box-shadow: var(--shadow-lifted); transform: translateY(-1px); }
+
+/* Champagne hairline divider with a center dot, used as a section flourish */
+.flourish {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.flourish::before, .flourish::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, var(--line-strong), transparent);
+}
+
+/* Focus ring in champagne, never default blue */
+:focus-visible {
+  outline: 2px solid var(--color-champagne-400);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+input, select, textarea, button { font: inherit; color: inherit; }
+
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; }
+.dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }
+} /* end @layer base */
+
+/* Print styles — printable companion pages */
+@media print {
+  body::before { display: none; }
+  body { background: #fff !important; font-size: 12px; }
+  .no-print { display: none !important; }
+  .print-page { page-break-after: always; }
+  .card { box-shadow: none !important; border-color: #d8ccbc !important; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 320ms ease both; }
+
+@keyframes gentlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
