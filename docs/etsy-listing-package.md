@@ -50,8 +50,11 @@ don't just reskin the same description with swapped keywords.
 **4. Don't advertise features that don't exist yet.**
 Every claim below is written to match what the app *actually ships today*: no barcode scanning (removed —
 `BarcodeDetector` doesn't work on iOS Safari, the core audience), no cloud sync/accounts (local-only
-today), and "fillable PDF" means GoodNotes/Notability digital annotation, not embedded Acrobat form
-fields. If you build any of these for real later, update the listing then — not before.
+today). The binder PDF genuinely has a clickable table of contents and real Acrobat form fields
+(built by `scripts/enhance-binder-pdf.mjs` — see `docs/printable-companion-guide.md`), in addition
+to being GoodNotes/Notability annotatable — so "fillable PDF" and "clickable table of contents" are
+both accurate claims now, not just "print-and-write." If you change the binder's pages later, re-run
+that script before re-shipping so the claim stays true.
 
 ---
 
@@ -119,7 +122,8 @@ private, beautiful home for all of it — designed like a luxury planner.
 **The Printable Companion Binder (PDF, print at home, unlimited)**
 • 15 matching pages: weekly dashboard, medication card, peptide log, HRT tracker, symptom tracker, supplement schedule, lab binder, provider questions, red light / cold plunge / sauna logs, pet binder, monthly review, quarterly optimization review + cover page
 • Print on your own paper, any number of times, for your own personal use
-• Save as PDF → import into GoodNotes or Notability, where you can write on every page with your stylus (this is a print-and-annotate system, not an Acrobat fillable form)
+• Fillable PDF with a clickable table of contents — type directly into every blank on a laptop or tablet, no printer needed
+• Or import into GoodNotes or Notability to write on every page with your stylus
 
 **Bonus: a companion web app** (works in the browser on iPhone, iPad, Android & desktop —
 installable like an app, no App Store needed)
@@ -142,8 +146,8 @@ installable like an app, no App Store needed)
 4. Take the 2-minute onboarding — the app shapes itself around what *you* track
 
 📱 **FORMATS**
-Printable PDF pages (US Letter/A4 friendly), GoodNotes/Notability-ready via import, Canva template
-link, plus the bonus web app. One-time purchase, undated — start anytime.
+Fillable, hyperlinked PDF pages (US Letter/A4 friendly, print-ready too), GoodNotes/Notability-ready
+via import, Canva template link, plus the bonus web app. One-time purchase, undated — start anytime.
 
 ❓ **FAQ**
 
@@ -172,7 +176,7 @@ purchase that works forever, offline, with no dependency on us keeping a server 
 
 ## 4 · "What's Included" one-liner (for image #2 grid)
 
-15 Printable Pages · GoodNotes/Notability Ready · Canva Template · Bonus Web App (16 modules) ·
+15 Fillable, Hyperlinked Pages · GoodNotes/Notability Ready · Canva Template · Bonus Web App (16 modules) ·
 Peptide Library · Hormone Suite · Supplement Library · Lab Binder · Pet & Household Profiles ·
 Light + Dark Mode
 

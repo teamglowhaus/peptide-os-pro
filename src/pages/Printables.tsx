@@ -94,21 +94,25 @@ export function Printables() {
 
       {/* Printable sheets */}
       <div className="space-y-6 print:space-y-0">
-        {selected.includes("cover") && <Sheet><CoverPage /></Sheet>}
-        {selected.includes("weekly") && <Sheet><WeeklyPage /></Sheet>}
-        {selected.includes("medcard") && <Sheet><MedCardPage prefill={prefill} /></Sheet>}
-        {selected.includes("peptide") && <Sheet><PeptideLogPage prefill={prefill} /></Sheet>}
-        {selected.includes("hrt") && <Sheet><HrtPage prefill={prefill} /></Sheet>}
-        {selected.includes("symptoms") && <Sheet><SymptomPage /></Sheet>}
-        {selected.includes("supplements") && <Sheet><SupplementPage prefill={prefill} /></Sheet>}
-        {selected.includes("labs") && <Sheet><LabsPage prefill={prefill} /></Sheet>}
-        {selected.includes("questions") && <Sheet><QuestionsPage prefill={prefill} /></Sheet>}
-        {selected.includes("redlight") && <Sheet><SimpleSessionPage title="Red Light Tracker" cols={["Date", "Device", "Area", "Minutes", "Distance", "Notes / glow"]} /></Sheet>}
-        {selected.includes("coldplunge") && <Sheet><SimpleSessionPage title="Cold Plunge Tracker" cols={["Date", "Temp", "Minutes", "Breathwork", "Mood after", "Notes"]} /></Sheet>}
-        {selected.includes("sauna") && <Sheet><SimpleSessionPage title="Sauna Tracker" cols={["Date", "Type", "Temp", "Minutes", "Hydration", "Sleep impact"]} /></Sheet>}
-        {selected.includes("pet") && <Sheet><PetPage prefill={prefill} /></Sheet>}
-        {selected.includes("monthly") && <Sheet><MonthlyPage /></Sheet>}
-        {selected.includes("quarterly") && <Sheet><QuarterlyPage /></Sheet>}
+        {selected.includes("cover") && (
+          <Sheet pageKey="cover">
+            <CoverPage toc={PAGES.filter((p) => p.key !== "cover" && selected.includes(p.key))} />
+          </Sheet>
+        )}
+        {selected.includes("weekly") && <Sheet pageKey="weekly"><WeeklyPage /></Sheet>}
+        {selected.includes("medcard") && <Sheet pageKey="medcard"><MedCardPage prefill={prefill} /></Sheet>}
+        {selected.includes("peptide") && <Sheet pageKey="peptide"><PeptideLogPage prefill={prefill} /></Sheet>}
+        {selected.includes("hrt") && <Sheet pageKey="hrt"><HrtPage prefill={prefill} /></Sheet>}
+        {selected.includes("symptoms") && <Sheet pageKey="symptoms"><SymptomPage /></Sheet>}
+        {selected.includes("supplements") && <Sheet pageKey="supplements"><SupplementPage prefill={prefill} /></Sheet>}
+        {selected.includes("labs") && <Sheet pageKey="labs"><LabsPage prefill={prefill} /></Sheet>}
+        {selected.includes("questions") && <Sheet pageKey="questions"><QuestionsPage prefill={prefill} /></Sheet>}
+        {selected.includes("redlight") && <Sheet pageKey="redlight"><SimpleSessionPage title="Red Light Tracker" cols={["Date", "Device", "Area", "Minutes", "Distance", "Notes / glow"]} /></Sheet>}
+        {selected.includes("coldplunge") && <Sheet pageKey="coldplunge"><SimpleSessionPage title="Cold Plunge Tracker" cols={["Date", "Temp", "Minutes", "Breathwork", "Mood after", "Notes"]} /></Sheet>}
+        {selected.includes("sauna") && <Sheet pageKey="sauna"><SimpleSessionPage title="Sauna Tracker" cols={["Date", "Type", "Temp", "Minutes", "Hydration", "Sleep impact"]} /></Sheet>}
+        {selected.includes("pet") && <Sheet pageKey="pet"><PetPage prefill={prefill} /></Sheet>}
+        {selected.includes("monthly") && <Sheet pageKey="monthly"><MonthlyPage /></Sheet>}
+        {selected.includes("quarterly") && <Sheet pageKey="quarterly"><QuarterlyPage /></Sheet>}
       </div>
     </div>
   );
@@ -116,9 +120,12 @@ export function Printables() {
 
 /* —— sheet chrome —— */
 
-function Sheet({ children }: { children: React.ReactNode }) {
+function Sheet({ children, pageKey }: { children: React.ReactNode; pageKey?: string }) {
   return (
-    <div className="print-page card mx-auto w-full max-w-[720px] !rounded-[14px] bg-white p-8 text-cocoa-700 shadow-soft print:max-w-none print:border-0 print:p-2 print:shadow-none dark:bg-white">
+    <div
+      data-sheet-page={pageKey}
+      className="print-page card mx-auto w-full max-w-[720px] !rounded-[14px] bg-white p-8 text-cocoa-700 shadow-soft print:max-w-none print:border-0 print:p-2 print:shadow-none dark:bg-white"
+    >
       {children}
       <div className="mt-6 flex items-center justify-between border-t border-taupe-200 pt-3">
         <p className="text-[0.6rem] uppercase tracking-[0.2em] text-taupe-400">The Biohacker Operating System</p>
@@ -138,16 +145,30 @@ function SheetTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
   );
 }
 
+/* data-fillable / data-fillable-id mark every writable blank so the PDF
+   export pipeline (scripts/enhance-binder-pdf.mjs) can overlay a real
+   AcroForm text field at that exact position — see
+   docs/printable-companion-guide.md for what "fillable" honestly means. */
+
 function WriteLine({ label, value, w }: { label: string; value?: string; w?: string }) {
+  const id = React.useId();
+  const blank = !value;
   return (
     <div className={cx("min-w-0", w)}>
       <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-taupe-400">{label}</p>
-      <p className="min-h-[1.35rem] border-b border-taupe-300 pb-0.5 text-[0.85rem] text-cocoa-600">{value || " "}</p>
+      <p
+        data-fillable={blank ? "text" : undefined}
+        data-fillable-id={blank ? id : undefined}
+        className="min-h-[1.35rem] border-b border-taupe-300 pb-0.5 text-[0.85rem] text-cocoa-600"
+      >
+        {value || " "}
+      </p>
     </div>
   );
 }
 
 function RuleTable({ cols, rows = 10, data }: { cols: string[]; rows?: number; data?: string[][] }) {
+  const tableId = React.useId();
   return (
     <table className="w-full border-collapse text-[0.78rem]">
       <thead>
@@ -162,11 +183,20 @@ function RuleTable({ cols, rows = 10, data }: { cols: string[]; rows?: number; d
       <tbody>
         {Array.from({ length: rows }, (_, i) => (
           <tr key={i}>
-            {cols.map((c, j) => (
-              <td key={j} className="h-8 border-b border-taupe-200 pr-3 align-bottom text-cocoa-600">
-                {data?.[i]?.[j] ?? ""}
-              </td>
-            ))}
+            {cols.map((c, j) => {
+              const cell = data?.[i]?.[j];
+              const blank = !cell;
+              return (
+                <td
+                  key={j}
+                  data-fillable={blank ? "text" : undefined}
+                  data-fillable-id={blank ? `${tableId}-r${i}-c${j}` : undefined}
+                  className="h-8 border-b border-taupe-200 pr-3 align-bottom text-cocoa-600"
+                >
+                  {cell ?? ""}
+                </td>
+              );
+            })}
           </tr>
         ))}
       </tbody>
@@ -174,9 +204,15 @@ function RuleTable({ cols, rows = 10, data }: { cols: string[]; rows?: number; d
   );
 }
 
+/** A blank writable line — freehand notes, before/after reflections, etc. */
+function Blank({ className }: { className?: string }) {
+  const id = React.useId();
+  return <div data-fillable="text" data-fillable-id={id} className={cx("h-7 border-b border-taupe-200", className)} />;
+}
+
 /* —— individual pages —— */
 
-function CoverPage() {
+function CoverPage({ toc = [] }: { toc?: { key: string; label: string }[] }) {
   const { activeProfile } = useStore();
   return (
     <div className="flex min-h-[560px] flex-col items-center justify-center text-center">
@@ -188,6 +224,18 @@ function CoverPage() {
       <p className="mt-10 max-w-sm font-display text-lg italic leading-relaxed text-taupe-500">
         “Consistency over perfection —<br />every small ritual counts.”
       </p>
+      {toc.length > 0 && (
+        <div className="mt-10 w-full max-w-sm text-left">
+          <p className="mb-2 text-center text-[0.62rem] font-semibold uppercase tracking-[0.25em] text-taupe-400">In this binder</p>
+          <ul className="columns-2 gap-x-6 space-y-1.5">
+            {toc.map((p) => (
+              <li key={p.key} className="break-inside-avoid text-[0.78rem] text-cocoa-600">
+                <span data-toc-target={p.key}>{p.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <p className="mt-12 text-[0.65rem] uppercase tracking-[0.25em] text-taupe-400">Season · ____________</p>
     </div>
   );
@@ -277,7 +325,7 @@ function HrtPage({ prefill }: { prefill: boolean }) {
       </div>
       <div className="mt-4">
         <p className="mb-1 text-[0.62rem] font-semibold uppercase tracking-wider text-taupe-400">Before / after notes</p>
-        {[0, 1, 2].map((i) => <div key={i} className="h-7 border-b border-taupe-200" />)}
+        {[0, 1, 2].map((i) => <Blank key={i} />)}
       </div>
     </div>
   );
@@ -304,7 +352,14 @@ function SymptomPage() {
           {MENO_SYMPTOMS.map((s) => (
             <tr key={s.key}>
               <td className="h-[1.42rem] border-b border-taupe-200 text-cocoa-600">{s.label}</td>
-              {[0, 1, 2, 3].map((i) => <td key={i} className="border-b border-l border-taupe-200" />)}
+              {[0, 1, 2, 3].map((i) => (
+                <td
+                  key={i}
+                  data-fillable="text"
+                  data-fillable-id={`symptom-${s.key}-w${i}`}
+                  className="border-b border-l border-taupe-200"
+                />
+              ))}
             </tr>
           ))}
         </tbody>
@@ -363,12 +418,27 @@ function QuestionsPage({ prefill }: { prefill: boolean }) {
         <WriteLine label="Appointment date" w="w-44" />
         <WriteLine label="Provider" w="flex-1" />
       </div>
-      {Array.from({ length: 10 }, (_, i) => (
-        <div key={i} className="mb-3.5">
-          <p className="min-h-[1.3rem] border-b border-taupe-300 text-[0.85rem] text-cocoa-600">{qs[i] ?? " "}</p>
-          <p className="mt-1.5 min-h-[1.1rem] border-b border-dotted border-taupe-200 text-[0.75rem] text-taupe-500">&nbsp;</p>
-        </div>
-      ))}
+      {Array.from({ length: 10 }, (_, i) => {
+        const hasQuestion = Boolean(qs[i]);
+        return (
+          <div key={i} className="mb-3.5">
+            <p
+              data-fillable={hasQuestion ? undefined : "text"}
+              data-fillable-id={hasQuestion ? undefined : `question-${i}`}
+              className="min-h-[1.3rem] border-b border-taupe-300 text-[0.85rem] text-cocoa-600"
+            >
+              {qs[i] ?? "\u00a0"}
+            </p>
+            <p
+              data-fillable="text"
+              data-fillable-id={`question-answer-${i}`}
+              className="mt-1.5 min-h-[1.1rem] border-b border-dotted border-taupe-200 text-[0.75rem] text-taupe-500"
+            >
+              &nbsp;
+            </p>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -421,7 +491,7 @@ function MonthlyPage() {
       ].map((q) => (
         <div key={q} className="mb-5">
           <p className="mb-1 text-[0.72rem] font-semibold uppercase tracking-wider text-taupe-500">{q}</p>
-          {[0, 1].map((i) => <div key={i} className="h-7 border-b border-taupe-200" />)}
+          {[0, 1].map((i) => <Blank key={i} />)}
         </div>
       ))}
     </div>
@@ -442,7 +512,7 @@ function QuarterlyPage() {
       <RuleTable cols={["Marker", "Last quarter", "This quarter", "Direction"]} rows={5} />
       <div className="mt-5">
         <p className="mb-1 text-[0.72rem] font-semibold uppercase tracking-wider text-taupe-500">The one change that would matter most next quarter</p>
-        {[0, 1].map((i) => <div key={i} className="h-7 border-b border-taupe-200" />)}
+        {[0, 1].map((i) => <Blank key={i} />)}
       </div>
     </div>
   );
