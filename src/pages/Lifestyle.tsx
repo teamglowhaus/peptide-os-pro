@@ -60,7 +60,12 @@ export function Lifestyle() {
           <p className="mb-5 mt-0.5 text-[0.83rem] italic text-ink-soft">{tracker.tagline}</p>
           <div className="grid gap-4 sm:grid-cols-2">
             {tracker.fields.map((f) => (
-              <Field key={f.key} label={f.label} className={f.full ? "sm:col-span-2" : undefined}>
+              <Field
+                key={f.key}
+                label={f.label}
+                className={f.full ? "sm:col-span-2" : undefined}
+                labelClassName={f.full ? undefined : "min-h-[2.4em]"}
+              >
                 {f.multiline ? (
                   <Textarea
                     rows={3}

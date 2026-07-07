@@ -103,15 +103,19 @@ export function Field({
   hint,
   children,
   className,
+  labelClassName,
 }: {
   label: string;
   hint?: string;
   children: React.ReactNode;
   className?: string;
+  /** Extra classes for the label text — e.g. a min-height to keep inputs aligned
+   * across a row of Fields whose labels wrap to different numbers of lines. */
+  labelClassName?: string;
 }) {
   return (
     <label className={cx("block", className)}>
-      <span className="mb-1.5 block text-[0.8rem] font-semibold tracking-wide text-ink-soft">{label}</span>
+      <span className={cx("mb-1.5 block text-[0.8rem] font-semibold tracking-wide text-ink-soft", labelClassName)}>{label}</span>
       {children}
       {hint && <span className="mt-1 block text-xs text-ink-faint">{hint}</span>}
     </label>
@@ -421,9 +425,9 @@ export function Ring({
 }
 
 /* Severity meter: 5 soft cells, single hue by intensity, value named in text */
-export function SeverityMeter({ value, labels }: { value: number; labels: string[] }) {
+export function SeverityMeter({ value, labels, className }: { value: number; labels: string[]; className?: string }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className={cx("flex items-center gap-2", className)}>
       <div className="flex gap-1">
         {[1, 2, 3, 4].map((n) => (
           <span
@@ -436,7 +440,7 @@ export function SeverityMeter({ value, labels }: { value: number; labels: string
           />
         ))}
       </div>
-      <span className="text-xs font-medium text-ink-soft">{labels[value] ?? ""}</span>
+      <span className="whitespace-nowrap text-xs font-medium text-ink-soft">{labels[value] ?? ""}</span>
     </div>
   );
 }
