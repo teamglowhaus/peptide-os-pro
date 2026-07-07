@@ -75,6 +75,7 @@ export function Lifestyle() {
                   />
                 ) : (
                   <Input
+                    className="truncate"
                     value={todayEntry?.fields[f.key] ?? ""}
                     onChange={(e) => saveField(f.key, e.target.value)}
                     placeholder={f.placeholder}

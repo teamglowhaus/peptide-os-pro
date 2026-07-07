@@ -518,7 +518,7 @@ export function Tabs({
   onChange: (k: string) => void;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-1.5 rounded-full bg-sunken/70 p-1.5 w-fit max-w-full overflow-x-auto">
+    <div className="mb-6 flex flex-wrap gap-1.5 rounded-2xl bg-sunken/70 p-1.5 w-fit max-w-full overflow-x-auto">
       {tabs.map((t) => (
         <button
           key={t.key}

@@ -70,10 +70,10 @@ export function SettingsPage() {
         <Card className="md:col-span-2">
           <SectionTitle className="mb-1">Modules</SectionTitle>
           <p className="mb-5 text-[0.85rem] text-ink-soft">Shape your sidebar — nothing is deleted when a module is off.</p>
-          <div className="grid gap-x-8 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-x-8 gap-y-3.5 sm:grid-cols-2 xl:grid-cols-3">
             {MODULE_TOGGLES.map((m) => (
               <div key={m.key as string} className="flex items-center justify-between gap-3">
-                <span className="text-[0.92rem] font-medium text-ink">{m.label}</span>
+                <span className="min-w-0 truncate text-[0.92rem] font-medium text-ink">{m.label}</span>
                 <Toggle
                   checked={Boolean(ob[m.key])}
                   onChange={(v) => update((d) => void ((d.settings.onboarding as any)[m.key] = v))}
