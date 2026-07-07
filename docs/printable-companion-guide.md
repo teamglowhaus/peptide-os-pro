@@ -12,8 +12,10 @@ as "done" until it's genuinely in `marketing/delivery-pdfs/`.
 | `marketing/delivery-pdfs/1-Welcome-Start-Here.pdf` | The buyer-guide.md welcome sheet, exported to PDF |
 | `marketing/delivery-pdfs/2-Companion-Binder-15-Pages.pdf` | The full 15-page binder, print-ready, **with a real clickable table of contents and real fillable form fields** — see below |
 | `marketing/delivery-pdfs/3-License-and-Thank-You.pdf` | license.md + thank-you.md |
+| `marketing/delivery-pdfs/4-Individual-Printable-Pages.zip` | All 15 pages as loose, single-page fillable PDFs |
 | `marketing/delivery-pdfs/5-Etsy-Listing-Copy-SELLER.pdf` | For you, the seller — not a buyer-facing file |
-| Canva design (editable, all 15 pages) | Imported into your Canva account — every text layer is live/editable. Ask for the current share link if you've lost it; it was created via `import-design-from-url` from the binder PDF. |
+| `marketing/delivery-pdfs/6-Canva-Template-Link.txt` | The real share link to the editable Canva bundle, packaged as an actual file |
+| Canva design (editable, all 15 pages) | Live in your Canva account — every text layer is editable. The design was refreshed via `import-design-from-url` against the current binder PDF (the first import predated the cover-page table of contents added in this repo, so it was stale); the link in `6-Canva-Template-Link.txt` points at the current one. |
 
 The hyperlinks and fillable fields described below are generated automatically by
 `scripts/enhance-binder-pdf.mjs` — they are not a manual one-off edit, so they regenerate
@@ -83,9 +85,11 @@ running preview build.
 ## 6 · Canva template bundle — already done
 
 This one is real: all 15 binder pages were imported into a Canva design with every text layer
-editable (not flattened images), matching the brand palette and typography. If you need to re-do
-it or create a fresh copy, use Canva's "Import design from URL" against the binder PDF, or open
-your existing design and use "Make a copy."
+editable (not flattened images), matching the brand palette and typography. The real share link
+is packaged in `marketing/delivery-pdfs/6-Canva-Template-Link.txt`. If you need to re-do it after
+a binder change, re-run `scripts/enhance-binder-pdf.mjs` first, then re-import the fresh PDF via
+Canva's "Import design from URL" so the Canva copy doesn't go stale relative to the binder — this
+already happened once (the first import predated the cover-page TOC) and was refreshed.
 
 ## Delivery checklist (what to actually upload to Etsy)
 
@@ -99,10 +103,10 @@ genuinely been done:
 | `2-Companion-Binder-15-Pages.pdf` | The 15-page binder — print + GoodNotes/Notability ready, with a real clickable TOC and real fillable form fields | ✅ exists |
 | `3-License-and-Thank-You.pdf` | License + thank-you | ✅ exists |
 | `4-Individual-Printable-Pages.zip` | All 15 pages as loose, single-page fillable PDFs | ✅ exists |
-| A Canva template link (as a short PDF or text file with the share link) | Editable Canva bundle | ✅ design exists — package the link |
+| `6-Canva-Template-Link.txt` | The real share link to the editable Canva bundle | ✅ exists |
 
-That's already 4 of Etsy's 5-file limit — the Canva link (packaged as a short PDF/text file) is
-the 5th. `5-Etsy-Listing-Copy-SELLER.pdf` is for you, not a buyer-facing upload.
+That's the full 5 of Etsy's 5-file limit. `5-Etsy-Listing-Copy-SELLER.pdf` is for you, not a
+buyer-facing upload — don't include it in the 5.
 
 If you ever regenerate the binder (new pages, copy changes, etc.), re-run
 `node scripts/enhance-binder-pdf.mjs` against a locally running preview build to rebuild the
