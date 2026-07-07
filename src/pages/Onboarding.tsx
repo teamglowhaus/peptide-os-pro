@@ -32,7 +32,7 @@ const MODULE_QUESTIONS: ModuleQuestion[] = [
 export function Onboarding() {
   const { update } = useStore();
   const [step, setStep] = useState(0);
-  const [goal, setGoal] = useState("");
+  const [goals, setGoals] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [answers, setAnswers] = useState<Record<string, boolean>>({
     peptides: true, glp1: false, hrt: true, menopause: true, supplements: true,
@@ -47,7 +47,7 @@ export function Onboarding() {
     update((d) => {
       d.settings.onboarding = {
         completed: true,
-        mainGoal: goal,
+        mainGoal: goals.join(" · "),
         peptides: answers.peptides, glp1: answers.glp1, hrt: answers.hrt,
         menopause: answers.menopause, supplements: answers.supplements,
         redLight: answers.redLight, coldPlunge: answers.coldPlunge, sauna: answers.sauna,
@@ -113,23 +113,26 @@ export function Onboarding() {
         <div className="fade-up">
           <p className="eyebrow mb-2">Step 1 · Your intention</p>
           <h2 className="font-display text-3xl font-medium">What brings you here?</h2>
-          <p className="mt-2 text-ink-soft">Choose the goal that feels most true right now.</p>
+          <p className="mt-2 text-ink-soft">Choose as many as feel true right now — most of us are juggling more than one.</p>
           <div className="mt-7 grid gap-2.5 sm:grid-cols-2">
-            {MAIN_GOALS.map((g) => (
-              <button
-                key={g}
-                onClick={() => setGoal(g)}
-                className={cx(
-                  "card card-hover flex items-center justify-between gap-3 px-5 py-4 text-left text-[0.95rem] font-medium",
-                  goal === g && "!border-champagne-400 bg-champagne-200/30 dark:bg-champagne-600/15"
-                )}
-              >
-                {g}
-                {goal === g && <Check size={17} className="shrink-0 text-champagne-600 dark:text-champagne-300" />}
-              </button>
-            ))}
+            {MAIN_GOALS.map((g) => {
+              const selected = goals.includes(g);
+              return (
+                <button
+                  key={g}
+                  onClick={() => setGoals((gs) => (gs.includes(g) ? gs.filter((x) => x !== g) : [...gs, g]))}
+                  className={cx(
+                    "card card-hover flex items-center justify-between gap-3 px-5 py-4 text-left text-[0.95rem] font-medium",
+                    selected && "!border-champagne-400 bg-champagne-200/30 dark:bg-champagne-600/15"
+                  )}
+                >
+                  {g}
+                  {selected && <Check size={17} className="shrink-0 text-champagne-600 dark:text-champagne-300" />}
+                </button>
+              );
+            })}
           </div>
-          <StepNav onBack={() => setStep(0)} onNext={() => setStep(2)} nextDisabled={!goal} />
+          <StepNav onBack={() => setStep(0)} onNext={() => setStep(2)} nextDisabled={goals.length === 0} />
         </div>
       )}
 
