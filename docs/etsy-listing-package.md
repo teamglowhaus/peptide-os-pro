@@ -124,6 +124,7 @@ private, beautiful home for all of it — designed like a luxury planner.
 • Print on your own paper, any number of times, for your own personal use
 • Fillable PDF with a clickable table of contents — type directly into every blank on a laptop or tablet, no printer needed
 • Or import into GoodNotes or Notability to write on every page with your stylus
+• Bonus: every page also included as its own loose, single-sheet fillable PDF — just print (or fill in) the one page you need
 
 **Bonus: a companion web app** (works in the browser on iPhone, iPad, Android & desktop —
 installable like an app, no App Store needed)
@@ -176,9 +177,9 @@ purchase that works forever, offline, with no dependency on us keeping a server 
 
 ## 4 · "What's Included" one-liner (for image #2 grid)
 
-15 Fillable, Hyperlinked Pages · GoodNotes/Notability Ready · Canva Template · Bonus Web App (16 modules) ·
-Peptide Library · Hormone Suite · Supplement Library · Lab Binder · Pet & Household Profiles ·
-Light + Dark Mode
+15 Fillable, Hyperlinked Pages · Loose Single-Page PDFs Included · GoodNotes/Notability Ready ·
+Canva Template · Bonus Web App (16 modules) · Peptide Library · Hormone Suite · Supplement Library ·
+Lab Binder · Pet & Household Profiles · Light + Dark Mode
 
 ---
 

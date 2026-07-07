@@ -69,11 +69,16 @@ fields — a fillable field would be pointless there since it already has an ans
 
 Given this, it's accurate to say **"fillable PDF"** in the listing — not just "print-and-write."
 
-## 5 · Printable pages (loose)
+## 5 · Printable pages (loose) — done
 
-Export each Studio page as its own PDF (select one page at a time → Print → Save as PDF) for
-buyers who want single sheets. Suggested print stock: 32 lb cream or ivory paper. Not yet done —
-optional, do this only if you want to sell/offer individual pages separately.
+`marketing/delivery-pdfs/4-Individual-Printable-Pages.zip` has all 15 pages (cover included) as
+their own single-page, fillable PDF — for buyers who just want one sheet instead of the full
+binder. Built by `scripts/generate-loose-pages.mjs`, which reuses the same geometry-capture
+approach as the binder script (see section 4) scoped to one selected page at a time, so each loose
+page gets real AcroForm fields too. Suggested print stock: 32 lb cream or ivory paper.
+
+To regenerate after a page/copy change: `node scripts/generate-loose-pages.mjs` against a locally
+running preview build.
 
 ## 6 · Canva template bundle — already done
 
@@ -93,7 +98,11 @@ genuinely been done:
 | `1-Welcome-Start-Here.pdf` | Buyer welcome sheet — **add your real app link before uploading** | ✅ exists |
 | `2-Companion-Binder-15-Pages.pdf` | The 15-page binder — print + GoodNotes/Notability ready, with a real clickable TOC and real fillable form fields | ✅ exists |
 | `3-License-and-Thank-You.pdf` | License + thank-you | ✅ exists |
+| `4-Individual-Printable-Pages.zip` | All 15 pages as loose, single-page fillable PDFs | ✅ exists |
 | A Canva template link (as a short PDF or text file with the share link) | Editable Canva bundle | ✅ design exists — package the link |
+
+That's already 4 of Etsy's 5-file limit — the Canva link (packaged as a short PDF/text file) is
+the 5th. `5-Etsy-Listing-Copy-SELLER.pdf` is for you, not a buyer-facing upload.
 
 If you ever regenerate the binder (new pages, copy changes, etc.), re-run
 `node scripts/enhance-binder-pdf.mjs` against a locally running preview build to rebuild the

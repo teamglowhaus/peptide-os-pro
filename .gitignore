@@ -27,3 +27,7 @@ yarn-error.log*
 .env
 .env.build
 .vercel
+
+# Intermediate build output for the loose-pages zip — the zip itself is the
+# deliverable and is committed; these per-page PDFs are redundant duplicates.
+/marketing/delivery-pdfs/loose-pages/
