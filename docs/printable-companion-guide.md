@@ -91,6 +91,12 @@ a binder change, re-run `scripts/enhance-binder-pdf.mjs` first, then re-import t
 Canva's "Import design from URL" so the Canva copy doesn't go stale relative to the binder — this
 already happened once (the first import predated the cover-page TOC) and was refreshed.
 
+**Known PDF-import quirk, already fixed once:** Canva's PDF import collapsed each page's small
+eyebrow label and large title into a single text box with too-tight line spacing, so the two
+lines visually overlapped on all 14 content pages (not the cover). Fixed by increasing that text
+box's line height. If you re-import after a binder change, check the top of a few pages for this
+same overlap and re-apply a `line_height` of roughly 1.6 via `format_text` if it recurs.
+
 ## Delivery checklist (what to actually upload to Etsy)
 
 Etsy allows 5 digital files ≤20 MB each. Only include files that exist and are accurately named —
