@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Plus, Syringe, MapPin, Archive, IdCard, Trash2, Pencil } from "lucide-react";
-import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
+import { useStore, byProfile, today, fmtDate, uid, addDays } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, Select, Chip, Tabs,
   EmptyState, DoseNote, SearchBox, Toggle, cx, useForm,
@@ -199,7 +199,7 @@ function ProtocolCard({
 }) {
   const last = [...logs].sort((a, b) => b.date.localeCompare(a.date))[0];
   const refillSoon =
-    p.refillReminder && p.refillReminder <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+    p.refillReminder && p.refillReminder <= addDays(today(), 7);
   return (
     <Card hover className="flex flex-col">
       <div className="flex items-start justify-between gap-3">

@@ -3,7 +3,7 @@ import {
   Syringe, Pill, Flower2, Sun, Snowflake, Flame, FlaskConical, CalendarHeart,
   PawPrint, Moon, HeartPulse, Plus,
 } from "lucide-react";
-import { useStore, byProfile, today, fmtDate, uid, daysSince, triggerBackupDownload } from "../lib/store";
+import { useStore, byProfile, today, fmtDate, uid, daysSince, triggerBackupDownload, localDateStr } from "../lib/store";
 import {
   Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx, BackupBanner,
 } from "../components/ui";
@@ -23,6 +23,22 @@ export function Dashboard() {
   const pid = activeProfile.id;
   const date = today();
   const ob = db.settings.onboarding;
+  const [apptOpen, setApptOpen] = useState(false);
+  const [apptTitle, setApptTitle] = useState("");
+  const [apptDate, setApptDate] = useState(date);
+
+  const addAppointment = () => {
+    if (!apptTitle.trim()) return;
+    update((d) => {
+      d.appointments.push({
+        id: uid(), profileId: pid, date: apptDate, time: "", title: apptTitle.trim(),
+        provider: "", kind: "other", notes: "", done: false,
+      });
+    });
+    setApptTitle("");
+    setApptDate(date);
+    setApptOpen(false);
+  };
 
   const log = useMemo(
     () => db.dailyLogs.find((l) => l.profileId === pid && l.date === date) ?? emptyLog(pid),
@@ -60,7 +76,7 @@ export function Dashboard() {
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      return d.toISOString().slice(0, 10);
+      return localDateStr(d);
     });
     let earned = 0;
     let possible = 0;
@@ -244,25 +260,53 @@ export function Dashboard() {
       {/* Reminders row */}
       <section className="mt-8 grid gap-3 md:grid-cols-2">
         <Card>
-          <div className="mb-3 flex items-center gap-2">
-            <CalendarHeart size={16} className="text-champagne-600 dark:text-champagne-300" />
-            <p className="font-display text-lg font-medium">Coming up</p>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <CalendarHeart size={16} className="text-champagne-600 dark:text-champagne-300" />
+              <p className="font-display text-lg font-medium">Coming up</p>
+            </div>
+            <button
+              onClick={() => setApptOpen(true)}
+              className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-champagne-600"
+              aria-label="Add appointment"
+            >
+              <Plus size={16} />
+            </button>
           </div>
           {upcoming.length === 0 ? (
             <p className="text-[0.88rem] text-ink-soft">
-              No appointments on the books. Lab dates and provider visits will appear here — add them
-              in Labs or Hormones.
+              No appointments on the books. Add a provider visit, lab draw, or refill date with the + above.
             </p>
           ) : (
             <ul className="space-y-2.5">
               {upcoming.map((a) => (
                 <li key={a.id} className="flex items-center justify-between gap-3 text-[0.9rem]">
-                  <span className="font-medium text-ink">{a.title}</span>
+                  <button
+                    onClick={() => update((d) => {
+                      const row = d.appointments.find((x) => x.id === a.id);
+                      if (row) row.done = true;
+                    })}
+                    className="text-left font-medium text-ink hover:text-champagne-600"
+                    title="Mark as done"
+                  >
+                    {a.title}
+                  </button>
                   <span className="shrink-0 text-ink-faint">{fmtDate(a.date)}</span>
                 </li>
               ))}
             </ul>
           )}
+          <Modal open={apptOpen} onClose={() => setApptOpen(false)} title="Add an appointment">
+            <div className="space-y-3">
+              <Field label="What's this for?">
+                <Input value={apptTitle} onChange={(e) => setApptTitle(e.target.value)} placeholder="Endocrinologist follow-up" />
+              </Field>
+              <Field label="Date">
+                <Input type="date" value={apptDate} onChange={(e) => setApptDate(e.target.value)} />
+              </Field>
+              <Button onClick={addAppointment} className="w-full justify-center">Add to Coming up</Button>
+            </div>
+          </Modal>
         </Card>
         <Card>
           <div className="mb-3 flex items-center gap-2">

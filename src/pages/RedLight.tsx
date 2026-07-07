@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Sun, Plus, Trash2 } from "lucide-react";
-import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
+import { useStore, byProfile, today, fmtDate, uid, localDateStr } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, EmptyState, RatingDots, Stat, useForm, cx,
 } from "../components/ui";
@@ -18,7 +18,7 @@ export function RedLight() {
     const dayISO = (offset: number) => {
       const d = new Date(now);
       d.setDate(d.getDate() - offset);
-      return d.toISOString().slice(0, 10);
+      return localDateStr(d);
     };
     const last7 = new Set(Array.from({ length: 7 }, (_, i) => dayISO(i)));
     return sessions.filter((s) => last7.has(s.date)).length;

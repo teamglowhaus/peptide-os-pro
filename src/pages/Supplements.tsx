@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from "react";
 import {
   Plus, Pill, Trash2, Pencil, Download, Upload, Sunrise, Sun, Sunset, Moon,
 } from "lucide-react";
-import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
+import { useStore, byProfile, today, fmtDate, uid, addDays } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, Select, Chip, Tabs,
   EmptyState, Disclaimer, SearchBox, cx, useForm,
@@ -250,7 +250,7 @@ export function Supplements() {
                   {s.dose && <span className="rounded-full bg-champagne-200/50 px-2.5 py-1 text-[0.7rem] font-semibold text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">{s.dose}</span>}
                   {s.inventory && <span className="rounded-full bg-sunken px-2.5 py-1 text-[0.7rem] text-ink-soft">on hand: {s.inventory}</span>}
                 </div>
-                {s.reorderReminder && s.reorderReminder <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10) && (
+                {s.reorderReminder && s.reorderReminder <= addDays(today(), 7) && (
                   <p className="mt-2.5 rounded-xl bg-blush-100 px-3 py-1.5 text-[0.78rem] font-medium text-blush-500 dark:bg-blush-500/20 dark:text-blush-200">
                     ✦ Reorder by {fmtDate(s.reorderReminder)}
                   </p>

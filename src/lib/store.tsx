@@ -14,8 +14,24 @@ export function uid(): ID {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
+/** Formats a Date as a local-calendar-day ISO string (YYYY-MM-DD). */
+export function localDateStr(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/** Today's date in the user's local timezone (not UTC — see localDateStr). */
 export function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateStr(new Date());
+}
+
+/** Adds `days` (may be negative) to an ISO date, returning a local-day ISO string. */
+export function addDays(iso: string, days: number): string {
+  const d = new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + days);
+  return localDateStr(d);
 }
 
 /** Whole days between an ISO date and today, or null if iso is empty/invalid. */
@@ -98,6 +114,46 @@ export function emptyDatabase(): Database {
   };
 }
 
+const ARRAY_KEYS = [
+  "profiles", "pets", "injectables", "injectionLogs", "hormones", "symptomLogs",
+  "providerQuestions", "supplements", "supplementChecks", "redLight", "coldPlunge",
+  "sauna", "toolSessions", "dailyLogs", "labs", "appointments", "wearables", "lifestyle",
+] as const satisfies readonly (keyof Database)[];
+
+/**
+ * Coerces an arbitrary parsed JSON value (a hand-edited backup, an older
+ * export missing newer fields, a corrupt/partial file) into a valid
+ * Database — every list defaults to [], settings/onboarding/cloud are
+ * merged onto current defaults, and profiles always has at least one entry.
+ * This is what stands between a bad Restore/localStorage read and a
+ * crashed blank screen.
+ */
+export function normalizeDatabase(raw: unknown): Database {
+  const base = emptyDatabase();
+  if (!raw || typeof raw !== "object") return base;
+  const src = raw as Partial<Database>;
+
+  const db: Database = { ...base };
+  db.version = typeof src.version === "number" ? src.version : base.version;
+  for (const key of ARRAY_KEYS) {
+    const val = src[key];
+    (db[key] as unknown[]) = Array.isArray(val) ? val : [];
+  }
+  if (db.profiles.length === 0) db.profiles = base.profiles;
+
+  const srcSettings: Partial<Settings> = src.settings && typeof src.settings === "object" ? src.settings : {};
+  db.settings = {
+    ...base.settings,
+    ...srcSettings,
+    onboarding: { ...base.settings.onboarding, ...srcSettings.onboarding },
+    cloud: { ...base.settings.cloud, ...srcSettings.cloud },
+  };
+  if (!db.profiles.some((p) => p.id === db.settings.activeProfileId)) {
+    db.settings.activeProfileId = db.profiles[0].id;
+  }
+  return db;
+}
+
 /* Sync adapter interface — LocalAdapter today, SupabaseAdapter tomorrow. */
 export interface SyncAdapter {
   load(): Database | null;
@@ -109,7 +165,7 @@ class LocalAdapter implements SyncAdapter {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      return JSON.parse(raw) as Database;
+      return normalizeDatabase(JSON.parse(raw));
     } catch {
       return null;
     }
@@ -176,17 +232,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setActiveProfile: (id) => update((d) => void (d.settings.activeProfileId = id)),
       resetAll: () => setDb(emptyDatabase()),
       exportJson: () => {
-        // Fire-and-forget: record that a backup was taken so the data-safety
-        // reminder can stay quiet. Doesn't block the synchronous return value
-        // the download flow needs.
-        setDb((prev) => ({ ...prev, settings: { ...prev.settings, lastBackupAt: today() } }));
-        return JSON.stringify(db, null, 2);
+        // Stamp lastBackupAt into the exact snapshot we both persist and
+        // return, so the downloaded file's own record of "last backup" is
+        // never a stale, pre-update value.
+        const stamped: Database = { ...db, settings: { ...db.settings, lastBackupAt: today() } };
+        setDb(stamped);
+        return JSON.stringify(stamped, null, 2);
       },
       importJson: (raw) => {
         try {
           const parsed = JSON.parse(raw);
-          if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.profiles)) return false;
-          setDb(parsed as Database);
+          if (!parsed || typeof parsed !== "object") return false;
+          setDb(normalizeDatabase(parsed));
           return true;
         } catch {
           return false;

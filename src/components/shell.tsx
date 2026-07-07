@@ -4,7 +4,7 @@ import {
   FlaskConical, Watch, HeartPulse, PawPrint, Users, Printer, Settings as SettingsIcon,
   Moon, SunMedium, ChevronDown, Menu, X, ScrollText,
 } from "lucide-react";
-import { useStore } from "../lib/store";
+import { useStore, today } from "../lib/store";
 import { cx } from "./ui";
 
 export interface NavItem {
@@ -97,7 +97,7 @@ function ProfileSwitcher() {
               if (!name) return;
               update((d) => {
                 const id = Math.random().toString(36).slice(2, 10);
-                d.profiles.push({ id, kind: "custom", name, emoji: "🌸", createdAt: new Date().toISOString().slice(0, 10) });
+                d.profiles.push({ id, kind: "custom", name, emoji: "🌸", createdAt: today() });
                 d.settings.activeProfileId = id;
               });
               setOpen(false);

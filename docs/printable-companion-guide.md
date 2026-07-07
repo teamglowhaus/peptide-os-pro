@@ -10,28 +10,33 @@ as "done" until it's genuinely in `marketing/delivery-pdfs/`.
 | File | What it actually is |
 |------|---------------------|
 | `marketing/delivery-pdfs/1-Welcome-Start-Here.pdf` | The buyer-guide.md welcome sheet, exported to PDF |
-| `marketing/delivery-pdfs/2-Companion-Binder-15-Pages.pdf` | The full 15-page binder, print-ready. **No real hyperlinks and no AcroForm fields** — see below for what that means |
+| `marketing/delivery-pdfs/2-Companion-Binder-15-Pages.pdf` | The full 15-page binder, print-ready, **with a real clickable table of contents and real fillable form fields** — see below |
 | `marketing/delivery-pdfs/3-License-and-Thank-You.pdf` | license.md + thank-you.md |
 | `marketing/delivery-pdfs/5-Etsy-Listing-Copy-SELLER.pdf` | For you, the seller — not a buyer-facing file |
 | Canva design (editable, all 15 pages) | Imported into your Canva account — every text layer is live/editable. Ask for the current share link if you've lost it; it was created via `import-design-from-url` from the binder PDF. |
 
-There is currently **no separate "hyperlinked" file and no separate "fillable" file** — only the
-one flat binder PDF above. The sections below describe what those words honestly mean for this
-product, and what it would take to build the real versions if you want them.
+The hyperlinks and fillable fields described below are generated automatically by
+`scripts/enhance-binder-pdf.mjs` — they are not a manual one-off edit, so they regenerate
+correctly every time the binder is rebuilt.
 
-## 1 · "Hyperlinked PDF" — what this means today, and what it would take to build for real
+## 1 · Hyperlinked PDF — real, built into the binder
 
-The binder PDF does **not** currently have a clickable table of contents or internal page jumps.
-If you want that:
+The cover page's "In this binder" list is a genuine clickable table of contents: each line is a
+PDF Link annotation with an internal `/Dest` pointing at that section's actual page object, not a
+page-number lookup. `scripts/enhance-binder-pdf.mjs` builds this by:
 
-1. Open `2-Companion-Binder-15-Pages.pdf` in a PDF editor that supports link annotations (Acrobat,
-   PDF Expert, or free: LibreOffice Draw / pdfescape.com).
-2. On the cover page, add invisible link rectangles from each line of a small table of contents
-   to its target page.
-3. Save as a new file — don't call it "hyperlinked" in your listing until this step is actually
-   done, since the auto-generated PDF doesn't have this today.
+1. Loading the app's own Printable Studio in a headless browser with every page selected.
+2. Reading the on-screen position of each TOC line and of each page's own `data-sheet-page`
+   marker directly from the rendered DOM.
+3. Rendering the binder to PDF, then using `pdf-lib` to overlay a real Link annotation at each
+   TOC line's exact position, targeting the correct destination page object.
 
-*Tip: keep the plain PDF too — some buyers just want to hit print, and a TOC adds no value there.*
+This has been verified structurally (every link's `/Dest` reference matches the exact page object
+xref of its intended target) and visually (each rendered page's overlay lines up with its printed
+underlines/cells). It's safe to say "clickable table of contents" in the listing.
+
+*The binder is still print-first — the TOC helps on tablets/PDF viewers, and a printed copy just
+ignores it, so nothing is lost either way.*
 
 ## 2 · GoodNotes planner
 
@@ -45,27 +50,24 @@ GoodNotes' read mode too.)
 
 Same PDF imports directly (Notability → Import) and is annotatable today, as-is. No changes needed.
 
-## 4 · "Fillable PDF" — say what you mean
+## 4 · Fillable PDF — real AcroForm fields, built into the binder
 
-**Important:** "fillable PDF" in the Etsy-planner world almost always means *"you can write on it
-in GoodNotes/Notability with a stylus,"* not *"it has real Acrobat form fields you tab through on
-a computer."* The binder as generated has neither AcroForm text fields nor checkboxes — it's a flat
-PDF with printed underlines and table cells meant for a pen (physical or stylus).
+The binder now has ~850 real AcroForm text fields — one over every blank write-line and every
+empty table cell across all 15 pages — so it's genuinely fillable on a laptop with no stylus, in
+addition to being print-and-write and annotatable in GoodNotes/Notability.
 
-**Do not advertise "fillable PDF" implying interactive Acrobat form fields** unless you actually
-build them. If you want that (useful mainly for buyers filling it out on a laptop with no stylus):
+`scripts/enhance-binder-pdf.mjs` builds these the same way it builds the TOC links: every writable
+blank in `src/pages/Printables.tsx` carries a `data-fillable` / `data-fillable-id` marker, the
+script reads each marker's exact on-screen position from the live app, and `pdf-lib` overlays a
+real `PDFTextField` at that position on the rendered PDF page.
 
-1. Take the master PDF into a form editor (Acrobat "Prepare Form" auto-detects many underlined
-   fields and table cells; free alternative: pdfescape.com or LibreOffice Draw form controls).
-2. Auto-detection catches most write-lines because they're true underlines; add checkbox fields
-   over the weekly-dashboard grid cells by hand.
-3. Test the result opens correctly in Preview *and* Adobe Reader *and* a browser PDF viewer — form
-   field support is inconsistent across viewers, so verify before shipping.
-4. Only then export as e.g. `Biohacker-Binder-Fillable.pdf` and only then say "fillable" in your
-   listing.
+This has been checked in Preview/PyMuPDF (the fields load, count correctly, and sit exactly on the
+printed lines/cells) — before shipping, spot-check the actual PDF in Adobe Acrobat Reader too,
+since form-field rendering can vary slightly across viewers. Prefilled cells (when a page is
+generated with sample data instead of blank) are correctly left as plain printed text, not
+fields — a fillable field would be pointless there since it already has an answer.
 
-If you skip this step (reasonable — it's genuinely optional, manual work), describe the product
-accurately instead: **"print-and-write, plus digitally annotatable in GoodNotes/Notability."**
+Given this, it's accurate to say **"fillable PDF"** in the listing — not just "print-and-write."
 
 ## 5 · Printable pages (loose)
 
@@ -89,7 +91,10 @@ genuinely been done:
 | File | Contents | Status |
 |------|----------|--------|
 | `1-Welcome-Start-Here.pdf` | Buyer welcome sheet — **add your real app link before uploading** | ✅ exists |
-| `2-Companion-Binder-15-Pages.pdf` | The 15-page binder, print + GoodNotes/Notability ready | ✅ exists |
+| `2-Companion-Binder-15-Pages.pdf` | The 15-page binder — print + GoodNotes/Notability ready, with a real clickable TOC and real fillable form fields | ✅ exists |
 | `3-License-and-Thank-You.pdf` | License + thank-you | ✅ exists |
 | A Canva template link (as a short PDF or text file with the share link) | Editable Canva bundle | ✅ design exists — package the link |
-| A true hyperlinked and/or fillable PDF | Only if you've done section 1 or 4 above | ⬜ optional, not done yet |
+
+If you ever regenerate the binder (new pages, copy changes, etc.), re-run
+`node scripts/enhance-binder-pdf.mjs` against a locally running preview build to rebuild the
+hyperlinks and fillable fields — a plain `page.pdf()` export on its own won't include them.
