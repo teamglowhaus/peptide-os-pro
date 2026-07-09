@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { StoreProvider } from "./lib/store";
+import "./lib/installPrompt";
 import "./styles/theme.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

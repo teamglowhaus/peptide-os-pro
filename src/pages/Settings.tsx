@@ -4,6 +4,7 @@ import { useStore, triggerBackupDownload, daysSince } from "../lib/store";
 import {
   PageHeader, Card, Button, Field, Input, Select, Toggle, Disclaimer, SectionTitle,
 } from "../components/ui";
+import { useInstallAvailable, promptInstall } from "../lib/installPrompt";
 import type { OnboardingAnswers } from "../lib/types";
 
 const MODULE_TOGGLES: { key: keyof OnboardingAnswers; label: string }[] = [
@@ -29,6 +30,7 @@ export function SettingsPage() {
 
   const download = () => triggerBackupDownload(exportJson());
   const backupAge = daysSince(db.settings.lastBackupAt);
+  const installAvailable = useInstallAvailable();
 
   return (
     <div>
@@ -58,11 +60,16 @@ export function SettingsPage() {
             <Smartphone size={17} className="text-sage-500" />
             <SectionTitle>Install as an app</SectionTitle>
           </div>
+          {installAvailable && (
+            <Button onClick={() => promptInstall()} className="mb-4">
+              <Download size={16} /> Install app
+            </Button>
+          )}
           <p className="text-[0.88rem] leading-relaxed text-ink-soft">
-            <strong className="text-ink">iPhone / iPad:</strong> open in Safari → Share → “Add to Home
-            Screen.”<br />
-            <strong className="text-ink">Android:</strong> Chrome menu → “Install app.”<br />
-            <strong className="text-ink">Desktop:</strong> the install icon in your address bar.<br />
+            <strong className="text-ink">iPhone / iPad:</strong> Apple's Safari doesn't support a
+            one-tap button — open in Safari → Share → “Add to Home Screen.”<br />
+            <strong className="text-ink">Android / Desktop Chrome or Edge:</strong>{" "}
+            {installAvailable ? "tap the button above" : "use your browser menu's “Install app” option"}.<br />
             It opens full-screen, works offline, and feels native.
           </p>
         </Card>
