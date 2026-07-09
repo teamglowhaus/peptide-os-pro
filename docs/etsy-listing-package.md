@@ -1,9 +1,19 @@
 # Etsy Listing Package — The Ultimate Biohacker Operating System
 
-Built from live market research of bestselling listings in the GLP-1 tracker, menopause/HRT
-tracker, supplement tracker, GoodNotes planner, Notion "Life OS," and biohacking planner niches
-(July 2026). Key insight: **no bestseller currently bundles GLP-1 + menopause/HRT + biohacking in
-one system — this combination is open white space.**
+Informed by a category scan of bestselling listings in the GLP-1 tracker, menopause/HRT tracker,
+supplement tracker, GoodNotes planner, Notion "Life OS," and biohacking planner niches (as of the
+session that wrote this doc). **This is a directional read, not a cited or sourced study** — no
+listing URLs, screenshots, or dated price snapshots back it up, and it should be treated as an
+informed starting hypothesis to test, not settled fact. Two takeaways worth testing, not assuming:
+
+- **No bestseller obviously bundles GLP-1 + menopause/HRT + biohacking in one system.** This could
+  mean open white space — or it could mean the three audiences don't actually want the same
+  product, and a hyper-focused single-niche competitor will out-convert a generalist bundle on
+  search-intent match. The research doesn't distinguish between these two explanations, and only
+  real conversion data will.
+- **The price bands cited below ($2–15, $3–20, $4–32, $47–197)** are the same kind of directional
+  read — reasonable-sounding, not independently verified. Don't treat them as more rigorous than
+  the "$97 anchor" assumption they replaced; they're a better-calibrated guess, still a guess.
 
 ---
 
@@ -27,10 +37,20 @@ a static file. To reduce (not eliminate) the risk of a policy flag or takedown:
     but are still visibly drug-adjacent; use your judgment on how much to soften imagery.
   - **Have a non-Etsy fallback** (Gumroad, your own Shopify/website checkout) so a single takedown
     doesn't zero out the business. Do not build the whole venture on one channel you don't control.
+  - **The "peptides" in this product are not one risk bucket — treat them differently.**
+    Semaglutide and tirzepatide are FDA-approved prescription drugs; BPC-157, TB-500, KPV,
+    Thymosin Alpha-1/Beta-4, and GHK-Cu are unapproved research chemicals with a meaningfully
+    higher regulatory/platform-policy profile — they're sold and used outside any approved
+    medical pathway. A reviewer flagging this listing is far more likely to focus on the research
+    peptides than the GLP-1s. This has **not** been verified against Etsy's actual current
+    Prohibited/Restricted Items policy text — read that yourself (not this doc, and not an LLM's
+    judgment call) before deciding how much research-peptide detail belongs in public-facing tags,
+    images, and descriptions.
 
 **2. Pricing — $97 fights the category, don't assume it, test it.**
-Live research on this niche shows trackers/planners selling **$2–15**, digital planners **$3–20**,
-Notion templates **$4–32**; the *only* things regularly selling **$47+** are genuine courses with
+An informal scan of this niche suggests trackers/planners selling **$2–15**, digital planners
+**$3–20**, Notion templates **$4–32**; the *only* things regularly selling **$47+** appear to be
+genuine courses with
 teaching content, or mega-bundles with visible "value math." A bare tracker at $97 — even with a
 compare-at anchor — is untested against buyers calibrated to $6 GLP-1 PDFs. Two honest paths:
   - **Add real educational content** (a short written guide on *how to use* peptide/HRT/supplement
@@ -129,10 +149,10 @@ private, beautiful home for all of it — designed like a luxury planner.
 **Bonus: a companion web app** (works in the browser on iPhone, iPad, Android & desktop —
 installable like an app, no App Store needed)
 • Today dashboard with your Biohacker Score, protocol checklist & gentle trends
-• Peptide & injectable tracker — 37-entry library (semaglutide, tirzepatide, BPC-157, NAD+ & more) + unlimited custom entries, site-rotation map, vial & refill reminders, travel cards
+• Peptide & injectable tracker — 36-entry library (semaglutide, tirzepatide, BPC-157, NAD+ & more) + unlimited custom entries, site-rotation map, vial & refill reminders, travel cards
 • Reconstitution Studio — mg/mL math with a visual 100-unit syringe (arithmetic only, never dosing advice, and gated behind an explicit "this is not medical advice" screen you must agree to before use)
 • Hormones & Menopause suite — HRT log (creams, patches, pellets, troches & more), 20-symptom daily check-in, trend charts to bring to your provider, "ask my provider" list
-• Supplement Sanctuary — 90+ item library, 25 categories, 48 seed brands, morning/afternoon/evening/bedtime stacks, inventory & reorder reminders, CSV import/export
+• Supplement Sanctuary — 84-item library, 25 categories, 48 seed brands, morning/afternoon/evening/bedtime stacks, inventory & reorder reminders, CSV import/export
 • Biohacking tools — red light, cold plunge, sauna, HRV, CGM, breathwork, PEMF + 20 more
 • Labs & Biomarker Binder with marker-by-marker trend lines
 • 8 daily ritual trackers: nutrition, body, fitness, sleep, beauty, dental, hair, mindset
@@ -178,7 +198,7 @@ purchase that works forever, offline, with no dependency on us keeping a server 
 ## 4 · "What's Included" one-liner (for image #2 grid)
 
 15 Fillable, Hyperlinked Pages · Loose Single-Page PDFs Included · GoodNotes/Notability Ready ·
-Canva Template · Bonus Web App (16 modules) · Peptide Library · Hormone Suite · Supplement Library ·
+Canva Template · Bonus Web App (13 modules) · Peptide Library · Hormone Suite · Supplement Library ·
 Lab Binder · Pet & Household Profiles · Light + Dark Mode
 
 ---
@@ -198,13 +218,24 @@ Lab Binder · Pet & Household Profiles · Light + Dark Mode
 (Bestseller conventions: big number claims, "instant download," device compatibility, audience
 call-outs. Files generated at 2700×2025 px in `marketing/thumbnails/`.)
 
+**⚠️ Known issue — 2 of the 15 already-generated images have a stale number baked into the
+pixels.** `04-peptide-library.jpg` reads "37+ Peptide & Injectable Library" / a badge saying
+"Library of 37+ Entries" — the real count is **36**. `02-whats-included.jpg`'s Supplements card
+reads "90+ library" — the real count is **84**. These were never regenerated after the library
+data changed, and there's no committed script (unlike thumbnails, the binder/videos/loose-pages
+all have one) to re-render them automatically. Before uploading, either retouch just those two
+text elements to say "36" and "84," or take fresh screenshots of the current app and rebuild
+both images from scratch matching the other 13's style (cream background, Fraunces headline,
+`#8F7040` gold eyebrow text, sage `#6F7F66` badge circle, dark bottom bar). Do not upload these
+two files as-is — the other 13 thumbnails were spot-checked and are accurate.
+
 1. **Hero** — "The Ultimate Biohacker Wellness Planner · Printable PDF Binder + Bonus Web App"
-2. "What's Included → 15 Printable Pages · Canva Template · Bonus App with 16 Modules"
+2. "What's Included → 15 Printable Pages · Canva Template · Bonus App with 13 Modules"
 3. "Your Whole Protocol. One Beautiful Home." (dashboard screenshot)
 4. "Peptide & GLP-1 Tracker · Site Rotation · Refill Reminders"
 5. "Reconstitution Studio · Visual Syringe · Zero Guesswork Math"
 6. "Menopause & HRT Suite · 20 Symptoms · Trends Your Doctor Will Love"
-7. "Supplement Sanctuary · 90+ Library · 4 Daily Stacks · CSV Import"
+7. "Supplement Sanctuary · 84-Item Library · 4 Daily Stacks · CSV Import"
 8. "Red Light · Cold Plunge · Sauna — Every Ritual, Logged"
 9. "Labs & Biomarker Binder · Watch Your Markers Move"
 10. "Bonus App Works on iPhone · iPad · Android · Desktop"
@@ -270,7 +301,8 @@ app. #printableplanner #goodnotesplanner"
 ## 12 · Pricing Strategy — honest version, not an assumption
 
 The earlier draft of this guide anchored at "$127 compare-at → sell $97" by analogy to bundle
-sellers. Look at what the actual research found before committing to that:
+sellers. Look at what the informal category scan suggests before committing to that — again, this
+is a directional read, not a verified study (see the note at the top of this document):
 
 - **What sells at $2–15:** simple trackers/planners (the bulk of this category).
 - **What sells at $3–20:** digital planners (GoodNotes-style).

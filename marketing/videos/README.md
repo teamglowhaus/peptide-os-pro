@@ -38,11 +38,20 @@ as real app footage.
 
 ## Regenerating
 
-Videos are produced from the live app with `scratchpad/video.mjs` (tour/ritual) and
-`scratchpad/video2.mjs` (morning-glance) via Playwright recording, then encoded to MP4
-with ffmpeg. Re-run against the deployed URL anytime the UI changes.
+All three videos are produced by the single committed pipeline `scripts/generate-videos.mjs`
+via Playwright recording against a locally running preview build, then encoded to MP4 with
+ffmpeg:
+
+```
+node scripts/generate-videos.mjs tour      # 01-product-tour-15s.mp4
+node scripts/generate-videos.mjs ritual    # 02-daily-ritual-mobile-12s.mp4
+node scripts/generate-videos.mjs morning   # 03-morning-glance-square-13s.mp4
+```
+
+Re-run whichever mode anytime the UI changes — nothing here depends on an ephemeral scratch
+script anymore.
 
 Note: the first navigation in a fresh browser context stalls ~13s in this sandbox
-(likely a blocked network resource on initial load) — `video2.mjs` records through it
-and the encode step trims the dead lead-in with `ffmpeg -ss`. Check the `mark()` log
-timestamps if you re-run it and need to adjust the trim point.
+(likely a blocked network resource on initial load) — the `morning` mode records through it
+and the encode step trims the dead lead-in with `ffmpeg -ss`, computed per run from `mark()`
+timestamps rather than a hardcoded offset.

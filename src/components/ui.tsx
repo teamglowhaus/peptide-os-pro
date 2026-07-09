@@ -123,6 +123,11 @@ export function Field({
 }
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  /* Do not add `truncate` to inputBase/here by default: it silently ellipsizes short,
+     exact VALUES too (e.g. Dashboard's "Sleep hrs" showing "7.5" as "7.."), not just long
+     placeholder text. Pass `className="truncate"` per call site only where the field holds
+     free-text prose in a narrow column (see Lifestyle.tsx) — never for compact numeric/short
+     fixed-format fields. */
   return <input {...props} className={cx(inputBase, props.className)} />;
 }
 

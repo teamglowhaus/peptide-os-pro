@@ -8,8 +8,9 @@ two minutes.*
 ## Step 1 · Open your app
 
 Your access link: **`https://your-deployment-url.com`**
-*(Seller: replace with your deployed URL — see docs/deploy.md — before exporting this page as the
-delivered PDF.)*
+*(Seller: replace with your real deployed URL — see `docs/HOW-TO-MERGE-AND-GET-YOUR-LINK.md` — and
+regenerate `1-Welcome-Start-Here.pdf` from this file before uploading anything to Etsy. Run
+`node scripts/check-listing-ready.mjs` first — it fails loudly if this placeholder is still here.)*
 
 Open it in the browser on any device. That's it — no account required to begin; your data stays
 on your device.

@@ -13,7 +13,8 @@ Welcome sheet.
 1. Go to **github.com** and sign in.
 2. Open your repository: **teamglowhaus/peptide-os-pro**
 3. Click the **"Pull requests"** tab near the top.
-4. Click the open one — titled about the Biohacker Operating System (it's **#1**).
+4. Click the newest open one for this work (check the title and date — the number changes
+   every time new work is added, so don't assume it's any specific PR number).
 5. Scroll to the bottom. You'll see a green-ish button. If it says **"Ready for review"**
    first, click that once (it takes it out of draft mode).
 6. Click **"Merge pull request"** → then **"Confirm merge."**
@@ -57,7 +58,9 @@ seconds) — **or** do it yourself:
 - ✅ Your app, permanently live at your own web address
 - ✅ Installable on any phone/tablet/computer ("Add to Home Screen")
 - ✅ Your Welcome PDF pointing buyers to the right place
-- ✅ Ready to attach the 5 delivery PDFs + 15 thumbnails + 2 videos to your Etsy listing
+- ✅ Ready to attach the 5 delivery files + 15 thumbnails + 3 videos to your Etsy listing
+  (run `node scripts/check-listing-ready.mjs` first — it checks your Welcome PDF actually
+  has your real link before you upload anything)
 
 ## If anything looks scary or different
 
