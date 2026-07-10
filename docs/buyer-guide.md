@@ -7,10 +7,7 @@ two minutes.*
 
 ## Step 1 · Open your app
 
-Your access link: **`https://your-deployment-url.com`**
-*(Seller: replace with your real deployed URL — see `docs/HOW-TO-MERGE-AND-GET-YOUR-LINK.md` — and
-regenerate `1-Welcome-Start-Here.pdf` from this file before uploading anything to Etsy. Run
-`node scripts/check-listing-ready.mjs` first — it fails loudly if this placeholder is still here.)*
+Your access link: **`https://peptide-os-d4la8rp0t-marie-z-projects11.vercel.app`**
 
 Open it in the browser on any device. That's it — no account required to begin; your data stays
 on your device.
