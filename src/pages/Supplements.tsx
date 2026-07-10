@@ -263,7 +263,7 @@ export function Supplements() {
 
       {tab === "library" && (
         <div>
-          <div className="mb-4"><SearchBox value={search} onChange={setSearch} placeholder="Search 90+ supplements…" /></div>
+          <div className="mb-4"><SearchBox value={search} onChange={setSearch} placeholder="Search 84 supplements…" /></div>
           <div className="mb-5 flex flex-wrap gap-1.5">
             {["All", ...SUPPLEMENT_CATEGORIES].map((c) => (
               <Chip key={c} active={cat === c} onClick={() => setCat(c)}>{c}</Chip>

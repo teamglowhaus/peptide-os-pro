@@ -209,7 +209,7 @@ function SymptomCheckin() {
       <Card>
         <p className="mb-1 font-display text-lg font-medium">How is your body speaking today?</p>
         <p className="mb-5 text-[0.85rem] text-ink-soft">Tap a symptom to cycle 0 → 4. Blank means “not today.”</p>
-        <div className="grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
+        <div className="grid gap-x-6 gap-y-3.5 xl:grid-cols-2">
           {MENO_SYMPTOMS.map((s) => {
             const v = log.symptoms[s.key] ?? 0;
             return (
@@ -218,10 +218,10 @@ function SymptomCheckin() {
                 onClick={() => setSeverity(s.key, (v + 1) % 5)}
                 className="flex items-center justify-between gap-3 rounded-xl px-2 py-1.5 text-left hover:bg-sunken"
               >
-                <span className={cx("text-[0.9rem]", v > 0 ? "font-semibold text-ink-strong" : "text-ink-soft")}>
+                <span className={cx("min-w-0 truncate text-[0.9rem]", v > 0 ? "font-semibold text-ink-strong" : "text-ink-soft")}>
                   {s.label}
                 </span>
-                <SeverityMeter value={v} labels={SEVERITY_LABELS} />
+                <SeverityMeter value={v} labels={SEVERITY_LABELS} className="shrink-0" />
               </button>
             );
           })}

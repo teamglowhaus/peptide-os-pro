@@ -103,15 +103,19 @@ export function Field({
   hint,
   children,
   className,
+  labelClassName,
 }: {
   label: string;
   hint?: string;
   children: React.ReactNode;
   className?: string;
+  /** Extra classes for the label text — e.g. a min-height to keep inputs aligned
+   * across a row of Fields whose labels wrap to different numbers of lines. */
+  labelClassName?: string;
 }) {
   return (
     <label className={cx("block", className)}>
-      <span className="mb-1.5 block text-[0.8rem] font-semibold tracking-wide text-ink-soft">{label}</span>
+      <span className={cx("mb-1.5 block text-[0.8rem] font-semibold tracking-wide text-ink-soft", labelClassName)}>{label}</span>
       {children}
       {hint && <span className="mt-1 block text-xs text-ink-faint">{hint}</span>}
     </label>
@@ -119,6 +123,11 @@ export function Field({
 }
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  /* Do not add `truncate` to inputBase/here by default: it silently ellipsizes short,
+     exact VALUES too (e.g. Dashboard's "Sleep hrs" showing "7.5" as "7.."), not just long
+     placeholder text. Pass `className="truncate"` per call site only where the field holds
+     free-text prose in a narrow column (see Lifestyle.tsx) — never for compact numeric/short
+     fixed-format fields. */
   return <input {...props} className={cx(inputBase, props.className)} />;
 }
 
@@ -421,9 +430,9 @@ export function Ring({
 }
 
 /* Severity meter: 5 soft cells, single hue by intensity, value named in text */
-export function SeverityMeter({ value, labels }: { value: number; labels: string[] }) {
+export function SeverityMeter({ value, labels, className }: { value: number; labels: string[]; className?: string }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className={cx("flex items-center gap-2", className)}>
       <div className="flex gap-1">
         {[1, 2, 3, 4].map((n) => (
           <span
@@ -436,7 +445,7 @@ export function SeverityMeter({ value, labels }: { value: number; labels: string
           />
         ))}
       </div>
-      <span className="text-xs font-medium text-ink-soft">{labels[value] ?? ""}</span>
+      <span className="whitespace-nowrap text-xs font-medium text-ink-soft">{labels[value] ?? ""}</span>
     </div>
   );
 }
@@ -514,7 +523,7 @@ export function Tabs({
   onChange: (k: string) => void;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-1.5 rounded-full bg-sunken/70 p-1.5 w-fit max-w-full overflow-x-auto">
+    <div className="mb-6 flex flex-wrap gap-1.5 rounded-2xl bg-sunken/70 p-1.5 w-fit max-w-full overflow-x-auto">
       {tabs.map((t) => (
         <button
           key={t.key}

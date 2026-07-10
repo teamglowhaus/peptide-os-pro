@@ -51,7 +51,7 @@ export function ColdPlunge() {
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <p className="font-medium text-ink-strong">
-                    {s.temperature && `${s.temperature}°`} {s.duration && `· ${s.duration}`}
+                    {s.temperature && `${s.temperature}°`} {s.duration && `· ${s.duration}${/[a-z]/i.test(s.duration) ? "" : " min"}`}
                     {s.personalBest && (
                       <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-champagne-200/60 px-2 py-0.5 text-[0.68rem] font-bold uppercase tracking-wide text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
                         <Trophy size={11} /> PB

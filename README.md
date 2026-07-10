@@ -24,10 +24,10 @@ installable on iPhone, iPad, Android, and desktop, and works offline.
 | Area | Details |
 |------|---------|
 | **Today dashboard** | Biohacker Score (7-day consistency ring), protocol cards, mood/energy/sleep/HRV/weight check-in + sparkline trends, reminders, a data-safety banner that nudges backups when they're overdue |
-| **Peptides & injectables** | 37-entry reference library (GLP-1s, recovery & GH-axis peptides, longevity, vitamin shots) + unlimited custom; site-rotation map; vials, storage, inventory, refill reminders; printable travel card; full dose log |
+| **Peptides & injectables** | 36-entry reference library (GLP-1s, recovery & GH-axis peptides, longevity, vitamin shots) + unlimited custom; site-rotation map; vials, storage, inventory, refill reminders; printable travel card; full dose log |
 | **Reconstitution Studio** | mg/mL/units arithmetic with a visual U-100 syringe, multi-syringe warning, mg⇄mcg and mL⇄units converters — math only, never dosing advice, gated behind a one-time explicit consent screen |
 | **Hormones & menopause** | HRT therapies in 9 delivery forms, 20-symptom daily check-in with severity meters, cycle log, trend charts, refill/lab reminders, provider question list |
-| **Supplement Sanctuary** | 90+ item library, 25 categories, 48 seed brands, manual barcode field, morning/afternoon/evening/bedtime stacks, with/without-food notes, inventory + reorder reminders, CSV import/export (RFC4180-correct parser) |
+| **Supplement Sanctuary** | 84-item library, 25 categories, 48 seed brands, manual barcode field, morning/afternoon/evening/bedtime stacks, with/without-food notes, inventory + reorder reminders, CSV import/export (RFC4180-correct parser) |
 | **Body lab** | Biohacking tools (30 rituals), dedicated red light / cold plunge / sauna trackers with before/after mood & energy, labs & biomarker binder with per-marker trends, wearables shelf |
 | **Daily rituals** | Nutrition, body, fitness, sleep, beauty, dental, hair, mindset |
 | **Your world** | Household profiles (fully separated data per person), pet wellness binder (meds, vaccines, vet visits, weight), Printable Studio (15 brand-matched print-to-PDF pages, blank or pre-filled), settings with backup/restore + light/dark luxury themes |
@@ -67,9 +67,12 @@ having cloud sync or accounts until that is actually built.
   video storyboard, Pinterest/Instagram copy, pricing strategy (from bestseller research)
 - `docs/buyer-guide.md`, `docs/license.md`, `docs/thank-you.md` — the delivered PDFs
 - `docs/printable-companion-guide.md` — producing the hyperlinked-TOC/GoodNotes/Notability/Canva
-  versions from the in-app Printable Studio (see that guide for what "fillable" honestly means here
-  — annotate-in-app, not embedded Acrobat form fields)
-- `marketing/thumbnails/` — 15 HD listing images (2700×2025)
+  versions from the in-app Printable Studio; the binder now has real embedded Acrobat form
+  fields too (built by `scripts/enhance-binder-pdf.mjs` — see that guide for how)
+- `marketing/thumbnails/` — 15 HD listing images (2700×2025) — 2 of these (`04-peptide-library`,
+  `02-whats-included`) have library-size counts baked into the image text that drifted from the
+  current data (see the note in `docs/etsy-listing-package.md` § thumbnails); re-render those two
+  before uploading, the other 13 are accurate as-is
 
 *This software organizes personal wellness information. It is not a medical device and provides
 no medical advice.*
