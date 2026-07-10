@@ -7,10 +7,11 @@ two minutes.*
 
 ## Step 1 · Open your app
 
-Your access link: **`https://peptide-os-d4la8rp0t-marie-z-projects11.vercel.app`**
+Your access link: **`https://peptide-os-pro.vercel.app`**
+Your access code: **`glowhaus2026`**
 
-Open it in the browser on any device. That's it — no account required to begin; your data stays
-on your device.
+Open the link in the browser on any device, enter the code once — after that this device stays
+unlocked. No account required; your data stays on your device.
 
 ## Step 2 · Install it like a real app
 

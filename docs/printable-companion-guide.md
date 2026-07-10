@@ -9,7 +9,7 @@ as "done" until it's genuinely in `marketing/delivery-pdfs/`.
 
 | File | What it actually is |
 |------|---------------------|
-| `marketing/delivery-pdfs/1-Welcome-Start-Here.pdf` | The buyer-guide.md welcome sheet, exported to PDF |
+| `marketing/delivery-pdfs/1-Welcome-Start-Here.pdf` | The buyer-guide.md welcome sheet, rendered to PDF by `scripts/generate-buyer-guide-pdf.mjs` — real access link + access code already in it, no placeholder |
 | `marketing/delivery-pdfs/2-Companion-Binder-15-Pages.pdf` | The full 15-page binder, print-ready, **with a real clickable table of contents and real fillable form fields** — see below |
 | `marketing/delivery-pdfs/3-License-and-Thank-You.pdf` | license.md + thank-you.md |
 | `marketing/delivery-pdfs/4-Individual-Printable-Pages.zip` | All 15 pages as loose, single-page fillable PDFs |
@@ -105,7 +105,7 @@ genuinely been done:
 
 | File | Contents | Status |
 |------|----------|--------|
-| `1-Welcome-Start-Here.pdf` | Buyer welcome sheet — **add your real app link before uploading** | ✅ exists |
+| `1-Welcome-Start-Here.pdf` | Buyer welcome sheet — real access link + access code already baked in | ✅ exists |
 | `2-Companion-Binder-15-Pages.pdf` | The 15-page binder — print + GoodNotes/Notability ready, with a real clickable TOC and real fillable form fields | ✅ exists |
 | `3-License-and-Thank-You.pdf` | License + thank-you | ✅ exists |
 | `4-Individual-Printable-Pages.zip` | All 15 pages as loose, single-page fillable PDFs | ✅ exists |
