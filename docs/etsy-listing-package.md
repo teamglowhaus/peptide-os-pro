@@ -218,16 +218,12 @@ Lab Binder · Pet & Household Profiles · Light + Dark Mode
 (Bestseller conventions: big number claims, "instant download," device compatibility, audience
 call-outs. Files generated at 2700×2025 px in `marketing/thumbnails/`.)
 
-**⚠️ Known issue — 2 of the 15 already-generated images have a stale number baked into the
-pixels.** `04-peptide-library.jpg` reads "37+ Peptide & Injectable Library" / a badge saying
-"Library of 37+ Entries" — the real count is **36**. `02-whats-included.jpg`'s Supplements card
-reads "90+ library" — the real count is **84**. These were never regenerated after the library
-data changed, and there's no committed script (unlike thumbnails, the binder/videos/loose-pages
-all have one) to re-render them automatically. Before uploading, either retouch just those two
-text elements to say "36" and "84," or take fresh screenshots of the current app and rebuild
-both images from scratch matching the other 13's style (cream background, Fraunces headline,
-`#8F7040` gold eyebrow text, sage `#6F7F66` badge circle, dark bottom bar). Do not upload these
-two files as-is — the other 13 thumbnails were spot-checked and are accurate.
+**Fixed:** `04-peptide-library.jpg` and `02-whats-included.jpg` previously had a stale "37+"/"90+"
+baked into the pixels from before the library data changed. Both were corrected in place (retouched
+to "36" and "84" respectively) rather than rebuilt from scratch, matched to the surrounding font/
+color/position — spot-check them once more before upload since there's still no committed
+regeneration script for thumbnails (unlike the binder/videos/loose-pages), so any future data change
+will need the same manual retouch or a full rebuild.
 
 1. **Hero** — "The Ultimate Biohacker Wellness Planner · Printable PDF Binder + Bonus Web App"
 2. "What's Included → 15 Printable Pages · Canva Template · Bonus App with 13 Modules"
