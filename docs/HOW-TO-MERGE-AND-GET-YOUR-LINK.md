@@ -42,14 +42,19 @@ The moment you merge, Vercel builds the official version and gives it a clean ad
 
 ## Part 3 · Put your link in the buyer Welcome sheet
 
-Your buyers get a Welcome PDF that tells them where to open the app. It currently has a
-placeholder. Send me your permanent link and I'll drop it in and regenerate the PDF (30
-seconds) — **or** do it yourself:
+*(Already done for the current link — this is here for if you ever change it, e.g. a custom
+domain, or move to a different Vercel project.)*
+
+Your buyers get a Welcome PDF that tells them where to open the app and their access code.
+To update it:
 
 1. Open `docs/buyer-guide.md`
-2. Find the line: `Your access link: **https://your-deployment-url.com**`
-3. Replace `https://your-deployment-url.com` with your real Vercel link.
-4. Tell me, and I'll rebuild the `1-Welcome-Start-Here.pdf` for you.
+2. Update the `Your access link:` and/or `Your access code:` lines
+3. Run `node scripts/generate-buyer-guide-pdf.mjs` to rebuild `1-Welcome-Start-Here.pdf` from it
+4. Run `node scripts/check-listing-ready.mjs` to confirm the rebuild picked up the change
+
+If you change the access code, also update `ACCESS_CODE` in `src/components/AccessGate.tsx` —
+the two have to match or buyers get locked out with the new PDF's code.
 
 ---
 

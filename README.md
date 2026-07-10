@@ -42,6 +42,12 @@ Legal & Disclaimers page.
 
 ## Data safety
 
+The app is gated behind a single shared access code (`src/components/AccessGate.tsx`, unlocked
+once per device via localStorage) — a deterrent against the app link being casually forwarded
+around, not real access control. It's a plain string in the client bundle, not a server-verified
+secret; a determined person can bypass it. Real per-buyer access would need actual accounts,
+which this app deliberately doesn't have (see below).
+
 This is a **local-only** app today: all data lives in the browser's storage, with no server copy.
 That means clearing browser data, switching devices, or the browser evicting storage can erase
 everything. The app mitigates this with `navigator.storage.persist()`, a `lastBackupAt` tracker,
