@@ -69,10 +69,8 @@ having cloud sync or accounts until that is actually built.
 - `docs/printable-companion-guide.md` — producing the hyperlinked-TOC/GoodNotes/Notability/Canva
   versions from the in-app Printable Studio; the binder now has real embedded Acrobat form
   fields too (built by `scripts/enhance-binder-pdf.mjs` — see that guide for how)
-- `marketing/thumbnails/` — 15 HD listing images (2700×2025) — 2 of these (`04-peptide-library`,
-  `02-whats-included`) have library-size counts baked into the image text that drifted from the
-  current data (see the note in `docs/etsy-listing-package.md` § thumbnails); re-render those two
-  before uploading, the other 13 are accurate as-is
+- `marketing/thumbnails/` — 15 HD listing images (2700×2025), all 15 verified accurate against
+  current data
 
 *This software organizes personal wellness information. It is not a medical device and provides
 no medical advice.*
