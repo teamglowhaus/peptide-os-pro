@@ -195,7 +195,7 @@ export function Shell({
   return (
     <div className="relative z-10 mx-auto flex min-h-dvh max-w-[1400px]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh w-72 shrink-0 flex-col border-r border-line px-5 py-6 lg:flex">
+      <aside className="dark sticky top-0 hidden h-dvh w-72 shrink-0 flex-col border-r border-line bg-page px-5 py-6 lg:flex">
         <Wordmark />
         <div className="mt-6">
           <ProfileSwitcher />
@@ -226,7 +226,7 @@ export function Shell({
       {menuOpen && (
         <div className="no-print fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-cocoa-800/40 backdrop-blur-[2px]" onClick={() => setMenuOpen(false)} />
-          <div className="fade-up absolute inset-y-0 left-0 flex w-[84%] max-w-xs flex-col bg-page px-5 py-6 shadow-lifted">
+          <div className="dark fade-up absolute inset-y-0 left-0 flex w-[84%] max-w-xs flex-col bg-page px-5 py-6 shadow-lifted">
             <div className="flex items-center justify-between">
               <Wordmark />
               <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="rounded-full p-2 text-ink-faint hover:bg-sunken">
