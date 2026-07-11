@@ -31,3 +31,7 @@ yarn-error.log*
 # Intermediate build output for the loose-pages zip — the zip itself is the
 # deliverable and is committed; these per-page PDFs are redundant duplicates.
 /marketing/delivery-pdfs/loose-pages/
+
+# Oversampled intermediate PNGs from scripts/generate-thumbnails.mjs — the
+# downscaled .jpg is the real output; these are just the 2x working copies.
+/marketing/thumbnails/*.png
