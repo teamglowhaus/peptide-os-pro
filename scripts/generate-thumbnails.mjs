@@ -19,6 +19,7 @@ const MOCK_VIEWPORT_W = 1280; // CSS width of the app viewport we capture from
 const CAPTURE_DSF = 4; // high oversampling so cropped regions can be blown up without blur
 const MOCK_MAX_W = 2460, MOCK_MAX_H = 1330; // max on-canvas footprint for the mockup screen
 const MOCK_TOP = 470; // top of the mockup band (below eyebrow/headline/subhead)
+const ZOOM = 1.35; // real CSS zoom applied to the app before capture, so text is genuinely bigger
 
 function initGate({ seed, dark }) {
   localStorage.setItem("biohacker-os:v1", JSON.stringify(dark ? { ...seed, settings: { ...seed.settings, theme: "dark" } } : seed));
@@ -26,8 +27,12 @@ function initGate({ seed, dark }) {
 }
 
 async function screenshotApp(browser, { route, dark, clip, actions }) {
+  // CSS zoom shrinks the *logical* layout width (viewport / zoom), which can
+  // shift Tailwind's responsive breakpoints and break grids. Counteract that
+  // by widening the real viewport by the same factor, so the app still lays
+  // itself out at the original 1280 logical width — just rendered bigger.
   const page = await browser.newPage({
-    viewport: { width: MOCK_VIEWPORT_W, height: clip.height + clip.y },
+    viewport: { width: Math.round(MOCK_VIEWPORT_W * ZOOM), height: Math.round((clip.height + clip.y) * ZOOM) },
     deviceScaleFactor: CAPTURE_DSF,
   });
   page.on("pageerror", (e) => console.log("PAGE ERROR:", e.message));
@@ -35,8 +40,10 @@ async function screenshotApp(browser, { route, dark, clip, actions }) {
   await page.goto(`${APP_URL}/#/${route}`, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForTimeout(900);
   if (actions) await actions(page);
-  await page.waitForTimeout(300);
-  const buf = await page.screenshot({ clip });
+  await page.addStyleTag({ content: `html { zoom: ${ZOOM}; }` });
+  await page.waitForTimeout(250);
+  const zoomedClip = { x: clip.x * ZOOM, y: clip.y * ZOOM, width: clip.width * ZOOM, height: clip.height * ZOOM };
+  const buf = await page.screenshot({ clip: zoomedClip });
   await page.close();
   return buf;
 }
