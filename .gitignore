@@ -42,3 +42,10 @@ yarn-error.log*
 # which is just a duplicate copy of /marketing/thumbnails/ for the zip.
 /marketing/canva-template-package.zip
 /marketing/canva-template-package/product-assets/screenshots/
+
+# One-off "everything to finish the Etsy images" bundle assembled on request —
+# entirely a reorganized duplicate of already-committed files (marketing/
+# thumbnails/, marketing/delivery-pdfs/) plus a couple of generated previews,
+# so it's not committed to avoid doubling repo size with duplicate binaries.
+/marketing/product-assets/
+/marketing/product-assets.zip
