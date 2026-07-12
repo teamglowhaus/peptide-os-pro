@@ -35,3 +35,10 @@ yarn-error.log*
 # Oversampled intermediate PNGs from scripts/generate-thumbnails.mjs — the
 # downscaled .jpg is the real output; these are just the 2x working copies.
 /marketing/thumbnails/*.png
+
+# The Canva template package zip is a delivered-to-buyer artifact regenerated
+# from scripts/generate-canva-template-assets.mjs + marketing/thumbnails/ —
+# not committed to keep repo size down. Same for the screenshots folder,
+# which is just a duplicate copy of /marketing/thumbnails/ for the zip.
+/marketing/canva-template-package.zip
+/marketing/canva-template-package/product-assets/screenshots/
