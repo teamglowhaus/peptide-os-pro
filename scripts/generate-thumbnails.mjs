@@ -22,7 +22,7 @@ const MOCK_VIEWPORT_W = 1280; // CSS width of the app viewport we capture from
 const CAPTURE_DSF = 4; // high oversampling so cropped regions can be blown up without blur
 const MOCK_MAX_W = 2460, MOCK_MAX_H = 1330; // max on-canvas footprint for the mockup screen
 const MOCK_TOP = 470; // top of the mockup band (below eyebrow/headline/subhead)
-const ZOOM = 1.35; // real CSS zoom applied to the app before capture, so text is genuinely bigger
+const ZOOM = 1.5; // real CSS zoom applied to the app before capture, so text is genuinely bigger
 
 function initGate({ seed, dark }) {
   localStorage.setItem("biohacker-os:v1", JSON.stringify(dark ? { ...seed, settings: { ...seed.settings, theme: "dark" } } : seed));
@@ -158,7 +158,7 @@ function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH
     position:absolute; left:0; right:0; top:0; bottom:170px;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:44px;
   }
-  .cta-wrap .cta-logo{ width:150px; height:150px; border-radius:34px; box-shadow:0 30px 60px -20px rgba(46,30,26,.35); }
+  .cta-wrap .cta-logo{ width:380px; height:380px; border-radius:86px; box-shadow:0 46px 90px -24px rgba(46,30,26,.4); }
   .cta-wrap .cta-eyebrow{
     font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:36px;
     letter-spacing:0.04em; color:#A8481F;
@@ -206,50 +206,57 @@ function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH
 </body></html>`;
 }
 
+// Standard content-only crop: skips the 288px sidebar entirely (it repeats on
+// every slide and buyers care about the feature, not the nav) so the mockup
+// scale-to-fit math has far less native content to shrink, and in-app text
+// stays legible even at small Etsy gallery display sizes — the whole point
+// of this redesign pass.
+const CX = 290, CW = 990;
+
 const SLIDES = [
   { n: "01-hero", eyebrow: "The Ultimate", headline: "Biohacker Wellness Planner", subhead: "Printable PDF binder + bonus web app",
-    route: "dashboard", clip: { x: 0, y: 0, width: 1280, height: 900 },
+    route: "dashboard", clip: { x: CX, y: 0, width: CW, height: 600 },
     callout: { value: "13", label: "Modules In One System", side: "right" } },
   { n: "04-peptide-library", eyebrow: "Peptide & GLP-1 Tracker", headline: "36-Entry Reference Library", subhead: "Semaglutide · Tirzepatide · BPC-157 · NAD+",
-    route: "peptides", clip: { x: 0, y: 0, width: 1280, height: 1150 },
+    route: "peptides", clip: { x: CX, y: 500, width: CW, height: 380 },
     actions: async (page) => { await page.getByRole("button", { name: "Library", exact: true }).click(); await page.waitForTimeout(400); },
     callout: { value: "36", label: "Peptides Tracked", side: "right" } },
   { n: "06-menopause", eyebrow: "Menopause & HRT Suite", headline: "Track 20 Symptoms Daily", subhead: "Charts your doctor will love",
-    route: "hormones", clip: { x: 0, y: 0, width: 1280, height: 1180 },
+    route: "hormones", clip: { x: CX, y: 195, width: CW, height: 500 },
     callout: { value: "20", label: "Symptoms Tracked", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
   { n: "02-whats-included", eyebrow: "Everything Included", headline: "13 Modules In One System", subhead: "Turn On Only What You Use",
-    route: "settings", clip: { x: 0, y: 0, width: 1280, height: 780 },
+    route: "settings", clip: { x: CX, y: 345, width: CW, height: 430 },
     callout: { value: "13", label: "Modules Included", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
   { n: "03-peptide-log", eyebrow: "Peptide & Injectable Log", headline: "Never Guess Your Last Dose", subhead: "Schedule · Storage · On-Hand Tracking",
-    route: "peptides", clip: { x: 0, y: 0, width: 1280, height: 950 },
+    route: "peptides", clip: { x: CX, y: 0, width: 700, height: 630 },
     callout: { value: "✓", label: "Every Dose Logged", side: "right" } },
   { n: "05-reconstitution", eyebrow: "Reconstitution Studio", headline: "Never Guess Your Dose Math", subhead: "mg ⇄ mcg · mL ⇄ Units · Visual Syringe",
-    route: "calculator", clip: { x: 0, y: 0, width: 1280, height: 950 },
+    route: "calculator", clip: { x: CX, y: 0, width: CW, height: 820 },
     callout: { value: "✓", label: "Math Done For You", side: "right" } },
   { n: "07-hrt", eyebrow: "HRT Tracking", headline: "Every Prescription, Organized", subhead: "Refills · Next Labs · Provider Notes",
-    route: "hormones", clip: { x: 0, y: 0, width: 1280, height: 650 },
+    route: "hormones", clip: { x: CX, y: 0, width: 700, height: 520 },
     actions: async (page) => { await page.getByRole("button", { name: "My therapies", exact: false }).click(); await page.waitForTimeout(400); },
     callout: { value: "✓", label: "Refill Reminders", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
   { n: "08-supplement-stacks", eyebrow: "Supplement Stacks", headline: "Morning To Bedtime, Sorted", subhead: "84 Supplements · 25 Categories",
-    route: "supplements", clip: { x: 0, y: 0, width: 1280, height: 780 },
+    route: "supplements", clip: { x: CX, y: 0, width: CW, height: 620 },
     callout: { value: "84", label: "Supplements Tracked", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
   { n: "09-supplement-add", eyebrow: "Supplement Library", headline: "84 Supplements, 25 Categories", subhead: "Search & Add In Seconds",
-    route: "supplements", clip: { x: 0, y: 0, width: 1280, height: 1150 },
+    route: "supplements", clip: { x: CX, y: 440, width: CW, height: 380 },
     actions: async (page) => { await page.getByRole("button", { name: "Library", exact: true }).click(); await page.waitForTimeout(400); },
     callout: { value: "25", label: "Categories", side: "right" } },
   { n: "10-biohacking", eyebrow: "Biohacking Tools", headline: "30 Rituals, One Tap to Log", subhead: "Red Light · Cold Plunge · Sauna · HRV · More",
-    route: "biohacking", clip: { x: 0, y: 0, width: 1280, height: 1250 },
+    route: "biohacking", clip: { x: CX, y: 170, width: CW, height: 400 },
     callout: { value: "30", label: "Tools Tracked", side: "right" } },
   { n: "11-labs", eyebrow: "Labs & Biomarkers", headline: "Every Result, One Binder", subhead: "Filed By Panel · Charted Over Time",
-    route: "labs", clip: { x: 0, y: 0, width: 1280, height: 650 },
+    route: "labs", clip: { x: CX, y: 0, width: CW, height: 560 },
     callout: { value: "✓", label: "Doctor-Ready Charts", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
   { n: "12-devices", eyebrow: "Wearables", headline: "Your Ring, Band & Watch — Unified", subhead: "Oura · WHOOP · Apple Health Ready",
-    route: "wearables", clip: { x: 0, y: 0, width: 1280, height: 700 },
+    route: "wearables", clip: { x: CX, y: 0, width: CW, height: 560 },
     callout: { value: "4s", label: "Morning Ritual", side: "right" } },
   { n: "13-dark", eyebrow: "Day Or Night", headline: "Beautiful In Dark Mode Too", subhead: "Every Screen, Every Theme",
-    route: "dashboard", dark: true, clip: { x: 0, y: 0, width: 1280, height: 900 } },
+    route: "dashboard", dark: true, clip: { x: CX, y: 0, width: CW, height: 600 } },
   { n: "14-printables", eyebrow: "Printable Studio", headline: "Your Matching Paper Companion", subhead: "Pick Pages · Print · Or Save As PDF",
-    route: "printables", clip: { x: 0, y: 0, width: 1280, height: 1330 },
+    route: "printables", clip: { x: CX, y: 0, width: CW, height: 1150 },
     callout: { value: "15", label: "Binder Pages", side: "right" } },
   { n: "15-start", eyebrow: "Ready When You Are", headline: "Start Tracking Today", subhead: "Your Calm, Private Wellness System Awaits",
     route: null, ctaText: "Get Your Planner Today" },
