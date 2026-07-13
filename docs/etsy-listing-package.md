@@ -215,31 +215,27 @@ Lab Binder · Pet & Household Profiles · Light + Dark Mode
 
 ## 8 · 15 Thumbnail Text Overlays
 
-(Bestseller conventions: big number claims, "instant download," device compatibility, audience
-call-outs. Files generated at 2700×2025 px in `marketing/thumbnails/`.)
+Fully redesigned and rebuilt from scratch (burgundy serif headline + italic subhead on a warm
+paper-textured background, a laptop-frame mockup of the real app, a circled-stat badge, and an
+italic checkmark trust row) via a real, committed, regenerate-anytime script:
+`scripts/generate-thumbnails.mjs`. Run it anytime the app or its data changes — there is no more
+manual pixel-retouching or drift risk. Files are 2700×2025 px in `marketing/thumbnails/`.
 
-**Fixed:** `04-peptide-library.jpg` and `02-whats-included.jpg` previously had a stale "37+"/"90+"
-baked into the pixels from before the library data changed. Both were corrected in place (retouched
-to "36" and "84" respectively) rather than rebuilt from scratch, matched to the surrounding font/
-color/position — spot-check them once more before upload since there's still no committed
-regeneration script for thumbnails (unlike the binder/videos/loose-pages), so any future data change
-will need the same manual retouch or a full rebuild.
-
-1. **Hero** — "The Ultimate Biohacker Wellness Planner · Printable PDF Binder + Bonus Web App"
-2. "What's Included → 15 Printable Pages · Canva Template · Bonus App with 13 Modules"
-3. "Your Whole Protocol. One Beautiful Home." (dashboard screenshot)
-4. "Peptide & GLP-1 Tracker · Site Rotation · Refill Reminders"
-5. "Reconstitution Studio · Visual Syringe · Zero Guesswork Math"
-6. "Menopause & HRT Suite · 20 Symptoms · Trends Your Doctor Will Love"
-7. "Supplement Sanctuary · 84-Item Library · 4 Daily Stacks · CSV Import"
-8. "Red Light · Cold Plunge · Sauna — Every Ritual, Logged"
-9. "Labs & Biomarker Binder · Watch Your Markers Move"
-10. "Bonus App Works on iPhone · iPad · Android · Desktop"
-11. "Dark Mode, But Make It Luxury" (dark dashboard)
-12. "Print Your Matching Binder · GoodNotes & Notability Ready"
-13. "Household + Pet Profiles · Track Everyone You Love"
-14. "The Bonus App Stays on Your Device — No Account, No Cloud"
-15. "Instant Download · Start Tonight · One-Time Purchase"
+1. **Hero** — "The Ultimate" / "Biohacker Wellness Planner" · Printable PDF binder + bonus web app
+2. **Everything Included** — "13 Modules In One System" · Turn on only what you use
+3. **Peptide & Injectable Log** — "Never Guess Your Last Dose" · Schedule · Storage · On-Hand Tracking
+4. **Peptide & GLP-1 Tracker** — "36-Entry Reference Library" · Semaglutide · Tirzepatide · BPC-157 · NAD+
+5. **Reconstitution Studio** — "Never Guess Your Dose Math" · mg ⇄ mcg · mL ⇄ Units · Visual Syringe
+6. **Menopause & HRT Suite** — "Track 20 Symptoms Daily" · Charts your doctor will love
+7. **HRT Tracking** — "Every Prescription, Organized" · Refills · Next Labs · Provider Notes
+8. **Supplement Stacks** — "Morning To Bedtime, Sorted" · 84 Supplements · 25 Categories
+9. **Supplement Library** — "84 Supplements, 25 Categories" · Search & Add In Seconds
+10. **Biohacking Tools** — "30 Rituals, One Tap to Log" · Red Light · Cold Plunge · Sauna · HRV · More
+11. **Labs & Biomarkers** — "Every Result, One Binder" · Filed By Panel · Charted Over Time
+12. **Wearables** — "Your Ring, Band & Watch — Unified" · Oura · WHOOP · Apple Health Ready
+13. **Day Or Night** — "Beautiful In Dark Mode Too" · Every Screen, Every Theme
+14. **Printable Studio** — "Your Matching Paper Companion" · Pick Pages · Print · Or Save As PDF
+15. **Final CTA** — "Start Tracking Today" · Your Calm, Private Wellness System Awaits
 
 ---
 

@@ -11,6 +11,9 @@
 import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
 import { seed as baseSeed } from "/tmp/claude-0/-home-user-peptide-os-pro/54abd27e-de26-5d27-9fff-6f7e05e954ad/scratchpad/fullseed.mjs";
 import { execSync } from "child_process";
+import { readFileSync } from "fs";
+
+const LOGO_DATA_URI = `data:image/svg+xml;base64,${readFileSync("/home/user/peptide-os-pro/public/icons/icon.svg").toString("base64")}`;
 
 const APP_URL = "http://localhost:4173";
 const OUT_DIR = "/home/user/peptide-os-pro/marketing/thumbnails";
@@ -48,35 +51,30 @@ async function screenshotApp(browser, { route, dark, clip, actions }) {
   return buf;
 }
 
-// A bold, hand-drawn-style callout (circled stat + arrow into the screenshot),
-// in the spirit of direct-response ad annotations — sized down to fit the
-// shop's existing warm/serif brand rather than a full hustle-ad palette swap.
-function calloutSvgAndBadge({ value, label, screenLeft, screenTop, mockW, side = "right", accent = "#E4572E", accentDark = "#B83A22" }) {
-  // Badge sits mostly above the laptop bezel; the arrow only grazes the very
-  // top corner of the screen (never dips into the content area) so it never
-  // covers real buttons, titles, or the wordmark underneath.
+// A bold circled-stat callout badge, in the spirit of direct-response ad
+// annotations — sized down to fit the shop's existing warm/serif brand
+// rather than a full hustle-ad palette swap.
+//
+// This deliberately has no connecting arrow: the badge sits mostly above
+// the laptop bezel, dipping only slightly onto its dark corner (never onto
+// real screenshot content). There isn't enough vertical room between the
+// headline block and the mockup for a badge-to-content arrow that's both
+// visibly outside the badge's own circle AND guaranteed to stay off real
+// buttons/text underneath — so the badge reads as a corner sticker instead.
+function calloutBadge({ value, label, screenLeft, screenTop, mockW, side = "right", accent = "#E4572E", accentDark = "#B83A22" }) {
   const badgeSize = 230;
   const badgeCX = side === "right" ? screenLeft + mockW - 40 : screenLeft + 40;
   const badgeCY = screenTop - 100;
-  const targetX = side === "right" ? screenLeft + mockW - 35 : screenLeft + 35;
-  const targetY = screenTop + 8;
   const rotate = side === "right" ? -7 : 7;
-  const startX = badgeCX + (side === "right" ? -70 : 70);
-  const startY = badgeCY + 85;
-  const midX = (startX + targetX) / 2 + (side === "right" ? 55 : -55);
-  const midY = (startY + targetY) / 2;
-  const svg = `<svg style="position:absolute;left:0;top:0;overflow:visible;z-index:6;pointer-events:none;" width="${CANVAS_W}" height="${CANVAS_H}">
-    <defs><marker id="arrowhead-${side}" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="${accent}"/></marker></defs>
-    <path d="M${startX},${startY} Q${midX},${midY} ${targetX},${targetY}" stroke="${accent}" stroke-width="8" fill="none" stroke-linecap="round" marker-end="url(#arrowhead-${side})"/>
-  </svg>`;
-  const badge = `<div class="callout" style="left:${badgeCX - badgeSize / 2}px; top:${badgeCY - badgeSize / 2}px; width:${badgeSize}px; height:${badgeSize}px; background:radial-gradient(circle at 32% 28%, ${accent}, ${accentDark}); transform:rotate(${rotate}deg);">
+  return `<div class="callout" style="left:${badgeCX - badgeSize / 2}px; top:${badgeCY - badgeSize / 2}px; width:${badgeSize}px; height:${badgeSize}px; background:radial-gradient(circle at 32% 28%, ${accent}, ${accentDark}); transform:rotate(${rotate}deg);">
     <span class="num">${value}</span><span class="label">${label}</span>
   </div>`;
-  return svg + badge;
 }
 
 // Composites a laptop-style mockup + warm serif headline copy into the final thumbnail HTML.
-function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH, checks, callout }) {
+// screenshotDataUri may be null for a mockup-less closing/CTA slide, in which case a big
+// pill-shaped CTA button is centered in the mockup's place instead.
+function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH, checks, callout, ctaText }) {
   const big = headline.length <= 22;
   const mid = headline.length > 22 && headline.length <= 36;
   const headlineSize = big ? 118 : mid ? 90 : 72;
@@ -88,7 +86,7 @@ function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH
   const checkRow = (checks || ["Instant download", "Printable + app", "One-time purchase"])
     .map((c) => `<span>${c}</span>`).join(`<span class="dot">·</span>`);
   const calloutHtml = callout
-    ? calloutSvgAndBadge({ ...callout, screenLeft, screenTop, mockW })
+    ? calloutBadge({ ...callout, screenLeft, screenTop, mockW })
     : "";
   return `<!doctype html><html><head><meta charset="utf-8"/>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -156,16 +154,54 @@ function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH
   }
   .checks span.dot{ color:#C9862E; padding:0 20px; font-style:normal; }
   .checks span:not(.dot)::before{ content:"✓ "; color:#5B7A3C; font-style:normal; font-weight:700; }
+  .cta-wrap{
+    position:absolute; left:0; right:0; top:0; bottom:170px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:44px;
+  }
+  .cta-wrap .cta-logo{ width:150px; height:150px; border-radius:34px; box-shadow:0 30px 60px -20px rgba(46,30,26,.35); }
+  .cta-wrap .cta-eyebrow{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:36px;
+    letter-spacing:0.04em; color:#A8481F;
+  }
+  .cta-wrap .cta-headline{
+    font-family:'Fraunces',serif; font-weight:700; font-size:150px; line-height:1.05;
+    color:#7A1524; text-align:center; max-width:2300px;
+  }
+  .cta-wrap .cta-subhead{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:400; font-size:44px;
+    color:#A8481F; text-align:center;
+  }
+  .cta-button{
+    white-space:nowrap;
+    background:linear-gradient(160deg,#E4572E,#B83A22); color:#FFF6E7;
+    font-family:'Figtree',sans-serif; font-weight:800; font-size:58px; letter-spacing:0.01em;
+    padding:40px 74px; border-radius:999px; box-shadow:0 34px 80px -20px rgba(30,15,10,.55);
+    border:6px solid #FFF6E7;
+  }
+  .cta-recap{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:30px; color:#8A5A3F;
+    text-align:center;
+  }
+  .cta-recap b{ font-style:normal; color:#7A1524; font-weight:700; }
 </style></head>
 <body>
   <div class="grain"></div>
+  ${screenshotDataUri == null ? `
+  <div class="cta-wrap">
+    <img class="cta-logo" src="${LOGO_DATA_URI}" />
+    <div class="cta-eyebrow">${eyebrow}</div>
+    <div class="cta-headline">${headline}</div>
+    ${subhead ? `<div class="cta-subhead">${subhead}</div>` : ""}
+    <div class="cta-button">${ctaText || "Get Your Planner Today"}</div>
+    <div class="cta-recap"><b>36</b> peptides · <b>84</b> supplements · <b>30</b> biohacking tools · <b>20</b> symptoms — one system</div>
+  </div>` : `
   <div class="eyebrow">${eyebrow}</div>
   <div class="headline">${headline}</div>
   ${subhead ? `<div class="subhead">${subhead}</div>` : ""}
   <div class="laptop"><div class="cam"></div></div>
   <div class="screen"><img src="${screenshotDataUri}" /></div>
   <div class="base"></div>
-  ${calloutHtml}
+  ${calloutHtml}`}
   <div class="checks">${checkRow}</div>
 </body></html>`;
 }
@@ -181,27 +217,71 @@ const SLIDES = [
   { n: "06-menopause", eyebrow: "Menopause & HRT Suite", headline: "Track 20 Symptoms Daily", subhead: "Charts your doctor will love",
     route: "hormones", clip: { x: 0, y: 0, width: 1280, height: 1180 },
     callout: { value: "20", label: "Symptoms Tracked", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
+  { n: "02-whats-included", eyebrow: "Everything Included", headline: "13 Modules In One System", subhead: "Turn On Only What You Use",
+    route: "settings", clip: { x: 0, y: 0, width: 1280, height: 780 },
+    callout: { value: "13", label: "Modules Included", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
+  { n: "03-peptide-log", eyebrow: "Peptide & Injectable Log", headline: "Never Guess Your Last Dose", subhead: "Schedule · Storage · On-Hand Tracking",
+    route: "peptides", clip: { x: 0, y: 0, width: 1280, height: 950 },
+    callout: { value: "✓", label: "Every Dose Logged", side: "right" } },
+  { n: "05-reconstitution", eyebrow: "Reconstitution Studio", headline: "Never Guess Your Dose Math", subhead: "mg ⇄ mcg · mL ⇄ Units · Visual Syringe",
+    route: "calculator", clip: { x: 0, y: 0, width: 1280, height: 950 },
+    callout: { value: "✓", label: "Math Done For You", side: "right" } },
+  { n: "07-hrt", eyebrow: "HRT Tracking", headline: "Every Prescription, Organized", subhead: "Refills · Next Labs · Provider Notes",
+    route: "hormones", clip: { x: 0, y: 0, width: 1280, height: 650 },
+    actions: async (page) => { await page.getByRole("button", { name: "My therapies", exact: false }).click(); await page.waitForTimeout(400); },
+    callout: { value: "✓", label: "Refill Reminders", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
+  { n: "08-supplement-stacks", eyebrow: "Supplement Stacks", headline: "Morning To Bedtime, Sorted", subhead: "84 Supplements · 25 Categories",
+    route: "supplements", clip: { x: 0, y: 0, width: 1280, height: 780 },
+    callout: { value: "84", label: "Supplements Tracked", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
+  { n: "09-supplement-add", eyebrow: "Supplement Library", headline: "84 Supplements, 25 Categories", subhead: "Search & Add In Seconds",
+    route: "supplements", clip: { x: 0, y: 0, width: 1280, height: 1150 },
+    actions: async (page) => { await page.getByRole("button", { name: "Library", exact: true }).click(); await page.waitForTimeout(400); },
+    callout: { value: "25", label: "Categories", side: "right" } },
+  { n: "10-biohacking", eyebrow: "Biohacking Tools", headline: "30 Rituals, One Tap to Log", subhead: "Red Light · Cold Plunge · Sauna · HRV · More",
+    route: "biohacking", clip: { x: 0, y: 0, width: 1280, height: 1250 },
+    callout: { value: "30", label: "Tools Tracked", side: "right" } },
+  { n: "11-labs", eyebrow: "Labs & Biomarkers", headline: "Every Result, One Binder", subhead: "Filed By Panel · Charted Over Time",
+    route: "labs", clip: { x: 0, y: 0, width: 1280, height: 650 },
+    callout: { value: "✓", label: "Doctor-Ready Charts", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
+  { n: "12-devices", eyebrow: "Wearables", headline: "Your Ring, Band & Watch — Unified", subhead: "Oura · WHOOP · Apple Health Ready",
+    route: "wearables", clip: { x: 0, y: 0, width: 1280, height: 700 },
+    callout: { value: "4s", label: "Morning Ritual", side: "right" } },
+  { n: "13-dark", eyebrow: "Day Or Night", headline: "Beautiful In Dark Mode Too", subhead: "Every Screen, Every Theme",
+    route: "dashboard", dark: true, clip: { x: 0, y: 0, width: 1280, height: 900 } },
+  { n: "14-printables", eyebrow: "Printable Studio", headline: "Your Matching Paper Companion", subhead: "Pick Pages · Print · Or Save As PDF",
+    route: "printables", clip: { x: 0, y: 0, width: 1280, height: 1330 },
+    callout: { value: "15", label: "Binder Pages", side: "right" } },
+  { n: "15-start", eyebrow: "Ready When You Are", headline: "Start Tracking Today", subhead: "Your Calm, Private Wellness System Awaits",
+    route: null, ctaText: "Get Your Planner Today" },
 ];
 
 async function build(slide, browser) {
-  const buf = await screenshotApp(browser, { route: slide.route, dark: slide.dark, clip: slide.clip, actions: slide.actions });
-  const dataUri = `data:image/png;base64,${buf.toString("base64")}`;
-  const scale = Math.min(MOCK_MAX_W / slide.clip.width, MOCK_MAX_H / slide.clip.height);
-  const mockW = Math.round(slide.clip.width * scale);
-  const mockH = Math.round(slide.clip.height * scale);
-  const html = slideHtml({ eyebrow: slide.eyebrow, headline: slide.headline, subhead: slide.subhead, screenshotDataUri: dataUri, mockW, mockH, checks: slide.checks, callout: slide.callout });
+  let dataUri = null, mockW = 1900, mockH = 1150;
+  if (slide.route) {
+    const buf = await screenshotApp(browser, { route: slide.route, dark: slide.dark, clip: slide.clip, actions: slide.actions });
+    dataUri = `data:image/png;base64,${buf.toString("base64")}`;
+    const scale = Math.min(MOCK_MAX_W / slide.clip.width, MOCK_MAX_H / slide.clip.height);
+    mockW = Math.round(slide.clip.width * scale);
+    mockH = Math.round(slide.clip.height * scale);
+  }
+  const html = slideHtml({ eyebrow: slide.eyebrow, headline: slide.headline, subhead: slide.subhead, screenshotDataUri: dataUri, mockW, mockH, checks: slide.checks, callout: slide.callout, ctaText: slide.ctaText });
   const browser2 = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
   const page = await browser2.newPage({ viewport: { width: CANVAS_W, height: CANVAS_H }, deviceScaleFactor: 2 });
   await page.setContent(html, { waitUntil: "networkidle" });
-  const outPath = `${OUT_DIR}/${slide.n}-DRAFT.png`;
+  const outPath = `${OUT_DIR}/${slide.n}.png`; // .png is a scratch intermediate, gitignored — .jpg below is the real output
   await page.screenshot({ path: outPath });
   await browser2.close();
-  execSync(`python3 -c "from PIL import Image; im=Image.open('${outPath}'); im.resize((${CANVAS_W},${CANVAS_H}), Image.LANCZOS).convert('RGB').save('${outPath.replace(".png", ".jpg")}', quality=95)"`);
+  // High quality, hi-def output: 2x-oversampled canvas downscaled via LANCZOS, saved near-lossless.
+  execSync(`python3 -c "from PIL import Image; im=Image.open('${outPath}'); im.resize((${CANVAS_W},${CANVAS_H}), Image.LANCZOS).convert('RGB').save('${outPath.replace(".png", ".jpg")}', quality=98, subsampling=0)"`);
   console.log(`✓ ${slide.n}`);
 }
 
+// Optional CLI filter: node scripts/generate-thumbnails.mjs 12-devices 14-printables
+const only = process.argv.slice(2);
+const slidesToBuild = only.length ? SLIDES.filter((s) => only.includes(s.n)) : SLIDES;
+
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-for (const slide of SLIDES) {
+for (const slide of slidesToBuild) {
   await build(slide, browser);
 }
 await browser.close();
