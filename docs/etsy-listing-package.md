@@ -184,8 +184,10 @@ message us with any issue and we'll make it right.
 ⚠️ **IMPORTANT DISCLAIMER**
 This planner is for personal organization and habit tracking only. It is not medical advice, does
 not diagnose, treat, or prescribe, and is not a substitute for guidance from your licensed
-healthcare provider. It is not affiliated with or endorsed by any pharmaceutical brand or
-provider. Always follow your own provider's and product labels' instructions.
+healthcare provider. Always follow your own provider's and product labels' instructions. This
+product is not affiliated with, endorsed by, or connected to any pharmaceutical brand, healthcare
+provider, or the makers of Oura, WHOOP, Apple Health, GoodNotes, Notability, or Canva — those names
+appear only to describe compatibility, and wearable data is logged in by hand, not synced.
 
 **A note on the app:** the bonus web app is provided as-is and may change or be discontinued; it is
 not a cloud service and has no account system today. Your printable binder is the part of this
@@ -232,7 +234,7 @@ manual pixel-retouching or drift risk. Files are 2700×2025 px in `marketing/thu
 9. **Supplement Library** — "84 Supplements, 25 Categories" · Search & Add In Seconds
 10. **Biohacking Tools** — "30 Rituals, One Tap to Log" · Red Light · Cold Plunge · Sauna · HRV · More
 11. **Labs & Biomarkers** — "Every Result, One Binder" · Filed By Panel · Charted Over Time
-12. **Wearables** — "Your Ring, Band & Watch — Unified" · Oura · WHOOP · Apple Health Ready
+12. **Wearables** — "Log Your Ring, Band & Watch" · Oura · WHOOP · Apple Health — Logged By Hand
 13. **Day Or Night** — "Beautiful In Dark Mode Too" · Every Screen, Every Theme
 14. **Printable Studio** — "Your Matching Paper Companion" · Pick Pages · Print · Or Save As PDF
 15. **Final CTA** — "Start Tracking Today" · Your Calm, Private Wellness System Awaits

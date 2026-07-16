@@ -2,13 +2,17 @@
 // for buyers who just want one sheet instead of the full 15-page binder.
 // Bundles the 15 files into one zip (marketing/delivery-pdfs/4-Individual-Printable-Pages.zip).
 // See docs/printable-companion-guide.md section 5.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
-import { PDFDocument } from "/home/user/peptide-os-pro/node_modules/pdf-lib/dist/pdf-lib.esm.js";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { PDFDocument } from "pdf-lib";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync } from "fs";
 import { execSync } from "child_process";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const OUT_DIR = "/home/user/peptide-os-pro/marketing/delivery-pdfs/loose-pages";
-const ZIP_PATH = "/home/user/peptide-os-pro/marketing/delivery-pdfs/4-Individual-Printable-Pages.zip";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const OUT_DIR = join(ROOT, "marketing/delivery-pdfs/loose-pages");
+const ZIP_PATH = join(ROOT, "marketing/delivery-pdfs/4-Individual-Printable-Pages.zip");
 const APP_URL = "http://localhost:4173/#/printables";
 
 const PX_TO_PT = 72 / 96;
@@ -75,7 +79,7 @@ function toPagePt(geo) {
 if (existsSync(OUT_DIR)) rmSync(OUT_DIR, { recursive: true });
 mkdirSync(OUT_DIR, { recursive: true });
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 let totalFields = 0;
 
 for (const p of PAGES) {

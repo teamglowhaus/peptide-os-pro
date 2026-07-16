@@ -8,15 +8,19 @@
 //
 // Usage: node scripts/generate-thumbnails.mjs
 // Requires a locally running preview build (npm run preview) at APP_URL.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
-import { seed as baseSeed } from "/tmp/claude-0/-home-user-peptide-os-pro/54abd27e-de26-5d27-9fff-6f7e05e954ad/scratchpad/fullseed.mjs";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { seed as baseSeed } from "./fixtures/demo-seed.mjs";
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const LOGO_DATA_URI = `data:image/svg+xml;base64,${readFileSync("/home/user/peptide-os-pro/public/icons/icon.svg").toString("base64")}`;
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const LOGO_DATA_URI = `data:image/svg+xml;base64,${readFileSync(join(ROOT, "public/icons/icon.svg")).toString("base64")}`;
 
 const APP_URL = "http://localhost:4173";
-const OUT_DIR = "/home/user/peptide-os-pro/marketing/thumbnails";
+const OUT_DIR = join(ROOT, "marketing/thumbnails");
 const CANVAS_W = 2700, CANVAS_H = 2025;
 const MOCK_VIEWPORT_W = 1280; // CSS width of the app viewport we capture from
 const CAPTURE_DSF = 4; // high oversampling so cropped regions can be blown up without blur
@@ -250,9 +254,9 @@ const SLIDES = [
   { n: "11-labs", eyebrow: "Labs & Biomarkers", headline: "Every Result, One Binder", subhead: "Filed By Panel · Charted Over Time",
     route: "labs", clip: { x: CX, y: 0, width: CW, height: 560 },
     callout: { value: "✓", label: "Doctor-Ready Charts", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
-  { n: "12-devices", eyebrow: "Wearables", headline: "Your Ring, Band & Watch — Unified", subhead: "Oura · WHOOP · Apple Health Ready",
+  { n: "12-devices", eyebrow: "Wearables", headline: "Log Your Ring, Band & Watch", subhead: "Oura · WHOOP · Apple Health — Logged By Hand",
     route: "wearables", clip: { x: CX, y: 0, width: CW, height: 560 },
-    callout: { value: "4s", label: "Morning Ritual", side: "right" } },
+    callout: { value: "✓", label: "Quick Morning Log", side: "right" } },
   { n: "13-dark", eyebrow: "Day Or Night", headline: "Beautiful In Dark Mode Too", subhead: "Every Screen, Every Theme",
     route: "dashboard", dark: true, clip: { x: CX, y: 0, width: CW, height: 600 } },
   { n: "14-printables", eyebrow: "Printable Studio", headline: "Your Matching Paper Companion", subhead: "Pick Pages · Print · Or Save As PDF",
@@ -272,7 +276,7 @@ async function build(slide, browser) {
     mockH = Math.round(slide.clip.height * scale);
   }
   const html = slideHtml({ eyebrow: slide.eyebrow, headline: slide.headline, subhead: slide.subhead, screenshotDataUri: dataUri, mockW, mockH, checks: slide.checks, callout: slide.callout, ctaText: slide.ctaText });
-  const browser2 = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+  const browser2 = await chromium.launch(chromiumLaunchOptions());
   const page = await browser2.newPage({ viewport: { width: CANVAS_W, height: CANVAS_H }, deviceScaleFactor: 2 });
   await page.setContent(html, { waitUntil: "networkidle" });
   const outPath = `${OUT_DIR}/${slide.n}.png`; // .png is a scratch intermediate, gitignored — .jpg below is the real output
@@ -287,7 +291,7 @@ async function build(slide, browser) {
 const only = process.argv.slice(2);
 const slidesToBuild = only.length ? SLIDES.filter((s) => only.includes(s.n)) : SLIDES;
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 for (const slide of slidesToBuild) {
   await build(slide, browser);
 }

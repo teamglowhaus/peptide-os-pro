@@ -2,11 +2,15 @@
 // Playwright-rendered companion binder PDF, using the data-fillable /
 // data-fillable-id / data-toc-target / data-sheet-page markers in
 // src/pages/Printables.tsx. See docs/printable-companion-guide.md.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
-import { PDFDocument, PDFName } from "/home/user/peptide-os-pro/node_modules/pdf-lib/dist/pdf-lib.esm.js";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { PDFDocument, PDFName } from "pdf-lib";
 import { writeFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const OUT = "/home/user/peptide-os-pro/marketing/delivery-pdfs";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const OUT = join(ROOT, "marketing/delivery-pdfs");
 const APP_URL = "http://localhost:4173/#/printables";
 
 // US Letter at 96 CSS px/in -> 72 pt/in
@@ -23,7 +27,7 @@ const MARGIN_IN = 0.3;
 const CONTENT_W_PX = Math.round((PAGE_W_IN - 2 * MARGIN_IN) * 96);
 const CONTENT_H_PX = Math.round((PAGE_H_IN - 2 * MARGIN_IN) * 96);
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 const page = await browser.newPage({ viewport: { width: CONTENT_W_PX, height: CONTENT_H_PX } });
 
 await page.addInitScript(() => {

@@ -21,6 +21,20 @@ doc — do not loosen these when reusing this copy):
   describe the app as *tracking* protocols the buyer already has, never as endorsing, dosing, or
   sourcing them.
 - No fake bestseller claims, fake reviews, fake urgency, or guaranteed-results language.
+- This product isn't affiliated with, endorsed by, or connected to Oura, WHOOP, Apple, Canva,
+  GoodNotes, or Notability — their names describe compatibility only, not partnership. Any listing
+  copy or thumbnail naming them needs that disclaimer somewhere a buyer will actually see it (the
+  Etsy description itself, not just the in-app Legal page), and shouldn't imply live device sync
+  where the real feature is manual entry.
+
+**Read `docs/etsy-listing-package.md`'s "channel risk, pricing reality" section before publishing
+any of the tags/titles below.** Short version this package does NOT re-litigate: featuring
+unapproved research-peptide names (BPC-157, TB-500, KPV, Thymosin Alpha-1/Beta-4, GHK-Cu) in public
+tags/titles/images carries a meaningfully higher Etsy policy-flag risk than the FDA-approved
+GLP-1 names (semaglutide, tirzepatide) — and that risk assessment has **not** been verified against
+Etsy's actual current Prohibited/Restricted Items policy text. Read that yourself before deciding
+how much research-peptide detail belongs in this listing's public-facing tags, images, and
+description — don't take this package's tag recommendations (Part 5) as cleared for that risk.
 
 ---
 
@@ -318,6 +332,10 @@ an AI-search phrase match.
 > *Can I use just the app, or just the PDF?* Either, or both — they cover the same system.
 > *What if I don't use peptides, just menopause tracking (or vice versa)?* Every section is
 > independent — use only what applies to you.
+> *Does this connect to my Oura, WHOOP, or Apple Health?* Not yet — you log those numbers in
+> yourself (it takes seconds). This product isn't affiliated with, endorsed by, or connected to
+> Oura, WHOOP, Apple, Canva, GoodNotes, or Notability; their names appear only to describe
+> compatibility.
 >
 > This is a **digital download** — no physical item ships. Instant access after purchase.
 >
@@ -438,6 +456,12 @@ an AI-search phrase match.
 ---
 
 ## PART 12 — Category + Attributes
+
+**Not verified against Etsy's live category picker** — this is a directional best-guess based on
+where comparable planner/tracker listings tend to sit, not a confirmed taxonomy path. Confirm the
+exact category and available attributes directly in your own Etsy listing editor before publishing;
+Etsy's category tree changes and the picker will show you what's actually available, which this
+package cannot see.
 
 - **Best category:** Paper & Party Supplies > Paper > Planners & Organizers (Etsy's standard home
   for printable planner/tracker digital downloads).
@@ -631,10 +655,21 @@ between."
 
 ## PART 18 — SEO Scorecard
 
+**This is a self-assessment, not a measured result** — scored by the same process that wrote the
+package, off two web searches and no live Etsy data. Treat every row as "this is the intent,
+untested" rather than a verified grade. The one strategic bet this scorecard doesn't stress-test
+enough on its own: combining the menopause/HRT audience and the GLP-1/peptide audience into one
+title/listing is a hypothesis, not a proven strength — a menopause-only shopper may bounce off
+peptide/BPC-157 terminology (or read it as off-label-drug-adjacent and lose trust), and a GLP-1
+shopper may skip past "menopause" framing entirely. Rows below that lean on the combined-audience
+bet ("Buyer intent," "Traffic potential") should be read with that risk attached, and it's worth
+testing a single-audience title variant against the combined one rather than assuming combined
+wins.
+
 | Dimension | Score | Note |
 |---|---|---|
 | Etsy search relevance | 9/10 | Title/tags map directly to real, active Etsy marketplace categories found in research. |
-| Buyer intent | 9/10 | Combination positioning targets buyers underserved by single-purpose competitors. |
+| Buyer intent | 9/10 | *Untested combined-audience bet* — combination positioning could reach buyers underserved by single-purpose competitors, or could dilute both audiences at once. Worth A/B testing against a single-audience title. |
 | Clickability | 8/10 | Thumbnail sequence leads with specificity (36, 84, 20) — improve further with real buyer-reaction testing once live. |
 | Conversion strength | 8/10 | Description follows a proven structure and answers real objections (privacy, subscriptions, medical-advice concerns). |
 | Differentiation | 9/10 | Format duality + reconstitution calculator + three-niche combination are genuinely rare in this category. |
@@ -643,7 +678,7 @@ between."
 | Pinterest-search potential | 8/10 | Pin titles/descriptions are keyword-rich and aesthetic-aware; needs real pin creative to fully realize. |
 | Mobile readability | 9/10 | Description uses short paragraphs, bolded scan points, and front-loaded value per line. |
 | Premium feel | 9/10 | Language throughout avoids hype/urgency clichés common in this category, matching the product's real quiet-luxury positioning. |
-| Traffic potential | 8/10 | Combines one saturated category (menopause) with one fast-growing category (GLP-1/peptide) for broader reach than either alone. |
+| Traffic potential | 8/10 | *Untested combined-audience bet* — combines one saturated category (menopause) with one fast-growing category (GLP-1/peptide) for potentially broader reach, but could also mean neither audience feels the listing is "for them." |
 | Sales potential | 8/10 | Strong once price is finalized — score assumes the seller lands in the previously-recommended $19–27 launch range; an anchor price far outside that range would need re-testing. |
 
 **Improving anything under 9/10:** Clickability, Google-search clarity, and Pinterest-search
@@ -652,7 +687,9 @@ off-Etsy blog/landing presence, real Pinterest pins) that don't exist yet indepe
 package — once those are built from Parts 10, 11, and 17, re-score against real click-through data
 rather than projected. Sales potential is capped at 8 until a final price is set; re-score once
 that's decided using real conversion data from the first 2–4 weeks, per the existing pricing
-guidance in `docs/etsy-listing-package.md`.
+guidance in `docs/etsy-listing-package.md`. Buyer intent and Traffic potential are capped by the
+untested combined-audience bet described above — re-score both once you have real click-through
+data comparing a combined title against a single-audience variant, not before.
 
 ---
 

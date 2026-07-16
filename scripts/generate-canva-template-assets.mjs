@@ -5,10 +5,14 @@
 // for the thumbnails (burgundy serif, warm background, laptop frame).
 //
 // Usage: node scripts/generate-canva-template-assets.mjs
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CANVAS_W = 2700, CANVAS_H = 2025;
-const OUT = "/home/user/peptide-os-pro/marketing/canva-template-package/master-template";
+const OUT = join(ROOT, "marketing/canva-template-package/master-template");
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,600;0,800;1,500&family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,400..600&display=swap" />`;
@@ -25,7 +29,7 @@ async function shot(page, html, outPath, { transparent = false, w = CANVAS_W, h 
   console.log(`✓ ${outPath}`);
 }
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 const page = await browser.newPage({ deviceScaleFactor: 2 });
 
 // --- 15 blank labeled starter pages, in the requested order ---

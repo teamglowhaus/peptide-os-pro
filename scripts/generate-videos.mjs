@@ -5,12 +5,18 @@
 // Requires a full (non-stripped) ffmpeg with libx264 — the ffmpeg bundled with
 // playwright-core is a stripped build. `pip install imageio-ffmpeg` gets one;
 // set FFMPEG_BIN below to its path if it differs from the default.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, rmSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const FFMPEG_BIN = "/usr/local/lib/python3.11/dist-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2";
-const OUT_DIR = "/home/user/peptide-os-pro/marketing/videos";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+// Override with FFMPEG_BIN=/path/to/ffmpeg if your system's default ffmpeg
+// lacks libx264 (e.g. the stripped build bundled with playwright-core).
+const FFMPEG_BIN = process.env.FFMPEG_BIN || "ffmpeg";
+const OUT_DIR = join(ROOT, "marketing/videos");
 const VDIR = "/tmp/biohacker-video-frames";
 const APP_URL = "http://localhost:4173";
 
@@ -219,7 +225,7 @@ async function main() {
   if (existsSync(VDIR)) rmSync(VDIR, { recursive: true });
   mkdirSync(VDIR, { recursive: true });
 
-  const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+  const browser = await chromium.launch(chromiumLaunchOptions());
 
   if (mode === "tour" || mode === "all") {
     const rawPath = await recordTourOrRitual(browser, "tour");
