@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Flame, Sparkles, Award, Medal, Trophy, Syringe, Pill, Sun, type LucideIcon } from "lucide-react";
-import { Card, Modal, cx } from "./ui";
+import { Card, Modal, cx, RIBBON_CLIP } from "./ui";
 import type { Badge, BadgeColor, StreakInfo } from "../lib/achievements";
 
 const ICONS: Record<Badge["icon"], LucideIcon> = {
@@ -21,12 +21,12 @@ function BadgeTile({ badge, onSelect }: { badge: Badge; onSelect: (b: Badge) => 
   return (
     <button
       onClick={() => onSelect(badge)}
-      className="flex flex-col items-center gap-1.5 rounded-2xl p-2 text-center transition-transform hover:-translate-y-0.5"
+      className="group flex flex-col items-center gap-1.5 rounded-2xl p-2 text-center transition-transform hover:-translate-y-0.5"
       aria-label={`${badge.label} — ${badge.unlocked ? "unlocked" : "locked"}`}
     >
       <span
         className={cx(
-          "flex h-14 w-14 items-center justify-center rounded-full text-white",
+          "flex h-14 w-14 -rotate-3 items-center justify-center rounded-full text-white transition-transform group-hover:rotate-0",
           !badge.unlocked && "grayscale opacity-35"
         )}
         style={{ background: COLOR_GRADIENT[badge.color], boxShadow: badge.unlocked ? "var(--shadow-glow)" : undefined }}
@@ -45,31 +45,41 @@ export function BadgeShelf({ streak, badges }: { streak: StreakInfo; badges: Bad
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
   return (
-    <Card>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <span
-            className="flex h-11 w-11 items-center justify-center rounded-full text-white"
-            style={{ background: COLOR_GRADIENT.ruby, boxShadow: "var(--shadow-glow)" }}
-          >
-            <Flame size={19} />
-          </span>
-          <div>
-            <p className="font-display text-lg font-medium text-ink-strong leading-tight">
-              {streak.current > 0 ? `${streak.current}-day streak` : "Start your streak today"}
-            </p>
-            <p className="text-[0.78rem] text-ink-soft">
-              Best: {streak.longest} days · {unlockedCount}/{badges.length} badges earned
-            </p>
+    <div className="relative">
+      {streak.current >= 3 && (
+        <span
+          className="absolute -right-2 -top-3 z-10 hidden -rotate-6 px-4 py-1.5 text-[0.72rem] font-bold uppercase tracking-wide text-cocoa-800 shadow-lifted sm:block"
+          style={{ background: "linear-gradient(135deg, var(--color-gold-400), var(--color-gold-500))", clipPath: RIBBON_CLIP }}
+        >
+          On a roll
+        </span>
+      )}
+      <Card className="card-hero overflow-hidden">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span
+              className="flex h-11 w-11 -rotate-6 items-center justify-center rounded-full text-white"
+              style={{ background: COLOR_GRADIENT.ruby, boxShadow: "var(--shadow-glow)" }}
+            >
+              <Flame size={19} />
+            </span>
+            <div>
+              <p className="font-display text-lg font-medium text-ink-strong leading-tight">
+                {streak.current > 0 ? `${streak.current}-day streak` : "Start your streak today"}
+              </p>
+              <p className="text-[0.78rem] text-ink-soft">
+                Best: {streak.longest} days · {unlockedCount}/{badges.length} badges earned
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-5 grid grid-cols-4 gap-1 sm:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6">
-        {badges.map((b) => (
-          <BadgeTile key={b.id} badge={b} onSelect={setSelected} />
-        ))}
-      </div>
+        <div className="mt-5 grid grid-cols-4 gap-1 sm:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6">
+          {badges.map((b) => (
+            <BadgeTile key={b.id} badge={b} onSelect={setSelected} />
+          ))}
+        </div>
+      </Card>
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.label ?? ""}>
         {selected && (
@@ -90,6 +100,6 @@ export function BadgeShelf({ streak, badges }: { streak: StreakInfo; badges: Bad
           </div>
         )}
       </Modal>
-    </Card>
+    </div>
   );
 }

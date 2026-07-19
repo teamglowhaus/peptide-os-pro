@@ -185,6 +185,11 @@ h1, h2, h3, .font-display {
 .card-hover { transition: box-shadow 180ms ease, transform 180ms ease; }
 .card-hover:hover { box-shadow: var(--shadow-lifted); transform: translateY(-1px); }
 
+/* A warmer wash for the one or two "star of the show" cards per screen —
+   everything else stays the calm flat card so this actually reads as emphasis. */
+.card-hero { background: linear-gradient(155deg, var(--color-champagne-200) -20%, var(--surface-card) 60%); }
+.dark .card-hero { background: linear-gradient(155deg, rgb(201 169 106 / 0.16) -20%, var(--surface-card) 60%); }
+
 /* Champagne hairline divider with a center dot, used as a section flourish */
 .flourish {
   display: flex; align-items: center; gap: 0.75rem;

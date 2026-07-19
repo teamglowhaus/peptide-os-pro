@@ -174,7 +174,11 @@ export function Dashboard() {
 
       {/* Score + check-in row */}
       <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
-        <Card className="flex items-center gap-6">
+        <Card className="card-hero relative flex items-center gap-6 overflow-hidden">
+          <div
+            className="pointer-events-none absolute -left-12 -top-12 h-44 w-44 rounded-full bg-gold-400/25 blur-3xl dark:bg-gold-500/15"
+            aria-hidden
+          />
           <Ring value={score} size={148} label="Biohacker Score" />
           <div className="max-w-[190px]">
             <p className="font-display text-lg font-medium text-ink-strong">
@@ -412,8 +416,8 @@ function ProtocolCard({
     champagne: "bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200",
   };
   return (
-    <button onClick={() => (window.location.hash = `/${route}`)} className="card card-hover p-5 text-left">
-      <span className={cx("mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full", tones[tone])}>
+    <button onClick={() => (window.location.hash = `/${route}`)} className="group card card-hover p-5 text-left">
+      <span className={cx("mb-3 inline-flex h-9 w-9 -rotate-6 items-center justify-center rounded-xl transition-transform group-hover:rotate-0", tones[tone])}>
         {icon}
       </span>
       <p className="font-semibold text-ink-strong">{title}</p>
@@ -432,9 +436,9 @@ function SessionQuickCard({
   icon: React.ReactNode; label: string; route: string; doneToday: boolean;
 }) {
   return (
-    <button onClick={() => (window.location.hash = `/${route}`)} className="card card-hover flex items-center gap-4 p-5 text-left">
+    <button onClick={() => (window.location.hash = `/${route}`)} className="group card card-hover flex items-center gap-4 p-5 text-left">
       <span className={cx(
-        "flex h-9 w-9 items-center justify-center rounded-full",
+        "flex h-9 w-9 -rotate-6 items-center justify-center rounded-xl transition-transform group-hover:rotate-0",
         doneToday ? "bg-sage-400 text-white" : "bg-sunken text-ink-faint"
       )}>
         {icon}
