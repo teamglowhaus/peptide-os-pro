@@ -9,6 +9,8 @@ import {
 } from "../components/ui";
 import { STACK_TIMES } from "../data/supplements";
 import type { DailyLog, StackTime } from "../lib/types";
+import { computeStreakInfo, computeBadges } from "../lib/achievements";
+import { BadgeShelf } from "../components/BadgeShelf";
 
 function emptyLog(profileId: string): DailyLog {
   return {
@@ -105,6 +107,9 @@ export function Dashboard() {
     return possible ? Math.round((earned / possible) * 100) : 0;
   }, [db, pid]);
 
+  const streak = useMemo(() => computeStreakInfo(db, pid, date), [db, pid, date]);
+  const badges = useMemo(() => computeBadges(db, pid, date), [db, pid, date]);
+
   const trendOf = (key: "mood" | "energy" | "sleepQuality"): number[] =>
     byProfile(db.dailyLogs, pid)
       .sort((a, b) => a.date.localeCompare(b.date))
@@ -184,6 +189,10 @@ export function Dashboard() {
             </div>
           </div>
         </Card>
+      </div>
+
+      <div className="mt-4">
+        <BadgeShelf streak={streak} badges={badges} />
       </div>
 
       {/* Today's protocol */}

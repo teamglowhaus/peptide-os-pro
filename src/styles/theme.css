@@ -49,9 +49,33 @@
   --color-cocoa-800: #211B17;
   --color-cocoa-900: #17120F;
 
+  /* Jewel accents — reserved for the badge/streak system so unlocking one
+     actually feels colorful and celebratory against the calm cream/cocoa
+     base everywhere else (and every existing marketing shot) stays true to. */
+  --color-gold-400: #E8C468;
+  --color-gold-500: #C9A227;
+  --color-gold-600: #93761A;
+
+  --color-ruby-400: #E38699;
+  --color-ruby-500: #C94F6B;
+  --color-ruby-600: #983650;
+
+  --color-emerald-400: #6FC79A;
+  --color-emerald-500: #359968;
+  --color-emerald-600: #23714C;
+
+  --color-sapphire-400: #7FAAE0;
+  --color-sapphire-500: #4779BD;
+  --color-sapphire-600: #325A8F;
+
+  --color-amethyst-400: #B99AE0;
+  --color-amethyst-500: #8C63C4;
+  --color-amethyst-600: #684896;
+
   --shadow-soft: 0 1px 2px rgb(62 51 43 / 0.05), 0 6px 20px -6px rgb(62 51 43 / 0.12);
   --shadow-lifted: 0 2px 4px rgb(62 51 43 / 0.06), 0 14px 34px -10px rgb(62 51 43 / 0.20);
   --shadow-inner-glow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+  --shadow-glow: 0 0 0 1px rgb(255 255 255 / 0.5) inset, 0 10px 24px -8px rgb(62 51 43 / 0.35);
 
   --radius-card: 1.375rem;
   --radius-pill: 999px;

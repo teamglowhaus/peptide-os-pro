@@ -401,19 +401,26 @@ export function Ring({
   size?: number;
   label: string;
 }) {
+  const gradientId = React.useId();
   const r = (size - 14) / 2;
   const c = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, value));
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
+        <defs>
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--color-gold-400)" />
+            <stop offset="100%" stopColor="var(--color-gold-600)" />
+          </linearGradient>
+        </defs>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--line)" strokeWidth="9" />
         <circle
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="var(--chart-gold)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="9"
           strokeLinecap="round"
           strokeDasharray={c}
