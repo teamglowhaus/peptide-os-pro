@@ -22,17 +22,17 @@ export function Button({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
   const styles: Record<ButtonVariant, string> = {
     primary:
-      "bg-cocoa-600 text-cream-50 hover:bg-cocoa-500 dark:bg-cream-200 dark:text-cocoa-800 dark:hover:bg-cream-100 shadow-soft",
+      "bg-cocoa-600 text-cream-50 hover:bg-cocoa-500 hover:shadow-lifted dark:bg-cream-200 dark:text-cocoa-800 dark:hover:bg-cream-100 shadow-soft",
     soft:
-      "bg-sage-200/60 text-sage-600 hover:bg-sage-200 dark:bg-sage-600/30 dark:text-sage-200 dark:hover:bg-sage-600/45",
-    ghost: "text-ink-soft hover:bg-sunken hover:text-ink",
-    outline: "border border-line-strong text-ink hover:bg-sunken",
-    danger: "bg-blush-100 text-blush-500 hover:bg-blush-200 dark:bg-blush-500/20 dark:text-blush-200",
+      "bg-sage-200/60 text-sage-600 hover:bg-sage-300/70 hover:shadow-soft dark:bg-sage-600/30 dark:text-sage-200 dark:hover:bg-sage-600/50",
+    ghost: "text-ink-soft hover:bg-champagne-200/50 hover:text-cocoa-600 dark:hover:bg-champagne-600/20 dark:hover:text-champagne-200",
+    outline: "border border-line-strong text-ink hover:border-champagne-500 hover:bg-champagne-200/40 hover:text-cocoa-600 dark:hover:bg-champagne-600/15",
+    danger: "bg-blush-100 text-blush-500 hover:bg-blush-200 hover:shadow-soft dark:bg-blush-500/20 dark:text-blush-200 dark:hover:bg-blush-500/30",
   };
   return (
     <button
       className={cx(
-        "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[0.9rem] font-semibold tracking-wide transition-colors disabled:opacity-40 disabled:pointer-events-none",
+        "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[0.9rem] font-semibold tracking-wide transition-all hover:-translate-y-px active:translate-y-0 disabled:opacity-40 disabled:pointer-events-none disabled:hover:translate-y-0",
         styles[variant],
         className
       )}
@@ -530,16 +530,16 @@ export function Tabs({
   onChange: (k: string) => void;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-1.5 rounded-2xl bg-sunken/70 p-1.5 w-fit max-w-full overflow-x-auto">
+    <div className="mb-6 flex flex-wrap gap-1.5 rounded-2xl border border-line-strong bg-cocoa-800/[0.05] p-1.5 w-fit max-w-full overflow-x-auto dark:bg-cocoa-900/50">
       {tabs.map((t) => (
         <button
           key={t.key}
           onClick={() => onChange(t.key)}
           className={cx(
-            "whitespace-nowrap rounded-full px-4 py-1.5 text-[0.85rem] font-semibold transition-colors",
+            "whitespace-nowrap rounded-full px-4 py-1.5 text-[0.85rem] font-semibold transition-all",
             active === t.key
-              ? "bg-card text-ink-strong shadow-soft"
-              : "text-ink-soft hover:text-ink"
+              ? "bg-cocoa-700 text-cream-50 shadow-lifted dark:bg-cream-100 dark:text-cocoa-800"
+              : "text-ink-soft hover:bg-card hover:text-ink-strong"
           )}
         >
           {t.label}

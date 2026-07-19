@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Syringe, Pill, Flower2, Sun, Snowflake, Flame, FlaskConical, CalendarHeart,
   PawPrint, Moon, HeartPulse, Plus,
@@ -11,6 +11,7 @@ import { STACK_TIMES } from "../data/supplements";
 import type { DailyLog, StackTime } from "../lib/types";
 import { computeStreakInfo, computeBadges } from "../lib/achievements";
 import { BadgeShelf } from "../components/BadgeShelf";
+import { Confetti } from "../components/Confetti";
 
 function emptyLog(profileId: string): DailyLog {
   return {
@@ -110,6 +111,21 @@ export function Dashboard() {
   const streak = useMemo(() => computeStreakInfo(db, pid, date), [db, pid, date]);
   const badges = useMemo(() => computeBadges(db, pid, date), [db, pid, date]);
 
+  // Celebrate the moment a streak grows or a new badge unlocks — but only
+  // once per real change, not on every render, by remembering what's
+  // already been celebrated for this profile.
+  const [confettiKey, setConfettiKey] = useState(0);
+  useEffect(() => {
+    const storeKey = `biohacker-os:celebrated:${pid}`;
+    let prev: { streak: number; unlocked: string[] } | null = null;
+    try { prev = JSON.parse(localStorage.getItem(storeKey) || "null"); } catch { prev = null; }
+    const unlockedIds = badges.filter((b) => b.unlocked).map((b) => b.id);
+    const newBadge = unlockedIds.some((id) => !prev?.unlocked.includes(id));
+    const streakGrew = streak.current > (prev?.streak ?? 0);
+    if (prev && (newBadge || streakGrew)) setConfettiKey((k) => k + 1);
+    localStorage.setItem(storeKey, JSON.stringify({ streak: streak.current, unlocked: unlockedIds }));
+  }, [badges, streak.current, pid]);
+
   const trendOf = (key: "mood" | "energy" | "sleepQuality"): number[] =>
     byProfile(db.dailyLogs, pid)
       .sort((a, b) => a.date.localeCompare(b.date))
@@ -128,6 +144,7 @@ export function Dashboard() {
 
   return (
     <div>
+      <Confetti burstKey={confettiKey} />
       <BackupBanner
         daysSince={daysSince(db.settings.lastBackupAt)}
         onExport={() => triggerBackupDownload(exportJson())}

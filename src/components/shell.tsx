@@ -173,13 +173,13 @@ export function Shell({
                   key={i.key}
                   onClick={() => { nav(i.key); onPick?.(); }}
                   className={cx(
-                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[0.92rem] font-medium transition-colors",
+                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[0.92rem] font-medium transition-all",
                     route === i.key
-                      ? "bg-champagne-200/50 text-cocoa-600 dark:bg-champagne-600/25 dark:text-champagne-200"
-                      : "text-ink-soft hover:bg-sunken hover:text-ink"
+                      ? "bg-champagne-500/30 text-champagne-50 shadow-soft dark:bg-champagne-500/35 dark:text-champagne-50"
+                      : "text-ink-soft hover:bg-champagne-400/10 hover:text-ink dark:hover:bg-champagne-400/15 dark:hover:text-champagne-100"
                   )}
                 >
-                  <span className={cx(route === i.key ? "text-champagne-600 dark:text-champagne-300" : "text-ink-faint")}>
+                  <span className={cx(route === i.key ? "text-champagne-100 dark:text-champagne-100" : "text-ink-faint")}>
                     {i.icon}
                   </span>
                   {i.label}

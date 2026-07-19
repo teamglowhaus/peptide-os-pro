@@ -226,3 +226,9 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; }
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
 }
+
+@keyframes confettiFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(560deg); opacity: 0.9; }
+}
+.confetti-piece { animation-name: confettiFall; animation-timing-function: ease-in; animation-fill-mode: forwards; }
