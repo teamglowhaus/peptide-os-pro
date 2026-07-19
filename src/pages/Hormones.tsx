@@ -405,8 +405,10 @@ function ProviderQuestions() {
                 })}
                 aria-label={q.asked ? "Mark unasked" : "Mark asked"}
                 className={cx(
-                  "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
-                  q.asked ? "border-sage-500 bg-sage-400 text-white" : "border-line-strong text-transparent"
+                  "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors",
+                  q.asked
+                    ? "border-sage-500 bg-sage-400 text-white"
+                    : "border-line-strong text-transparent hover:border-sage-400 hover:bg-sage-100/50 dark:hover:bg-sage-600/20"
                 )}
               >
                 <Check size={13} strokeWidth={3} />

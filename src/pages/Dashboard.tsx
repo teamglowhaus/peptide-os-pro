@@ -5,13 +5,13 @@ import {
 } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid, daysSince, triggerBackupDownload, localDateStr } from "../lib/store";
 import {
-  Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx, BackupBanner,
+  Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx, BackupBanner, Squiggle,
 } from "../components/ui";
 import { STACK_TIMES } from "../data/supplements";
 import type { DailyLog, StackTime } from "../lib/types";
 import { computeStreakInfo, computeBadges } from "../lib/achievements";
 import { BadgeShelf } from "../components/BadgeShelf";
-import { Confetti } from "../components/Confetti";
+import { Streamers, StreakToast } from "../components/Streamers";
 
 function emptyLog(profileId: string): DailyLog {
   return {
@@ -114,15 +114,19 @@ export function Dashboard() {
   // Celebrate the moment a streak grows or a new badge unlocks — but only
   // once per real change, not on every render, by remembering what's
   // already been celebrated for this profile.
-  const [confettiKey, setConfettiKey] = useState(0);
+  const [streamerKey, setStreamerKey] = useState(0);
+  const [celebration, setCelebration] = useState<string | null>(null);
   useEffect(() => {
     const storeKey = `biohacker-os:celebrated:${pid}`;
     let prev: { streak: number; unlocked: string[] } | null = null;
     try { prev = JSON.parse(localStorage.getItem(storeKey) || "null"); } catch { prev = null; }
     const unlockedIds = badges.filter((b) => b.unlocked).map((b) => b.id);
-    const newBadge = unlockedIds.some((id) => !prev?.unlocked.includes(id));
+    const freshBadge = badges.find((b) => b.unlocked && !prev?.unlocked.includes(b.id));
     const streakGrew = streak.current > (prev?.streak ?? 0);
-    if (prev && (newBadge || streakGrew)) setConfettiKey((k) => k + 1);
+    if (prev && (freshBadge || streakGrew)) {
+      setStreamerKey((k) => k + 1);
+      setCelebration(freshBadge ? `Badge earned: ${freshBadge.label}` : `${streak.current}-Day Streak!`);
+    }
     localStorage.setItem(storeKey, JSON.stringify({ streak: streak.current, unlocked: unlockedIds }));
   }, [badges, streak.current, pid]);
 
@@ -144,7 +148,8 @@ export function Dashboard() {
 
   return (
     <div>
-      <Confetti burstKey={confettiKey} />
+      <Streamers burstKey={streamerKey} />
+      <StreakToast message={celebration} />
       <BackupBanner
         daysSince={daysSince(db.settings.lastBackupAt)}
         onExport={() => triggerBackupDownload(exportJson())}
@@ -154,7 +159,11 @@ export function Dashboard() {
           {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
         </p>
         <h1 className="text-[1.9rem] font-medium leading-tight sm:text-4xl">
-          {greeting}, {activeProfile.name === "Me" ? "gorgeous" : activeProfile.name}
+          {greeting},{" "}
+          <span className="relative inline-block">
+            {activeProfile.name === "Me" ? "gorgeous" : activeProfile.name}
+            <Squiggle className="absolute -bottom-1.5 left-0 h-2.5 w-full text-champagne-400" />
+          </span>
         </h1>
         {ob.mainGoal && (
           <p className="mt-2 text-[0.95rem] text-ink-soft">

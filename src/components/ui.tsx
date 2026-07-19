@@ -85,6 +85,24 @@ export function SectionTitle({ children, className }: { children: React.ReactNod
   );
 }
 
+/** A single hand-drawn wavy underline — a signature accent, not a straight rule. */
+export function Squiggle({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 200 14" preserveAspectRatio="none" className={className} aria-hidden="true">
+      <path
+        d="M2 8 C 18 1, 33 1, 50 8 S 82 15, 100 8 S 132 1, 150 8 S 182 15, 198 7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** A ribbon/pennant shape — two notched ends, like a banner. Used for stickers & toasts. */
+export const RIBBON_CLIP = "polygon(0% 50%, 7% 0%, 93% 0%, 100% 50%, 93% 100%, 7% 100%)";
+
 export function Flourish({ label }: { label?: string }) {
   return (
     <div className="flourish my-6 text-champagne-500">

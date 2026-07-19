@@ -227,8 +227,16 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; }
   50% { opacity: 0.55; }
 }
 
-@keyframes confettiFall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(105vh) rotate(560deg); opacity: 0.9; }
+@keyframes streamerFall {
+  0%   { transform: translate(0, -10vh) rotate(0deg); opacity: 1; }
+  20%  { transform: translate(calc(var(--sway) * 1), 12vh) rotate(70deg); }
+  40%  { transform: translate(calc(var(--sway) * -1), 38vh) rotate(150deg); }
+  60%  { transform: translate(var(--sway), 62vh) rotate(230deg); }
+  80%  { transform: translate(calc(var(--sway) * -0.7), 86vh) rotate(310deg); }
+  100% { transform: translate(calc(var(--sway) * 0.5), 106vh) rotate(400deg); opacity: 0.85; }
 }
-.confetti-piece { animation-name: confettiFall; animation-timing-function: ease-in; animation-fill-mode: forwards; }
+.streamer-piece {
+  animation-name: streamerFall;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-fill-mode: forwards;
+}
