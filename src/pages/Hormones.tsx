@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { Plus, Flower2, Trash2, Pencil, MessageCircleQuestion, Check } from "lucide-react";
-import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
+import { Plus, Flower2, Trash2, Pencil, MessageCircleQuestion, Check, Droplet } from "lucide-react";
+import { useStore, byProfile, today, fmtDate, uid, computeCycleInfo, CYCLE_PHASE_LABEL } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, Select, Tabs, EmptyState,
   SeverityMeter, Sparkline, Disclaimer, cx, useForm,
@@ -191,7 +191,7 @@ function SymptomCheckin() {
   const date = today();
   const existing = db.symptomLogs.find((l) => l.profileId === pid && l.date === date);
   const log: SymptomLog = existing ?? {
-    id: uid(), profileId: pid, date, symptoms: {}, cycleDay: "", flow: "", notes: "",
+    id: uid(), profileId: pid, date, symptoms: {}, flow: "", notes: "",
   };
 
   const save = (patch: Partial<SymptomLog>) =>
@@ -228,24 +228,7 @@ function SymptomCheckin() {
         </div>
       </Card>
       <div className="space-y-4">
-        <Card>
-          <p className="mb-3 font-display text-lg font-medium">Cycle</p>
-          <div className="space-y-3">
-            <Field label="Cycle day (if cycling)">
-              <Input value={log.cycleDay} onChange={(e) => save({ cycleDay: e.target.value })} placeholder="e.g. 17 · or “none”" />
-            </Field>
-            <Field label="Flow">
-              <Select value={log.flow} onChange={(e) => save({ flow: e.target.value as any })}>
-                <option value="">—</option>
-                <option value="none">None</option>
-                <option value="spotting">Spotting</option>
-                <option value="light">Light</option>
-                <option value="medium">Medium</option>
-                <option value="heavy">Heavy</option>
-              </Select>
-            </Field>
-          </div>
-        </Card>
+        <CycleCard flow={log.flow} onFlowChange={(flow) => save({ flow })} />
         <Card>
           <p className="mb-3 font-display text-lg font-medium">Notes for the chart</p>
           <Textarea
@@ -257,6 +240,85 @@ function SymptomCheckin() {
         </Card>
       </div>
     </div>
+  );
+}
+
+function CycleCard({ flow, onFlowChange }: { flow: SymptomLog["flow"]; onFlowChange: (f: SymptomLog["flow"]) => void }) {
+  const { db, update, activeProfile } = useStore();
+  const pid = activeProfile.id;
+  const periods = byProfile(db.periods, pid).sort((a, b) => b.startDate.localeCompare(a.startDate));
+  const info = computeCycleInfo(db.periods, pid);
+  const startedToday = periods.some((p) => p.startDate === today());
+
+  const logPeriodStart = () =>
+    update((d) => void d.periods.push({ id: uid(), profileId: pid, startDate: today(), notes: "" }));
+  const removePeriod = (id: string) =>
+    update((d) => void (d.periods = d.periods.filter((p) => p.id !== id)));
+
+  return (
+    <Card>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="font-display text-lg font-medium">Cycle</p>
+        <button
+          onClick={logPeriodStart}
+          disabled={startedToday}
+          className={cx(
+            "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.78rem] font-semibold",
+            startedToday ? "border-line text-ink-faint" : "border-blush-300 text-blush-600 hover:bg-blush-100/60 dark:text-blush-300"
+          )}
+        >
+          <Droplet size={13} /> {startedToday ? "Logged today" : "Period started today"}
+        </button>
+      </div>
+
+      {info ? (
+        <div className="mb-4 rounded-2xl bg-sunken/60 px-4 py-3.5">
+          <p className="font-display text-2xl font-medium text-ink-strong">Day {info.cycleDay}</p>
+          <p className="text-[0.85rem] font-medium text-blush-600 dark:text-blush-300">{CYCLE_PHASE_LABEL[info.phase]}</p>
+          <p className="mt-1 text-[0.78rem] text-ink-faint">
+            {info.avgCycleLength
+              ? `Estimated from your last ${info.cyclesLogged} logged cycles (avg ${info.avgCycleLength} days).`
+              : "Estimated using a typical 28-day cycle — log your next period for a personal average."}
+          </p>
+        </div>
+      ) : (
+        <p className="mb-4 text-[0.85rem] text-ink-soft">
+          Log your period's start date above to see your cycle day and estimated phase here.
+        </p>
+      )}
+
+      <Field label="Flow today">
+        <Select value={flow} onChange={(e) => onFlowChange(e.target.value as SymptomLog["flow"])}>
+          <option value="">—</option>
+          <option value="none">None</option>
+          <option value="spotting">Spotting</option>
+          <option value="light">Light</option>
+          <option value="medium">Medium</option>
+          <option value="heavy">Heavy</option>
+        </Select>
+      </Field>
+
+      {periods.length > 0 && (
+        <div className="mt-4 border-t border-line pt-3">
+          <p className="eyebrow mb-2">Period history</p>
+          <div className="space-y-1">
+            {periods.slice(0, 6).map((p) => (
+              <div key={p.id} className="flex items-center justify-between text-[0.82rem]">
+                <span className="text-ink-soft">{fmtDate(p.startDate)}</span>
+                <button onClick={() => removePeriod(p.id)} aria-label="Delete period log" className="rounded-full p-1 text-ink-faint hover:text-blush-500">
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p className="mt-4 text-[0.72rem] leading-relaxed text-ink-faint">
+        Estimates only, based on what you log — not a fertility or contraception tool. Perimenopausal
+        cycles are often irregular, so treat this as a rough guide alongside your own body's signals.
+      </p>
+    </Card>
   );
 }
 
