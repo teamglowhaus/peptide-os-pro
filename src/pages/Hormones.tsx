@@ -97,11 +97,16 @@ export function Hormones() {
 function TherapyCard({ h, onEdit }: { h: HormoneTherapy; onEdit: () => void }) {
   const { update } = useStore();
   return (
-    <Card hover>
+    <Card hover className="group">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-blush-500 dark:text-blush-300">{h.form}</p>
-          <h3 className="font-display text-xl font-medium text-ink-strong">{h.name}</h3>
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 -rotate-6 items-center justify-center rounded-xl bg-blush-100 text-blush-500 transition-transform group-hover:rotate-0 dark:bg-blush-500/25 dark:text-blush-200">
+            <Flower2 size={17} />
+          </span>
+          <div>
+            <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-blush-500 dark:text-blush-300">{h.form}</p>
+            <h3 className="font-display text-xl font-medium text-ink-strong">{h.name}</h3>
+          </div>
         </div>
         <div className="flex">
           <button onClick={onEdit} aria-label="Edit" className="rounded-full p-2 text-ink-faint hover:bg-sunken hover:text-ink"><Pencil size={15} /></button>
@@ -256,7 +261,11 @@ function CycleCard({ flow, onFlowChange }: { flow: SymptomLog["flow"]; onFlowCha
     update((d) => void (d.periods = d.periods.filter((p) => p.id !== id)));
 
   return (
-    <Card>
+    <Card className="card-hero relative overflow-hidden">
+      <div
+        className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-blush-300/30 blur-3xl dark:bg-blush-500/15"
+        aria-hidden
+      />
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="font-display text-lg font-medium">Cycle</p>
         <button

@@ -72,6 +72,7 @@ export function PageHeader({
       <div>
         <p className="eyebrow mb-1.5">{eyebrow}</p>
         <h1 className="text-[1.9rem] leading-tight sm:text-4xl font-medium">{title}</h1>
+        <Squiggle className="mt-1.5 h-2 w-24 text-champagne-400" />
         {sub && <p className="mt-2 max-w-xl text-[0.95rem] text-ink-soft">{sub}</p>}
       </div>
       {actions && <div className="flex shrink-0 gap-2">{actions}</div>}

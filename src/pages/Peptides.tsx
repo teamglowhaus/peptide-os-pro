@@ -201,14 +201,19 @@ function ProtocolCard({
   const refillSoon =
     p.refillReminder && p.refillReminder <= addDays(today(), 7);
   return (
-    <Card hover className="flex flex-col">
+    <Card hover className="group flex flex-col">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-champagne-600 dark:text-champagne-300">
-            {p.category}
-          </p>
-          <h3 className="font-display text-xl font-medium text-ink-strong">{p.name}</h3>
-          {p.goal && <p className="mt-0.5 text-[0.85rem] text-ink-soft">{p.goal}</p>}
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 -rotate-6 items-center justify-center rounded-xl bg-champagne-200/60 text-champagne-600 transition-transform group-hover:rotate-0 dark:bg-champagne-600/25 dark:text-champagne-200">
+            <Syringe size={17} />
+          </span>
+          <div>
+            <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-champagne-600 dark:text-champagne-300">
+              {p.category}
+            </p>
+            <h3 className="font-display text-xl font-medium text-ink-strong">{p.name}</h3>
+            {p.goal && <p className="mt-0.5 text-[0.85rem] text-ink-soft">{p.goal}</p>}
+          </div>
         </div>
         <button onClick={onEdit} aria-label="Edit" className="rounded-full p-2 text-ink-faint hover:bg-sunken hover:text-ink">
           <Pencil size={15} />
