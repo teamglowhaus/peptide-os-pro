@@ -243,5 +243,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; }
 .streamer-piece {
   animation-name: streamerFall;
   animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
-  animation-fill-mode: forwards;
+  /* `both`, not `forwards`: pieces have staggered delays, and without a
+     backwards fill each one would sit visible at top:0 — right over the
+     page heading — until its own animation starts. */
+  animation-fill-mode: both;
 }
