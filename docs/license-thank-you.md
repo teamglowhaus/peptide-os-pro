@@ -3,11 +3,12 @@
 <p class="hand">…from our little studio to your wellness ritual.</p>
 
 You didn't just buy a planner — you claimed a private, beautiful home for the things you do to
-feel like yourself. We made every page of this by hand, and we're genuinely glad it's yours now.
+feel like yourself. Every page of this was designed with real care in our little studio, and
+we're genuinely glad it's yours now.
 
 <div class="code-card">
   <div class="code-row"><span class="code-label">Your app</span><code>https://peptide-os-pro.vercel.app</code></div>
-  <div class="code-row"><span class="code-label">Your access code</span><code>glowhaus2026</code></div>
+  <div class="code-row"><span class="code-label">Your access code</span><code>glowhausritual</code></div>
   <div class="code-note">Open the link on any device, enter the code once — that device stays unlocked.
   Full setup steps live in your <strong>Welcome — Start Here</strong> PDF.</div>
 </div>

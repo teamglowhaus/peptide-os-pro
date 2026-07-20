@@ -8,7 +8,9 @@ import { Card, Button, Input } from "./ui";
    meant to (and can't) stop a determined person. Real per-buyer access
    control would need actual accounts, which this app deliberately doesn't
    have — see README's "Data safety" section. */
-const ACCESS_CODE = "glowhaus2026";
+// Year-free on purpose: a "2026" code reads stale to a 2027 buyer of a
+// lifetime product.
+const ACCESS_CODE = "glowhausritual";
 const GATE_KEY = "biohacker-os:gate";
 
 export function AccessGate({ children }: { children: React.ReactNode }) {

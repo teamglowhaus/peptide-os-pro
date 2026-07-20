@@ -149,9 +149,10 @@ private, beautiful home for all of it — designed like a luxury planner.
 **Bonus: a companion web app** (works in the browser on iPhone, iPad, Android & desktop —
 installable like an app, no App Store needed)
 • Today dashboard with your Biohacker Score, protocol checklist & gentle trends
+• Streaks & badges — 13 earnable milestones, a daily streak flame, and a little celebration when you hit a new one (motivation, made pretty)
 • Peptide & injectable tracker — 36-entry library (semaglutide, tirzepatide, BPC-157, NAD+ & more) + unlimited custom entries, site-rotation map, vial & refill reminders, travel cards
 • Reconstitution Studio — mg/mL math with a visual 100-unit syringe (arithmetic only, never dosing advice, and gated behind an explicit "this is not medical advice" screen you must agree to before use)
-• Hormones & Menopause suite — HRT log (creams, patches, pellets, troches & more), 20-symptom daily check-in, trend charts to bring to your provider, "ask my provider" list
+• Hormones & Menopause suite — HRT log (creams, patches, pellets, troches & more), 20-symptom daily check-in (hot flashes, night sweats, brain fog & more), period & cycle tracking with estimated cycle day + phase and flow log (estimates from what you log — not a fertility or contraception tool), trend charts to bring to your provider, "ask my provider" list
 • Supplement Sanctuary — 84-item library, 25 categories, 48 seed brands, morning/afternoon/evening/bedtime stacks, inventory & reorder reminders, CSV import/export
 • Biohacking tools — red light, cold plunge, sauna, HRV, CGM, breathwork, PEMF + 20 more
 • Labs & Biomarker Binder with marker-by-marker trend lines
@@ -200,8 +201,9 @@ purchase that works forever, offline, with no dependency on us keeping a server 
 ## 4 · "What's Included" one-liner (for image #2 grid)
 
 15 Fillable, Hyperlinked Pages · Loose Single-Page PDFs Included · GoodNotes/Notability Ready ·
-Canva Template · Bonus Web App (13 modules) · Peptide Library · Hormone Suite · Supplement Library ·
-Lab Binder · Pet & Household Profiles · Light + Dark Mode
+Canva Template · Bonus Web App (13 modules) · Peptide Library · Hormone Suite · Cycle & Period
+Tracking · Supplement Library · Lab Binder · Streaks & Badges · Pet & Household Profiles ·
+Light + Dark Mode
 
 ---
 

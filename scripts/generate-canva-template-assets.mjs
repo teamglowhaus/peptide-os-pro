@@ -14,8 +14,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CANVAS_W = 2700, CANVAS_H = 2025;
 const OUT = join(ROOT, "marketing/canva-template-package/master-template");
 
-const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,600;0,800;1,500&family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,400..600&display=swap" />`;
+const FONTS = `<style>${EMBEDDED_FONT_CSS}</style>`;
 
 const BG_CSS = `background:
     radial-gradient(120% 90% at 50% 0%, rgba(255,253,247,0.92), rgba(255,253,247,0) 60%),

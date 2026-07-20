@@ -567,13 +567,30 @@ export function Tabs({
 }) {
   // Planner folder-tabs: each rests at its own slight tilt on a shared
   // baseline; the active section sits up straight, lifted, in wine, glowing.
+  // Keyboard: full roving-tabindex tab pattern — Left/Right/Home/End move and
+  // activate; only the active tab is in the page's tab order.
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const idx = tabs.findIndex((t) => t.key === active);
+    let next = -1;
+    if (e.key === "ArrowRight") next = (idx + 1) % tabs.length;
+    else if (e.key === "ArrowLeft") next = (idx - 1 + tabs.length) % tabs.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = tabs.length - 1;
+    if (next < 0) return;
+    e.preventDefault();
+    onChange(tabs[next].key);
+    const buttons = listRef.current?.querySelectorAll<HTMLButtonElement>("[role=tab]");
+    buttons?.[next]?.focus();
+  };
   return (
-    <div className="tab-row mb-6" role="tablist">
+    <div className="tab-row mb-6" role="tablist" ref={listRef} onKeyDown={onKeyDown}>
       {tabs.map((t) => (
         <button
           key={t.key}
           role="tab"
           aria-selected={active === t.key}
+          tabIndex={active === t.key ? 0 : -1}
           onClick={() => onChange(t.key)}
           className="tab-folder"
         >

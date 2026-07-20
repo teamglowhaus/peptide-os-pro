@@ -6,6 +6,7 @@
 // Usage: node scripts/generate-buyer-guide-pdf.mjs
 import { chromium } from "playwright-core";
 import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { EMBEDDED_FONT_CSS } from "./lib/embedded-fonts.mjs";
 import { marked } from "marked";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
@@ -19,9 +20,8 @@ const iconDataUri = `data:image/svg+xml;base64,${Buffer.from(iconSvg).toString("
 
 const html = `<!doctype html>
 <html><head><meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..700;1,300..700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=JetBrains+Mono:wght@400;700&display=swap" />
 <style>
+${EMBEDDED_FONT_CSS}
   @page { margin: 40px 45px; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #F7F1E8; }

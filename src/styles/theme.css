@@ -7,8 +7,8 @@
    Warm cream · taupe · champagne · sage · blush · cocoa
    ———————————————————————————————————————————————— */
 @theme {
-  --font-display: "Fraunces", "Georgia", serif;
-  --font-body: "Figtree", "Avenir Next", "Segoe UI", sans-serif;
+  --font-display: "Fraunces Variable", "Fraunces", "Georgia", serif;
+  --font-body: "Figtree Variable", "Figtree", "Avenir Next", "Segoe UI", sans-serif;
   --font-hand: "Caveat", "Segoe Script", cursive;
 
   --color-cream-50: #FBF8F2;
@@ -216,7 +216,8 @@ h1, h2, h3, .font-display {
 .input-ink:focus {
   border-color: var(--color-champagne-400);
   box-shadow: var(--shadow-halo);
-  outline: none;
+  /* No `outline: none` here: the halo is ambience, not a focus indicator.
+     Keyboard users keep the global wine :focus-visible outline. */
 }
 
 /* Rating dots — hand-daubed paint dots, each slightly off-round and turned */
@@ -260,7 +261,9 @@ h1, h2, h3, .font-display {
 .handnote {
   font-family: var(--font-hand);
   font-weight: 500;
-  font-size: 1.28em;
+  /* Handwriting needs to run larger than the surrounding text to stay
+     readable — this demographic includes a lot of reading glasses. */
+  font-size: max(1.4em, 1.05rem);
   line-height: 1.25;
   letter-spacing: 0;
 }
@@ -286,7 +289,9 @@ h1, h2, h3, .font-display {
   font-weight: 600;
   font-size: 0.85rem;
   white-space: nowrap;
-  color: var(--ink-soft);
+  /* --ink, not --ink-soft: inactive tab labels at this size need ≥4.5:1
+     against the sunken background to stay WCAG-readable. */
+  color: var(--ink);
   background: var(--surface-sunken);
   transition: all 180ms ease;
   transform-origin: bottom center;

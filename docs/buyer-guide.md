@@ -8,7 +8,7 @@ two minutes.*
 ## Step 1 · Open your app
 
 Your access link: **`https://peptide-os-pro.vercel.app`**
-Your access code: **`glowhaus2026`**
+Your access code: **`glowhausritual`**
 
 Open the link in the browser on any device, enter the code once — after that this device stays
 unlocked. No account required; your data stays on your device.

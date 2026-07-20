@@ -6,6 +6,7 @@
 // Usage: node scripts/generate-license-pdf.mjs
 import { chromium } from "playwright-core";
 import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { EMBEDDED_FONT_CSS } from "./lib/embedded-fonts.mjs";
 import { marked } from "marked";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
@@ -17,33 +18,14 @@ const bodyHtml = marked.parse(md);
 const iconSvg = readFileSync(join(ROOT, "public/icons/icon.svg"), "utf8");
 const iconDataUri = `data:image/svg+xml;base64,${Buffer.from(iconSvg).toString("base64")}`;
 
-// Caveat (the handwriting accent) is vendored in scripts/lib/fonts and
-// embedded as base64: Google Fonts is not reachable from every build
-// environment, and without a real Caveat the handwritten lines silently
-// fall back to a serif — which defeats their entire purpose.
-const caveat500 = readFileSync(join(ROOT, "scripts/lib/fonts/caveat-latin-500-normal.woff2")).toString("base64");
-const caveat600 = readFileSync(join(ROOT, "scripts/lib/fonts/caveat-latin-600-normal.woff2")).toString("base64");
 
 // Hand-drawn squiggle underline, matching the app's signature accent
 const squiggle = `<svg viewBox="0 0 200 14" preserveAspectRatio="none" style="width:96px;height:8px;display:block;margin-top:6px;"><path d="M2 8 C 18 1, 33 1, 50 8 S 82 15, 100 8 S 132 1, 150 8 S 182 15, 198 7" fill="none" stroke="#A85D73" stroke-width="3.5" stroke-linecap="round"/></svg>`;
 
 const html = `<!doctype html>
 <html><head><meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..700;1,300..700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=JetBrains+Mono:wght@400;700&display=swap" />
 <style>
-  @font-face {
-    font-family: 'Caveat';
-    font-style: normal;
-    font-weight: 500;
-    src: url(data:font/woff2;base64,${caveat500}) format('woff2');
-  }
-  @font-face {
-    font-family: 'Caveat';
-    font-style: normal;
-    font-weight: 600;
-    src: url(data:font/woff2;base64,${caveat600}) format('woff2');
-  }
+${EMBEDDED_FONT_CSS}
   @page { margin: 40px 45px; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #F7F1E8; }

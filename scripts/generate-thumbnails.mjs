@@ -10,6 +10,7 @@
 // Requires a locally running preview build (npm run preview) at APP_URL.
 import { chromium } from "playwright-core";
 import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { EMBEDDED_FONT_CSS } from "./lib/embedded-fonts.mjs";
 import { seed as baseSeed } from "./fixtures/demo-seed.mjs";
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
@@ -33,13 +34,15 @@ function initGate({ seed, dark }) {
   localStorage.setItem("biohacker-os:gate", "1");
 }
 
-async function screenshotApp(browser, { route, dark, clip, actions }) {
+async function screenshotApp(browser, { route, dark, clip, actions, viewportW = MOCK_VIEWPORT_W }) {
   // CSS zoom shrinks the *logical* layout width (viewport / zoom), which can
   // shift Tailwind's responsive breakpoints and break grids. Counteract that
   // by widening the real viewport by the same factor, so the app still lays
-  // itself out at the original 1280 logical width — just rendered bigger.
+  // itself out at the original logical width — just rendered bigger.
+  // `viewportW` lets dense screens (e.g. the two-column symptom grid) run
+  // wider so labels don't truncate in the marketing shot.
   const page = await browser.newPage({
-    viewport: { width: Math.round(MOCK_VIEWPORT_W * ZOOM), height: Math.round((clip.height + clip.y) * ZOOM) },
+    viewport: { width: Math.round(viewportW * ZOOM), height: Math.round((clip.height + clip.y) * ZOOM) },
     deviceScaleFactor: CAPTURE_DSF,
   });
   page.on("pageerror", (e) => console.log("PAGE ERROR:", e.message));
@@ -93,9 +96,8 @@ function slideHtml({ eyebrow, headline, subhead, screenshotDataUri, mockW, mockH
     ? calloutBadge({ ...callout, screenLeft, screenTop, mockW })
     : "";
   return `<!doctype html><html><head><meta charset="utf-8"/>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,600;0,800;1,500&family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,400..600&display=swap" />
 <style>
+${EMBEDDED_FONT_CSS}
   * { box-sizing: border-box; }
   html,body{margin:0;padding:0;width:${CANVAS_W}px;height:${CANVAS_H}px;overflow:hidden;
     background:
@@ -226,7 +228,7 @@ const SLIDES = [
     actions: async (page) => { await page.getByRole("tab", { name: "Library", exact: true }).click(); await page.waitForTimeout(400); },
     callout: { value: "36", label: "Peptides Tracked", side: "right" } },
   { n: "06-menopause", eyebrow: "Menopause & HRT Suite", headline: "Track 20 Symptoms Daily", subhead: "Charts your doctor will love",
-    route: "hormones", clip: { x: CX, y: 195, width: CW, height: 500 },
+    route: "hormones", viewportW: 1480, clip: { x: CX, y: 195, width: 1180, height: 500 },
     callout: { value: "20", label: "Symptoms Tracked", side: "left", accent: "#D9A22C", accentDark: "#A6721B" } },
   { n: "02-whats-included", eyebrow: "Everything Included", headline: "13 Modules In One System", subhead: "Turn On Only What You Use",
     route: "settings", clip: { x: CX, y: 345, width: CW, height: 430 },
@@ -269,7 +271,7 @@ const SLIDES = [
 async function build(slide, browser) {
   let dataUri = null, mockW = 1900, mockH = 1150;
   if (slide.route) {
-    const buf = await screenshotApp(browser, { route: slide.route, dark: slide.dark, clip: slide.clip, actions: slide.actions });
+    const buf = await screenshotApp(browser, { route: slide.route, dark: slide.dark, clip: slide.clip, actions: slide.actions, viewportW: slide.viewportW });
     dataUri = `data:image/png;base64,${buf.toString("base64")}`;
     const scale = Math.min(MOCK_MAX_W / slide.clip.width, MOCK_MAX_H / slide.clip.height);
     mockW = Math.round(slide.clip.width * scale);

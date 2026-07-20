@@ -57,7 +57,32 @@ if (existsSync(welcomePdf)) {
   fail("marketing/delivery-pdfs/1-Welcome-Start-Here.pdf is missing entirely.");
 }
 
-// 3. The 5-file Etsy delivery slate should be complete and named correctly.
+// 3. Font-fallback check: a delivery PDF once shipped with "Fraunces"
+//    headers that were actually Liberation Serif, because Google Fonts
+//    silently failed during generation. Brand fonts are embedded from npm
+//    now (scripts/lib/embedded-fonts.mjs) — this guards the regression.
+//    A PDF must contain its brand font names; DejaVu/Liberation appearing
+//    WITHOUT the brand fonts means the render fell back wholesale.
+for (const pdfName of ["1-Welcome-Start-Here.pdf", "3-License-and-Thank-You.pdf"]) {
+  const pdfPath = join(ROOT, "marketing/delivery-pdfs", pdfName);
+  if (!existsSync(pdfPath)) continue;
+  const raw = readFileSync(pdfPath, "latin1");
+  const hasBrand = /Fraunces/.test(raw) && /Figtree/.test(raw);
+  if (!hasBrand) {
+    fail(`${pdfName} does not embed the brand fonts (Fraunces/Figtree) — it was generated with fallback system fonts. Regenerate it (the generators embed fonts from node_modules).`);
+  } else {
+    ok(`${pdfName} embeds the real brand fonts.`);
+  }
+}
+
+// 4. The access link in the PDFs is a *guess* until the production deploy
+//    exists. Nothing automated can verify it from here — so say it loudly.
+const urlMatch = buyerGuide.match(/https:\/\/[^\s`*)]+/);
+if (urlMatch) {
+  console.warn(`⚠ REMINDER: open ${urlMatch[0]} yourself (on your phone!) after merging to main. If Vercel assigned a different production domain, fix docs/buyer-guide.md + docs/license-thank-you.md and regenerate both PDFs BEFORE uploading to Etsy.`);
+}
+
+// 5. The 5-file Etsy delivery slate should be complete and named correctly.
 const expected = [
   "1-Welcome-Start-Here.pdf",
   "2-Companion-Binder-15-Pages.pdf",
