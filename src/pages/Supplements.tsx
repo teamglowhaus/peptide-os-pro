@@ -172,8 +172,10 @@ export function Supplements() {
               return (
                 <Card key={st.key}>
                   <div className="mb-3 flex items-center justify-between">
-                    <p className="flex items-center gap-2 font-display text-lg font-medium">
-                      <span className="text-champagne-600 dark:text-champagne-300">{STACK_ICONS[st.key as StackTime]}</span>
+                    <p className="flex items-center gap-2.5 font-display text-lg font-medium">
+                      <span className="flex h-8 w-8 -rotate-6 items-center justify-center rounded-xl bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
+                        {STACK_ICONS[st.key as StackTime]}
+                      </span>
                       {st.label}
                     </p>
                     <span className="text-xs text-ink-faint">
@@ -226,14 +228,19 @@ export function Supplements() {
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
             {mine.map((s) => (
-              <Card key={s.id} hover className="!p-4.5 p-5">
+              <Card key={s.id} hover className="group !p-4.5 p-5">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-[0.68rem] font-semibold uppercase tracking-wider text-sage-500 dark:text-sage-300">{s.category}</p>
-                    <p className="font-display text-lg font-medium text-ink-strong">{s.name}</p>
-                    {(s.brand || s.product) && (
-                      <p className="truncate text-[0.8rem] text-ink-soft">{[s.brand, s.product].filter(Boolean).join(" · ")}</p>
-                    )}
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 -rotate-6 items-center justify-center rounded-xl bg-sage-100 text-sage-500 transition-transform group-hover:rotate-0 dark:bg-sage-600/25 dark:text-sage-300">
+                      <Pill size={17} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[0.68rem] font-semibold uppercase tracking-wider text-sage-500 dark:text-sage-300">{s.category}</p>
+                      <p className="font-display text-lg font-medium text-ink-strong">{s.name}</p>
+                      {(s.brand || s.product) && (
+                        <p className="truncate text-[0.8rem] text-ink-soft">{[s.brand, s.product].filter(Boolean).join(" · ")}</p>
+                      )}
+                    </div>
                   </div>
                   <div className="flex shrink-0">
                     <button onClick={() => setEditing(s)} aria-label="Edit" className="rounded-full p-2 text-ink-faint hover:bg-sunken hover:text-ink"><Pencil size={15} /></button>

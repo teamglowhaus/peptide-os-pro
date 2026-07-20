@@ -352,11 +352,14 @@ export function Stat({
   value,
   detail,
   tone = "neutral",
+  hero,
 }: {
   label: string;
   value: string;
   detail?: string;
   tone?: "neutral" | "sage" | "blush" | "champagne";
+  /** The one headline stat per page gets the warm hero wash. */
+  hero?: boolean;
 }) {
   const tones = {
     neutral: "",
@@ -365,7 +368,7 @@ export function Stat({
     champagne: "text-champagne-600 dark:text-champagne-300",
   };
   return (
-    <div className="card p-4">
+    <div className={cx("card p-4", hero && "card-hero")}>
       <p className="eyebrow">{label}</p>
       <p className={cx("mt-1 font-display text-2xl font-medium text-ink-strong", tones[tone])}>{value}</p>
       {detail && <p className="mt-0.5 text-xs text-ink-faint">{detail}</p>}

@@ -32,12 +32,17 @@ export function Wearables() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {devices.map((w) => (
-            <Card key={w.id} hover className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-wider text-sage-500 dark:text-sage-300">{w.brand}</p>
-                <p className="font-display text-lg font-medium text-ink-strong">{w.model || w.brand}</p>
-                {w.metricFocus && <p className="mt-1 text-[0.85rem] text-ink-soft">Watching: {w.metricFocus}</p>}
-                {w.syncNotes && <p className="mt-1 text-[0.78rem] text-ink-faint">{w.syncNotes}</p>}
+            <Card key={w.id} hover className="group flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-9 w-9 shrink-0 -rotate-6 items-center justify-center rounded-xl bg-sage-100 text-sage-500 transition-transform group-hover:rotate-0 dark:bg-sage-600/25 dark:text-sage-300">
+                  <Watch size={17} />
+                </span>
+                <div>
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-wider text-sage-500 dark:text-sage-300">{w.brand}</p>
+                  <p className="font-display text-lg font-medium text-ink-strong">{w.model || w.brand}</p>
+                  {w.metricFocus && <p className="mt-1 text-[0.85rem] text-ink-soft">Watching: {w.metricFocus}</p>}
+                  {w.syncNotes && <p className="mt-1 text-[0.78rem] text-ink-faint">{w.syncNotes}</p>}
+                </div>
               </div>
               <button
                 onClick={() => update((d) => void (d.wearables = d.wearables.filter((x) => x.id !== w.id)))}
