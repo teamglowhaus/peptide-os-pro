@@ -175,8 +175,8 @@ export function Shell({
                   className={cx(
                     "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[0.92rem] font-medium transition-all",
                     route === i.key
-                      ? "bg-champagne-500/30 text-champagne-50 shadow-soft dark:bg-champagne-500/35 dark:text-champagne-50"
-                      : "text-ink-soft hover:bg-champagne-400/10 hover:text-ink dark:hover:bg-champagne-400/15 dark:hover:text-champagne-100"
+                      ? "bg-champagne-500/30 text-champagne-50 shadow-[0_0_16px_rgb(201_169_106/0.25)] dark:bg-champagne-500/35 dark:text-champagne-50"
+                      : "text-ink-soft hover:bg-champagne-400/10 hover:text-ink hover:shadow-[0_0_14px_rgb(201_169_106/0.2)] dark:hover:bg-champagne-400/15 dark:hover:text-champagne-100"
                   )}
                 >
                   <span className={cx(route === i.key ? "text-champagne-100 dark:text-champagne-100" : "text-ink-faint")}>

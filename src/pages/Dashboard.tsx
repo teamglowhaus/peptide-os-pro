@@ -167,7 +167,8 @@ export function Dashboard() {
         </h1>
         {ob.mainGoal && (
           <p className="mt-2 text-[0.95rem] text-ink-soft">
-            This season's intention: <em className="text-ink">{ob.mainGoal.toLowerCase()}</em>
+            This season's intention:{" "}
+            <span className="handnote text-wine-500 dark:text-wine-300">{ob.mainGoal.toLowerCase()}</span>
           </p>
         )}
       </header>

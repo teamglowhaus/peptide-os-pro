@@ -57,7 +57,7 @@ export function Lifestyle() {
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <Card>
           <p className="font-display text-lg font-medium">{tracker.label} · today</p>
-          <p className="mb-5 mt-0.5 text-[0.83rem] italic text-ink-soft">{tracker.tagline}</p>
+          <p className="handnote mb-5 mt-0.5 text-[0.83rem] text-wine-500 dark:text-wine-300">{tracker.tagline}</p>
           <div className="grid gap-4 sm:grid-cols-2">
             {tracker.fields.map((f) => (
               <Field

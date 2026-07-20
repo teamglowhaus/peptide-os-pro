@@ -183,7 +183,7 @@ export function Supplements() {
                     </span>
                   </div>
                   {items.length === 0 ? (
-                    <p className="text-[0.85rem] text-ink-faint">Nothing scheduled — a quiet moment.</p>
+                    <p className="handnote text-[0.85rem] text-ink-faint">Nothing scheduled — a quiet moment.</p>
                   ) : (
                     <ul className="space-y-1">
                       {items.map((s) => {

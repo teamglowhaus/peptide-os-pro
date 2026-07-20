@@ -9,6 +9,7 @@
 @theme {
   --font-display: "Fraunces", "Georgia", serif;
   --font-body: "Figtree", "Avenir Next", "Segoe UI", sans-serif;
+  --font-hand: "Caveat", "Segoe Script", cursive;
 
   --color-cream-50: #FBF8F2;
   --color-cream-100: #F7F1E8;
@@ -72,10 +73,31 @@
   --color-amethyst-500: #8C63C4;
   --color-amethyst-600: #684896;
 
+  /* The 2026 depth palette — wine, plum, terracotta. Wine is the app's
+     statement color: active tabs, primary buttons, italic accent words.
+     Deep enough to feel expensive, warm enough to live beside cream. */
+  --color-wine-200: #E8C6CE;
+  --color-wine-300: #C98A9B;
+  --color-wine-400: #A85D73;
+  --color-wine-500: #8A3B55;
+  --color-wine-600: #6E2A42;
+  --color-wine-700: #521E31;
+
+  --color-plum-300: #B294B8;
+  --color-plum-400: #8F6798;
+  --color-plum-500: #714C7B;
+
+  --color-terracotta-300: #E0A183;
+  --color-terracotta-400: #C97C58;
+  --color-terracotta-500: #A85D3D;
+
   --shadow-soft: 0 1px 2px rgb(62 51 43 / 0.05), 0 6px 20px -6px rgb(62 51 43 / 0.12);
   --shadow-lifted: 0 2px 4px rgb(62 51 43 / 0.06), 0 14px 34px -10px rgb(62 51 43 / 0.20);
   --shadow-inner-glow: inset 0 1px 0 rgb(255 255 255 / 0.6);
   --shadow-glow: 0 0 0 1px rgb(255 255 255 / 0.5) inset, 0 10px 24px -8px rgb(62 51 43 / 0.35);
+  /* Warm halo used on hover — tabs, nav, buttons all glow with candlelight */
+  --shadow-halo: 0 0 0 1px rgb(201 169 106 / 0.35), 0 2px 18px -2px rgb(201 169 106 / 0.55);
+  --shadow-halo-wine: 0 0 0 1px rgb(138 59 85 / 0.30), 0 2px 20px -2px rgb(138 59 85 / 0.45);
 
   --radius-card: 1.375rem;
   --radius-pill: 999px;
@@ -186,9 +208,109 @@ h1, h2, h3, .font-display {
 .card-hover:hover { box-shadow: var(--shadow-lifted); transform: translateY(-1px); }
 
 /* A warmer wash for the one or two "star of the show" cards per screen —
-   everything else stays the calm flat card so this actually reads as emphasis. */
-.card-hero { background: linear-gradient(155deg, var(--color-champagne-200) -20%, var(--surface-card) 60%); }
-.dark .card-hero { background: linear-gradient(155deg, rgb(201 169 106 / 0.16) -20%, var(--surface-card) 60%); }
+   everything else stays the calm flat card so this actually reads as emphasis.
+   Now carries a whisper of wine at the tail so the wash reads hand-tinted,
+   not a single default gradient. */
+.card-hero {
+  background:
+    radial-gradient(130% 90% at 108% -8%, rgb(138 59 85 / 0.10), transparent 55%),
+    linear-gradient(155deg, var(--color-champagne-200) -20%, var(--surface-card) 60%);
+}
+.dark .card-hero {
+  background:
+    radial-gradient(130% 90% at 108% -8%, rgb(168 93 115 / 0.14), transparent 55%),
+    linear-gradient(155deg, rgb(201 169 106 / 0.16) -20%, var(--surface-card) 60%);
+}
+
+/* —— Character kit: shapes a human would draw ——————————————— */
+
+/* Hand-inked button: no two corners share a radius, like a pen outline.
+   Subtle enough to stay luxe, irregular enough to never read "default pill". */
+.btn-ink { border-radius: 1.15rem 0.8rem 1.2rem 0.85rem / 0.85rem 1.2rem 0.8rem 1.15rem; }
+.btn-ink:hover { box-shadow: var(--shadow-halo); }
+
+/* Handwritten aside — Caveat, for the notes a person would pencil in */
+.handnote {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 1.28em;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+/* Planner folder-tabs: tabs sit ON a baseline like a real binder's section
+   tabs. Each rests at its own slight tilt (nth-child), the active one sits
+   up straight, lifted and glowing — exactly how a well-thumbed planner looks. */
+.tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--line-strong);
+  padding: 0 0.4rem;
+}
+.tab-folder {
+  position: relative;
+  top: 2px;
+  border: 2px solid var(--line-strong);
+  border-bottom: none;
+  border-radius: 0.9rem 1.2rem 0 0 / 1.1rem 1.4rem 0 0;
+  padding: 0.5rem 1.15rem 0.62rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  color: var(--ink-soft);
+  background: var(--surface-sunken);
+  transition: all 180ms ease;
+  transform-origin: bottom center;
+}
+.tab-folder:nth-child(odd) { transform: rotate(-1.1deg); }
+.tab-folder:nth-child(even) { transform: rotate(0.9deg); }
+.tab-folder:hover {
+  color: var(--ink-strong);
+  background: var(--surface-card);
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow: var(--shadow-halo);
+}
+.tab-folder[aria-selected="true"] {
+  color: var(--color-cream-50);
+  background: linear-gradient(170deg, var(--color-wine-400), var(--color-wine-600));
+  border-color: var(--color-wine-600);
+  transform: rotate(0deg) translateY(-3px);
+  padding-bottom: 0.75rem;
+  box-shadow: var(--shadow-halo-wine);
+}
+.dark .tab-folder[aria-selected="true"] {
+  color: var(--color-cream-50);
+  background: linear-gradient(170deg, var(--color-wine-400), var(--color-wine-600));
+  border-color: var(--color-wine-400);
+}
+
+/* Watercolor wash behind page headers — two soft-edged pigment pools,
+   wine + champagne, like a brush touched the paper before the title. */
+.header-wash { position: relative; }
+.header-wash::before,
+.header-wash::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(26px);
+}
+.header-wash::before {
+  width: 240px; height: 130px;
+  left: -60px; top: -46px;
+  background: radial-gradient(closest-side, rgb(201 169 106 / 0.34), transparent);
+  border-radius: 58% 42% 55% 45% / 48% 60% 40% 52%;
+}
+.header-wash::after {
+  width: 190px; height: 110px;
+  left: 130px; top: -18px;
+  background: radial-gradient(closest-side, rgb(138 59 85 / 0.16), transparent);
+  border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%;
+}
+.dark .header-wash::before { background: radial-gradient(closest-side, rgb(201 169 106 / 0.20), transparent); }
+.dark .header-wash::after { background: radial-gradient(closest-side, rgb(168 93 115 / 0.22), transparent); }
 
 /* Champagne hairline divider with a center dot, used as a section flourish */
 .flourish {

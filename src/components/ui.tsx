@@ -22,17 +22,18 @@ export function Button({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
   const styles: Record<ButtonVariant, string> = {
     primary:
-      "bg-cocoa-600 text-cream-50 hover:bg-cocoa-500 hover:shadow-lifted dark:bg-cream-200 dark:text-cocoa-800 dark:hover:bg-cream-100 shadow-soft",
+      "bg-gradient-to-br from-wine-400 to-wine-600 text-cream-50 hover:from-wine-300 hover:to-wine-500 shadow-soft",
     soft:
-      "bg-sage-200/60 text-sage-600 hover:bg-sage-300/70 hover:shadow-soft dark:bg-sage-600/30 dark:text-sage-200 dark:hover:bg-sage-600/50",
+      "bg-sage-200/60 text-sage-600 hover:bg-sage-300/70 dark:bg-sage-600/30 dark:text-sage-200 dark:hover:bg-sage-600/50",
     ghost: "text-ink-soft hover:bg-champagne-200/50 hover:text-cocoa-600 dark:hover:bg-champagne-600/20 dark:hover:text-champagne-200",
-    outline: "border border-line-strong text-ink hover:border-champagne-500 hover:bg-champagne-200/40 hover:text-cocoa-600 dark:hover:bg-champagne-600/15",
-    danger: "bg-blush-100 text-blush-500 hover:bg-blush-200 hover:shadow-soft dark:bg-blush-500/20 dark:text-blush-200 dark:hover:bg-blush-500/30",
+    outline: "border-2 border-line-strong text-ink hover:border-wine-400 hover:bg-wine-200/25 hover:text-wine-600 dark:hover:border-wine-300 dark:hover:bg-wine-500/15 dark:hover:text-wine-200",
+    danger: "bg-blush-100 text-blush-500 hover:bg-blush-200 dark:bg-blush-500/20 dark:text-blush-200 dark:hover:bg-blush-500/30",
   };
   return (
     <button
       className={cx(
-        "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[0.9rem] font-semibold tracking-wide transition-all hover:-translate-y-px active:translate-y-0 disabled:opacity-40 disabled:pointer-events-none disabled:hover:translate-y-0",
+        // btn-ink: hand-drawn asymmetric corners + candlelight halo on hover
+        "btn-ink inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[0.9rem] font-semibold tracking-wide transition-all hover:-translate-y-px active:translate-y-0 disabled:opacity-40 disabled:pointer-events-none disabled:hover:translate-y-0",
         styles[variant],
         className
       )}
@@ -67,12 +68,25 @@ export function PageHeader({
   sub?: string;
   actions?: React.ReactNode;
 }) {
+  // Editorial signature: the last word of every title is set as a wine italic —
+  // the typographic equivalent of a hand-finished flourish.
+  const words = title.trim().split(" ");
+  const lastWord = words.length > 1 ? words.pop() : null;
   return (
     <header className="fade-up mb-7 flex flex-wrap items-end justify-between gap-4">
-      <div>
+      <div className="header-wash">
         <p className="eyebrow mb-1.5">{eyebrow}</p>
-        <h1 className="text-[1.9rem] leading-tight sm:text-4xl font-medium">{title}</h1>
-        <Squiggle className="mt-1.5 h-2 w-24 text-champagne-400" />
+        <h1 className="text-[1.9rem] leading-tight sm:text-4xl font-medium">
+          {lastWord ? (
+            <>
+              {words.join(" ")}{" "}
+              <em className="font-light text-wine-500 dark:text-wine-300">{lastWord}</em>
+            </>
+          ) : (
+            title
+          )}
+        </h1>
+        <Squiggle className="mt-1.5 h-2 w-24 text-wine-400/70 dark:text-wine-300/70" />
         {sub && <p className="mt-2 max-w-xl text-[0.95rem] text-ink-soft">{sub}</p>}
       </div>
       {actions && <div className="flex shrink-0 gap-2">{actions}</div>}
@@ -182,9 +196,9 @@ export function Chip({
     <button
       type="button"
       className={cx(
-        "rounded-full border px-3.5 py-1.5 text-[0.82rem] font-medium transition-colors",
+        "btn-ink border px-3.5 py-1.5 text-[0.82rem] font-medium transition-all",
         active
-          ? "border-champagne-400 bg-champagne-200/50 text-cocoa-600 dark:bg-champagne-600/25 dark:text-champagne-200"
+          ? "border-wine-400 bg-wine-200/40 text-wine-600 dark:border-wine-300 dark:bg-wine-500/20 dark:text-wine-200"
           : "border-line text-ink-soft hover:border-line-strong hover:text-ink",
         className
       )}
@@ -551,18 +565,17 @@ export function Tabs({
   active: string;
   onChange: (k: string) => void;
 }) {
+  // Planner folder-tabs: each rests at its own slight tilt on a shared
+  // baseline; the active section sits up straight, lifted, in wine, glowing.
   return (
-    <div className="mb-6 flex flex-wrap gap-1.5 rounded-2xl border border-line-strong bg-cocoa-800/[0.05] p-1.5 w-fit max-w-full overflow-x-auto dark:bg-cocoa-900/50">
+    <div className="tab-row mb-6" role="tablist">
       {tabs.map((t) => (
         <button
           key={t.key}
+          role="tab"
+          aria-selected={active === t.key}
           onClick={() => onChange(t.key)}
-          className={cx(
-            "whitespace-nowrap rounded-full px-4 py-1.5 text-[0.85rem] font-semibold transition-all",
-            active === t.key
-              ? "bg-cocoa-700 text-cream-50 shadow-lifted dark:bg-cream-100 dark:text-cocoa-800"
-              : "text-ink-soft hover:bg-card hover:text-ink-strong"
-          )}
+          className="tab-folder"
         >
           {t.label}
         </button>
