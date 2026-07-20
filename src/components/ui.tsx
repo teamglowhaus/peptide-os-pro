@@ -129,7 +129,7 @@ export function Flourish({ label }: { label?: string }) {
 /* —— Form primitives —— */
 
 const inputBase =
-  "w-full rounded-2xl border border-line bg-raised px-4 py-2.5 text-[0.95rem] text-ink placeholder:text-ink-faint focus:border-champagne-400 transition-colors";
+  "input-ink w-full border border-line bg-raised px-4 py-2.5 text-[0.95rem] text-ink placeholder:text-ink-faint transition-all";
 
 export function Field({
   label,
@@ -267,7 +267,7 @@ export function RatingDots({
           aria-label={`${n} of ${max}`}
           onClick={() => onChange?.(n === value ? 0 : n)}
           className={cx(
-            "h-5 w-5 rounded-full border transition-all",
+            "dot-ink h-5 w-5 border transition-all",
             n <= value ? tones[tone] : "border-line-strong bg-transparent hover:bg-sunken"
           )}
         />
@@ -313,7 +313,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cx(
-          "fade-up relative z-10 max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-card p-6 shadow-lifted sm:rounded-3xl border border-line",
+          "sheet-ink fade-up relative z-10 max-h-[92dvh] w-full overflow-y-auto bg-card p-6 shadow-lifted border border-line",
           wide ? "sm:max-w-3xl" : "sm:max-w-lg"
         )}
       >
@@ -348,7 +348,7 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="fade-up flex flex-col items-center rounded-[--radius-card] border border-dashed border-line-strong bg-card/60 px-8 py-14 text-center">
+    <div className="ink-xl fade-up flex flex-col items-center border-2 border-dashed border-line-strong bg-card/60 px-8 py-14 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-sage-100 text-sage-500 dark:bg-sage-600/25 dark:text-sage-300">
         {icon}
       </div>
@@ -497,7 +497,7 @@ export function SeverityMeter({ value, labels, className }: { value: number; lab
 
 export function Disclaimer({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-6 rounded-2xl bg-sunken/70 px-4 py-3 text-[0.78rem] leading-relaxed text-ink-faint">
+    <p className="ink-xl mt-6 bg-sunken/70 px-4 py-3 text-[0.78rem] leading-relaxed text-ink-faint">
       {children}
     </p>
   );
@@ -531,7 +531,7 @@ export function BackupBanner({
   if (!stale) return null;
   const never = daysSince === null;
   return (
-    <div className="fade-up mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-blush-300/70 bg-blush-100/50 px-5 py-4 dark:bg-blush-500/10">
+    <div className="ink-xl fade-up mb-6 flex flex-wrap items-center justify-between gap-3 border-2 border-blush-300/70 bg-blush-100/50 px-5 py-4 dark:bg-blush-500/10">
       <div className="flex items-start gap-3">
         <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blush-200/70 text-blush-500 dark:bg-blush-500/25 dark:text-blush-200">
           <ShieldAlert size={16} />

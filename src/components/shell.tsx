@@ -62,7 +62,7 @@ function ProfileSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-line bg-card px-3.5 py-2.5 text-left shadow-soft hover:border-line-strong"
+        className="input-ink flex w-full items-center gap-3 border border-line bg-card px-3.5 py-2.5 text-left shadow-soft transition-all hover:border-line-strong hover:shadow-[0_0_14px_rgb(201_169_106/0.2)]"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blush-100 text-lg dark:bg-blush-500/25">
           {activeProfile.emoji}
@@ -76,7 +76,7 @@ function ProfileSwitcher() {
         <ChevronDown size={16} className={cx("text-ink-faint transition-transform", open && "rotate-180")} />
       </button>
       {open && (
-        <div className="fade-up absolute left-0 right-0 z-30 mt-2 overflow-hidden rounded-2xl border border-line bg-card shadow-lifted">
+        <div className="ink-xl fade-up absolute left-0 right-0 z-30 mt-2 overflow-hidden border border-line bg-card shadow-lifted">
           {db.profiles.map((p) => (
             <button
               key={p.id}
