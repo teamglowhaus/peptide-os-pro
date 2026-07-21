@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Syringe, Pill, Flower2, Sun, Snowflake, Flame, FlaskConical, CalendarHeart,
-  PawPrint, Moon, HeartPulse, Plus,
+  PawPrint, Moon, HeartPulse, Plus, Gem,
 } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid, daysSince, triggerBackupDownload, localDateStr } from "../lib/store";
 import {
@@ -10,6 +10,7 @@ import {
 import { STACK_TIMES } from "../data/supplements";
 import type { DailyLog, StackTime } from "../lib/types";
 import { computeStreakInfo, computeBadges } from "../lib/achievements";
+import { nextDueDate } from "./Beauty";
 import { BadgeShelf } from "../components/BadgeShelf";
 import { Streamers, StreakToast } from "../components/Streamers";
 
@@ -67,6 +68,21 @@ export function Dashboard() {
     .filter((a) => !a.done && a.date >= date)
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 3);
+
+  // Beauty treatments due within the next 3 days (or overdue) surface here —
+  // the "your peel is coming up" nudge, answered on the Beauty page.
+  const beautyDue = useMemo(() => {
+    const logs = byProfile(db.beautyLogs, pid);
+    return byProfile(db.beautyTreatments, pid)
+      .filter((t) => t.active)
+      .map((t) => ({ t, due: nextDueDate(t, logs) }))
+      .filter((x): x is { t: (typeof x)["t"]; due: string } => {
+        if (!x.due) return false;
+        const since = daysSince(x.due);
+        return since !== null && since >= -3;
+      })
+      .sort((a, b) => a.due.localeCompare(b.due));
+  }, [db.beautyTreatments, db.beautyLogs, pid]);
 
   const petReminders = db.pets
     .flatMap((p) => p.appointments.map((a) => ({ pet: p.name, ...a })))
@@ -267,6 +283,18 @@ export function Dashboard() {
               tone="champagne"
               lines={injectables.slice(0, 3).map((i) => `${i.name} · ${i.schedule || "see plan"}`)}
               route="peptides"
+            />
+          )}
+          {ob.beauty !== false && beautyDue.length > 0 && (
+            <ProtocolCard
+              icon={<Gem size={17} />}
+              title="Beauty due"
+              tone="blush"
+              lines={beautyDue.slice(0, 3).map(({ t, due }) => {
+                const since = daysSince(due) ?? 0;
+                return `${t.name} · ${since > 0 ? "overdue" : since === 0 ? "today" : fmtDate(due)}`;
+              })}
+              route="beauty"
             />
           )}
           {ob.redLight && <SessionQuickCard icon={<Sun size={17} />} label="Red light session" route="redlight" doneToday={db.redLight.some((s) => s.profileId === pid && s.date === date)} />}

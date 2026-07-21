@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Sparkles, Syringe, Calculator, Flower2, Pill, Activity, Sun, Snowflake, Flame,
   FlaskConical, Watch, HeartPulse, PawPrint, Users, Printer, Settings as SettingsIcon,
-  Moon, SunMedium, ChevronDown, Menu, X, ScrollText,
+  Moon, SunMedium, ChevronDown, Menu, X, ScrollText, Gem,
 } from "lucide-react";
 import { useStore, today } from "../lib/store";
 import { cx } from "./ui";
@@ -25,6 +25,7 @@ export const NAV_ITEMS: NavItem[] = [
   { key: "coldplunge", label: "Cold Plunge", icon: <Snowflake size={18} />, group: "body" },
   { key: "sauna", label: "Sauna", icon: <Flame size={18} />, group: "body" },
   { key: "labs", label: "Labs & Biomarkers", icon: <FlaskConical size={18} />, group: "body" },
+  { key: "beauty", label: "Beauty Studio", icon: <Gem size={18} />, group: "body" },
   { key: "wearables", label: "Wearables", icon: <Watch size={18} />, group: "body" },
   { key: "lifestyle", label: "Daily Rituals", icon: <HeartPulse size={18} />, group: "daily" },
   { key: "pets", label: "Pets", icon: <PawPrint size={18} />, group: "home" },

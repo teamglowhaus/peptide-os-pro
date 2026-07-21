@@ -155,6 +155,7 @@ installable like an app, no App Store needed)
 • Hormones & Menopause suite — HRT log (creams, patches, pellets, troches & more), 20-symptom daily check-in (hot flashes, night sweats, brain fog & more), period & cycle tracking with estimated cycle day + phase and flow log (estimates from what you log — not a fertility or contraception tool), trend charts to bring to your provider, "ask my provider" list
 • Supplement Sanctuary — 84-item library, 25 categories, 48 seed brands, morning/afternoon/evening/bedtime stacks, inventory & reorder reminders, CSV import/export
 • Biohacking tools — red light, cold plunge, sauna, HRV, CGM, breathwork, PEMF + 20 more
+• Beauty Studio — 30-entry treatment library (chemical peels, microneedling, LED masks, gua sha, dermaplaning & more, in-office and at-home), set your own repeat schedule and get a gentle "your peel is coming up" reminder you can log or skip, plus an ordered morning/evening skincare routine builder (products, amounts, layer order) with daily check-offs and a skin-reaction diary
 • Labs & Biomarker Binder with marker-by-marker trend lines
 • 8 daily ritual trackers: nutrition, body, fitness, sleep, beauty, dental, hair, mindset
 • Household profiles (spouse, kids, parents) + full pet wellness binder 🐾
@@ -201,9 +202,9 @@ purchase that works forever, offline, with no dependency on us keeping a server 
 ## 4 · "What's Included" one-liner (for image #2 grid)
 
 15 Fillable, Hyperlinked Pages · Loose Single-Page PDFs Included · GoodNotes/Notability Ready ·
-Canva Template · Bonus Web App (13 modules) · Peptide Library · Hormone Suite · Cycle & Period
-Tracking · Supplement Library · Lab Binder · Streaks & Badges · Pet & Household Profiles ·
-Light + Dark Mode
+Canva Template · Bonus Web App (14 modules) · Peptide Library · Hormone Suite · Cycle & Period
+Tracking · Beauty Studio & Skincare Routines · Supplement Library · Lab Binder · Streaks & Badges ·
+Pet & Household Profiles · Light + Dark Mode
 
 ---
 
@@ -226,7 +227,7 @@ italic checkmark trust row) via a real, committed, regenerate-anytime script:
 manual pixel-retouching or drift risk. Files are 2700×2025 px in `marketing/thumbnails/`.
 
 1. **Hero** — "The Ultimate" / "Biohacker Wellness Planner" · Printable PDF binder + bonus web app
-2. **Everything Included** — "13 Modules In One System" · Turn on only what you use
+2. **Everything Included** — "14 Modules In One System" · Turn on only what you use
 3. **Peptide & Injectable Log** — "Never Guess Your Last Dose" · Schedule · Storage · On-Hand Tracking
 4. **Peptide & GLP-1 Tracker** — "36-Entry Reference Library" · Semaglutide · Tirzepatide · BPC-157 · NAD+
 5. **Reconstitution Studio** — "Never Guess Your Dose Math" · mg ⇄ mcg · mL ⇄ Units · Visual Syringe

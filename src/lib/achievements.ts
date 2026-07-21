@@ -49,6 +49,8 @@ function activeDates(db: Database, pid: ID): Set<string> {
   for (const s of db.toolSessions) if (s.profileId === pid) add(s.date);
   for (const l of db.labs) if (l.profileId === pid) add(l.date);
   for (const p of db.periods) if (p.profileId === pid) add(p.startDate);
+  for (const b of db.beautyLogs) if (b.profileId === pid && !b.skipped) add(b.date);
+  for (const c of db.skincareChecks) if (c.profileId === pid) add(c.date);
 
   return dates;
 }
@@ -86,6 +88,9 @@ export function computeBadges(db: Database, pid: ID, onDate: string = today()): 
     db.coldPlunge.filter((s) => s.profileId === pid).length +
     db.sauna.filter((s) => s.profileId === pid).length +
     db.toolSessions.filter((s) => s.profileId === pid).length;
+  const beautyCount =
+    db.beautyLogs.filter((l) => l.profileId === pid && !l.skipped).length +
+    db.skincareChecks.filter((c) => c.profileId === pid).length;
 
   const streakBadge = (id: string, label: string, target: number): Badge => ({
     id, label, description: `Log something ${target} days in a row`,
@@ -127,6 +132,11 @@ export function computeBadges(db: Database, pid: ID, onDate: string = today()): 
       id: "recovery-ritual", label: "Recovery", description: "Log 10 red light / cold plunge / sauna / tool sessions",
       icon: "sun", color: "amethyst", unlocked: recoveryCount >= 10,
       progress: { current: Math.min(recoveryCount, 10), target: 10 },
+    },
+    {
+      id: "glow-ritual", label: "Glow Ritual", description: "Log 10 beauty treatments or skincare check-ins",
+      icon: "sparkles", color: "ruby", unlocked: beautyCount >= 10,
+      progress: { current: Math.min(beautyCount, 10), target: 10 },
     },
   ];
 }

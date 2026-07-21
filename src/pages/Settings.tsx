@@ -17,6 +17,7 @@ const MODULE_TOGGLES: { key: keyof OnboardingAnswers; label: string }[] = [
   { key: "coldPlunge", label: "Cold plunge" },
   { key: "sauna", label: "Sauna" },
   { key: "labs", label: "Labs & biomarkers" },
+  { key: "beauty", label: "Beauty Studio" },
   { key: "wearables", label: "Wearables" },
   { key: "pets", label: "Pet profiles" },
   { key: "household", label: "Household profiles" },

@@ -139,6 +139,7 @@ function defaultSettings(): Settings {
       sauna: false,
       labs: true,
       wearables: false,
+      beauty: true,
       pets: false,
       household: false,
       aesthetic: "cream",
@@ -176,6 +177,10 @@ export function emptyDatabase(): Database {
     appointments: [],
     wearables: [],
     lifestyle: [],
+    beautyTreatments: [],
+    beautyLogs: [],
+    skincareSteps: [],
+    skincareChecks: [],
   };
 }
 
@@ -183,6 +188,7 @@ const ARRAY_KEYS = [
   "profiles", "pets", "injectables", "injectionLogs", "hormones", "symptomLogs", "periods",
   "providerQuestions", "supplements", "supplementChecks", "redLight", "coldPlunge",
   "sauna", "toolSessions", "dailyLogs", "labs", "appointments", "wearables", "lifestyle",
+  "beautyTreatments", "beautyLogs", "skincareSteps", "skincareChecks",
 ] as const satisfies readonly (keyof Database)[];
 
 /**
