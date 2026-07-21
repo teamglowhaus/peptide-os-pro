@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { FlaskConical, Plus, Trash2, FileUp, Sparkle } from "lucide-react";
+import { FlaskConical, Plus, Trash2, FileUp, FileHeart, Sparkle } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, Select, Chip, Tabs,
@@ -47,6 +47,7 @@ export function Labs() {
         sub="Every result in one elegant binder — filed by panel, charted over time, ready for your next appointment."
         actions={
           <>
+            <Button variant="outline" onClick={() => (window.location.hash = "/report")}><FileHeart size={15} /> Visit report</Button>
             <Button variant="outline" onClick={() => fileRef.current?.click()}><FileUp size={15} /> Attach PDF</Button>
             <Button onClick={() => setOpen(true)}><Plus size={16} /> Add result</Button>
           </>

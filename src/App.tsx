@@ -18,6 +18,7 @@ import { Lifestyle } from "./pages/Lifestyle";
 import { Pets } from "./pages/Pets";
 import { Household } from "./pages/Household";
 import { Printables } from "./pages/Printables";
+import { ProviderReport } from "./pages/ProviderReport";
 import { Legal } from "./pages/Legal";
 import { SettingsPage } from "./pages/Settings";
 
@@ -38,6 +39,7 @@ const PAGES: Record<string, React.ComponentType> = {
   pets: Pets,
   household: Household,
   printables: Printables,
+  report: ProviderReport,
   legal: Legal,
   settings: SettingsPage,
 };

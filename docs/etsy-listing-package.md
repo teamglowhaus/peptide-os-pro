@@ -157,6 +157,7 @@ installable like an app, no App Store needed)
 • Biohacking tools — red light, cold plunge, sauna, HRV, CGM, breathwork, PEMF + 20 more
 • Beauty Studio — 42-entry treatment library (chemical peels, microneedling, Botox, filler, PRP & PRF, Fraxel, CO2, Halo & more lasers, LED masks, gua sha, dermaplaning & more, in-office and at-home), set your own repeat schedule and get a gentle "your peel is coming up" reminder you can log or skip, plus an ordered morning/evening skincare routine builder (products, amounts, layer order) with daily check-offs and a skin-reaction diary
 • Labs & Biomarker Binder with marker-by-marker trend lines
+• Provider Visit Report — one tap assembles your last 30 or 90 days (current therapies, symptom patterns, cycle, check-in averages, labs, and your saved questions) into a clean printable report to hand your provider at the start of the appointment
 • 8 daily ritual trackers: nutrition, body, fitness, sleep, beauty, dental, hair, mindset
 • Household profiles (spouse, kids, parents) + full pet wellness binder 🐾
 • Light & dark luxury themes · 100% private today — everything lives only in your own browser,
