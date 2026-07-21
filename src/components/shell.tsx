@@ -62,7 +62,7 @@ function ProfileSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-line bg-card px-3.5 py-2.5 text-left shadow-soft hover:border-line-strong"
+        className="input-ink flex w-full items-center gap-3 border border-line bg-card px-3.5 py-2.5 text-left shadow-soft transition-all hover:border-line-strong hover:shadow-[0_0_14px_rgb(201_169_106/0.2)]"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blush-100 text-lg dark:bg-blush-500/25">
           {activeProfile.emoji}
@@ -76,7 +76,7 @@ function ProfileSwitcher() {
         <ChevronDown size={16} className={cx("text-ink-faint transition-transform", open && "rotate-180")} />
       </button>
       {open && (
-        <div className="fade-up absolute left-0 right-0 z-30 mt-2 overflow-hidden rounded-2xl border border-line bg-card shadow-lifted">
+        <div className="ink-xl fade-up absolute left-0 right-0 z-30 mt-2 overflow-hidden border border-line bg-card shadow-lifted">
           {db.profiles.map((p) => (
             <button
               key={p.id}
@@ -173,13 +173,13 @@ export function Shell({
                   key={i.key}
                   onClick={() => { nav(i.key); onPick?.(); }}
                   className={cx(
-                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[0.92rem] font-medium transition-colors",
+                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[0.92rem] font-medium transition-all",
                     route === i.key
-                      ? "bg-champagne-200/50 text-cocoa-600 dark:bg-champagne-600/25 dark:text-champagne-200"
-                      : "text-ink-soft hover:bg-sunken hover:text-ink"
+                      ? "bg-champagne-500/30 text-champagne-50 shadow-[0_0_16px_rgb(201_169_106/0.25)] dark:bg-champagne-500/35 dark:text-champagne-50"
+                      : "text-ink-soft hover:bg-champagne-400/10 hover:text-ink hover:shadow-[0_0_14px_rgb(201_169_106/0.2)] dark:hover:bg-champagne-400/15 dark:hover:text-champagne-100"
                   )}
                 >
-                  <span className={cx(route === i.key ? "text-champagne-600 dark:text-champagne-300" : "text-ink-faint")}>
+                  <span className={cx(route === i.key ? "text-champagne-100 dark:text-champagne-100" : "text-ink-faint")}>
                     {i.icon}
                   </span>
                   {i.label}
@@ -195,7 +195,7 @@ export function Shell({
   return (
     <div className="relative z-10 mx-auto flex min-h-dvh max-w-[1400px]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh w-72 shrink-0 flex-col border-r border-line px-5 py-6 lg:flex">
+      <aside className="dark sticky top-0 hidden h-dvh w-72 shrink-0 flex-col border-r border-line bg-page px-5 py-6 lg:flex">
         <Wordmark />
         <div className="mt-6">
           <ProfileSwitcher />
@@ -226,7 +226,7 @@ export function Shell({
       {menuOpen && (
         <div className="no-print fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-cocoa-800/40 backdrop-blur-[2px]" onClick={() => setMenuOpen(false)} />
-          <div className="fade-up absolute inset-y-0 left-0 flex w-[84%] max-w-xs flex-col bg-page px-5 py-6 shadow-lifted">
+          <div className="dark fade-up absolute inset-y-0 left-0 flex w-[84%] max-w-xs flex-col bg-page px-5 py-6 shadow-lifted">
             <div className="flex items-center justify-between">
               <Wordmark />
               <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="rounded-full p-2 text-ink-faint hover:bg-sunken">

@@ -3,7 +3,7 @@ import { Snowflake, Plus, Trash2, Trophy } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, EmptyState, Stat,
-  Disclaimer, useForm,
+  Disclaimer, useForm, RIBBON_CLIP,
 } from "../components/ui";
 import { BeforeAfter } from "./RedLight";
 import type { ColdPlungeSession } from "../lib/types";
@@ -33,7 +33,7 @@ export function ColdPlunge() {
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Stat label="Total plunges" value={String(sessions.length)} tone="sage" />
-        <Stat label="Personal best" value={best ? `${best.duration}${/[a-z]/i.test(best.duration) ? "" : " min"}` : "—"} detail={best ? `${best.temperature}° · ${fmtDate(best.date)}` : "log durations in minutes"} tone="champagne" />
+        <Stat label="Personal best" value={best ? `${best.duration}${/[a-z]/i.test(best.duration) ? "" : " min"}` : "—"} detail={best ? `${best.temperature}° · ${fmtDate(best.date)}` : "log durations in minutes"} tone="champagne" hero />
         <Stat label="Last plunge" value={sessions[0] ? fmtDate(sessions[0].date) : "—"} detail={sessions[0] ? `${sessions[0].temperature}°` : ""} />
       </div>
 
@@ -53,7 +53,10 @@ export function ColdPlunge() {
                   <p className="font-medium text-ink-strong">
                     {s.temperature && `${s.temperature}°`} {s.duration && `· ${s.duration}${/[a-z]/i.test(s.duration) ? "" : " min"}`}
                     {s.personalBest && (
-                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-champagne-200/60 px-2 py-0.5 text-[0.68rem] font-bold uppercase tracking-wide text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
+                      <span
+                        className="ml-2 inline-flex -rotate-3 items-center gap-1 px-3 py-0.5 text-[0.68rem] font-bold uppercase tracking-wide text-cocoa-800"
+                        style={{ background: "linear-gradient(135deg, var(--color-gold-400), var(--color-gold-500))", clipPath: RIBBON_CLIP }}
+                      >
                         <Trophy size={11} /> PB
                       </span>
                     )}

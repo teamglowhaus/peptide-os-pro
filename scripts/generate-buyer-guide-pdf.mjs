@@ -4,20 +4,24 @@
 // code, copy edits) so the delivered PDF never drifts from its source again.
 //
 // Usage: node scripts/generate-buyer-guide-pdf.mjs
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
-import { marked } from "/home/user/peptide-os-pro/node_modules/marked/lib/marked.esm.js";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { EMBEDDED_FONT_CSS } from "./lib/embedded-fonts.mjs";
+import { marked } from "marked";
 import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const md = readFileSync("/home/user/peptide-os-pro/docs/buyer-guide.md", "utf8");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const md = readFileSync(join(ROOT, "docs/buyer-guide.md"), "utf8");
 const bodyHtml = marked.parse(md);
-const iconSvg = readFileSync("/home/user/peptide-os-pro/public/icons/icon.svg", "utf8");
+const iconSvg = readFileSync(join(ROOT, "public/icons/icon.svg"), "utf8");
 const iconDataUri = `data:image/svg+xml;base64,${Buffer.from(iconSvg).toString("base64")}`;
 
 const html = `<!doctype html>
 <html><head><meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..700;1,300..700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=JetBrains+Mono:wght@400;700&display=swap" />
 <style>
+${EMBEDDED_FONT_CSS}
   @page { margin: 40px 45px; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #F7F1E8; }
@@ -69,11 +73,11 @@ const html = `<!doctype html>
   <div class="footer">© GlowHausDigital · For personal use only · Not medical advice — always consult your own physician.</div>
 </body></html>`;
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 const page = await browser.newPage();
 await page.setContent(html, { waitUntil: "networkidle" });
 await page.pdf({
-  path: "/home/user/peptide-os-pro/marketing/delivery-pdfs/1-Welcome-Start-Here.pdf",
+  path: join(ROOT, "marketing/delivery-pdfs/1-Welcome-Start-Here.pdf"),
   format: "Letter",
   printBackground: true,
   margin: { top: "0.5in", bottom: "0.5in", left: "0.55in", right: "0.55in" },

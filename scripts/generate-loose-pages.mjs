@@ -2,13 +2,18 @@
 // for buyers who just want one sheet instead of the full 15-page binder.
 // Bundles the 15 files into one zip (marketing/delivery-pdfs/4-Individual-Printable-Pages.zip).
 // See docs/printable-companion-guide.md section 5.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
-import { PDFDocument } from "/home/user/peptide-os-pro/node_modules/pdf-lib/dist/pdf-lib.esm.js";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { seed as baseSeed } from "./fixtures/demo-seed.mjs";
+import { PDFDocument } from "pdf-lib";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync } from "fs";
 import { execSync } from "child_process";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const OUT_DIR = "/home/user/peptide-os-pro/marketing/delivery-pdfs/loose-pages";
-const ZIP_PATH = "/home/user/peptide-os-pro/marketing/delivery-pdfs/4-Individual-Printable-Pages.zip";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const OUT_DIR = join(ROOT, "marketing/delivery-pdfs/loose-pages");
+const ZIP_PATH = join(ROOT, "marketing/delivery-pdfs/4-Individual-Printable-Pages.zip");
 const APP_URL = "http://localhost:4173/#/printables";
 
 const PX_TO_PT = 72 / 96;
@@ -38,28 +43,13 @@ const PAGES = [
   { key: "quarterly", label: "Quarterly optimization review", file: "14-Quarterly-Optimization-Review" },
 ];
 
+// Seed from the shared demo fixture — the single source of truth for the
+// Database shape (a hand-rolled seed here drifts as features ship; see the
+// same fix in enhance-binder-pdf.mjs).
 function seedInit() {
-  return () => {
-    localStorage.setItem(
-      "biohacker-os:v1",
-      JSON.stringify({
-        version: 1,
-        settings: {
-          theme: "light",
-          activeProfileId: "x",
-          onboarding: {
-            completed: true, mainGoal: "", peptides: true, glp1: true, hrt: true, menopause: true,
-            supplements: true, redLight: true, coldPlunge: true, sauna: true, labs: true,
-            wearables: true, pets: true, household: true, aesthetic: "cream",
-          },
-          cloud: { provider: "local", email: "", connected: false },
-        },
-        profiles: [{ id: "x", kind: "self", name: "Ava", emoji: "🌿", createdAt: "2026-01-01" }],
-        pets: [], injectables: [], injectionLogs: [], hormones: [], symptomLogs: [],
-        providerQuestions: [], supplements: [], supplementChecks: [], redLight: [], coldPlunge: [],
-        sauna: [], toolSessions: [], dailyLogs: [], labs: [], appointments: [], wearables: [], lifestyle: [],
-      })
-    );
+  return ({ seed }) => {
+    localStorage.setItem("biohacker-os:v1", JSON.stringify(seed));
+    localStorage.setItem("biohacker-os:gate", "1");
   };
 }
 
@@ -75,13 +65,14 @@ function toPagePt(geo) {
 if (existsSync(OUT_DIR)) rmSync(OUT_DIR, { recursive: true });
 mkdirSync(OUT_DIR, { recursive: true });
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 let totalFields = 0;
 
 for (const p of PAGES) {
   const page = await browser.newPage({ viewport: { width: CONTENT_W_PX, height: CONTENT_H_PX } });
-  await page.addInitScript(seedInit());
-  await page.goto(APP_URL, { waitUntil: "networkidle" });
+  await page.addInitScript(seedInit(), { seed: baseSeed });
+  await page.goto(APP_URL, { waitUntil: "domcontentloaded" });
+  await page.waitForSelector('button:has-text("Binder cover page")', { timeout: 15000 });
   await page.waitForTimeout(600);
 
   await page.evaluate(() => {

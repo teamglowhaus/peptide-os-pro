@@ -164,7 +164,7 @@ export function SettingsPage() {
           </p>
           <button
             onClick={() => (window.location.hash = "/legal")}
-            className="mt-3 text-[0.85rem] font-semibold text-champagne-600 underline underline-offset-2 dark:text-champagne-300"
+            className="mt-3 text-[0.85rem] font-semibold text-champagne-600 underline underline-offset-2 transition-colors hover:text-cocoa-600 dark:text-champagne-300 dark:hover:text-champagne-200"
           >
             Read the full Legal &amp; Disclaimers →
           </button>
@@ -174,7 +174,7 @@ export function SettingsPage() {
       <Disclaimer>
         If you rerun onboarding (below), your data stays safe — only the welcome flow repeats.
         <button
-          className="ml-2 font-semibold text-champagne-600 underline underline-offset-2 dark:text-champagne-300"
+          className="ml-2 font-semibold text-champagne-600 underline underline-offset-2 transition-colors hover:text-cocoa-600 dark:text-champagne-300 dark:hover:text-champagne-200"
           onClick={() => update((d) => void (d.settings.onboarding.completed = false))}
         >
           Rerun onboarding

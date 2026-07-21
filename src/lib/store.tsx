@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import type { Database, Profile, Settings, ID } from "./types";
+import type { Database, Profile, Settings, ID, PeriodLog } from "./types";
 
 /* ————————————————————————————————————————————————
    Local-first store with a pluggable sync adapter.
@@ -41,6 +41,70 @@ export function daysSince(iso: string): number | null {
   if (isNaN(then.getTime())) return null;
   const now = new Date(today() + "T00:00:00");
   return Math.round((now.getTime() - then.getTime()) / 86_400_000);
+}
+
+export type CyclePhase = "menstrual" | "follicular" | "ovulation" | "luteal" | "late";
+export const CYCLE_PHASE_LABEL: Record<CyclePhase, string> = {
+  menstrual: "Menstrual",
+  follicular: "Follicular",
+  ovulation: "Ovulation window",
+  luteal: "Luteal",
+  late: "Running longer than usual",
+};
+
+export interface CycleInfo {
+  cycleDay: number;
+  phase: CyclePhase;
+  /** Personal average from >=2 logged cycles, or null if using the generic 28-day default. */
+  avgCycleLength: number | null;
+  cyclesLogged: number;
+  lastPeriodStart: string;
+}
+
+/**
+ * Derives cycle day + an estimated phase from logged period start dates —
+ * never a guaranteed prediction, since perimenopausal cycles are frequently
+ * irregular (see docs/etsy-listing-package.md's honesty guardrails: this is
+ * an organizational estimate, not a fertility or contraception tool).
+ * Returns null if no period has been logged yet for this profile.
+ */
+export function computeCycleInfo(periods: PeriodLog[], profileId: string, onDate: string = today()): CycleInfo | null {
+  const own = periods.filter((p) => p.profileId === profileId).map((p) => p.startDate).filter(Boolean).sort();
+  const priorStarts = own.filter((d) => d <= onDate);
+  if (!priorStarts.length) return null;
+  const lastPeriodStart = priorStarts[priorStarts.length - 1];
+  // daysSince() always measures against the real wall-clock date, which
+  // would silently ignore a non-"today" onDate — compute the diff directly
+  // from the two ISO strings instead so this function's onDate param (used
+  // by tests, and any future "what phase was I in on X date" feature) works.
+  const cycleDay = Math.round((new Date(onDate + "T00:00:00").getTime() - new Date(lastPeriodStart + "T00:00:00").getTime()) / 86_400_000) + 1;
+
+  let avgCycleLength: number | null = null;
+  if (own.length >= 2) {
+    const recentStarts = own.slice(-7); // last up to 6 cycles
+    const gaps: number[] = [];
+    for (let i = 1; i < recentStarts.length; i++) {
+      const prev = new Date(recentStarts[i - 1] + "T00:00:00").getTime();
+      const next = new Date(recentStarts[i] + "T00:00:00").getTime();
+      const gap = Math.round((next - prev) / 86_400_000);
+      if (gap > 10 && gap < 90) gaps.push(gap); // discard obvious data-entry errors
+    }
+    if (gaps.length) avgCycleLength = Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length);
+  }
+  const cycleLength = avgCycleLength ?? 28;
+
+  const lutealLength = 14; // relatively fixed clinically regardless of total cycle length
+  const ovulationDay = Math.max(cycleLength - lutealLength, 8);
+  const periodLength = Math.min(5, Math.round(cycleLength * 0.18));
+
+  let phase: CyclePhase;
+  if (cycleDay > cycleLength + 5) phase = "late";
+  else if (cycleDay <= periodLength) phase = "menstrual";
+  else if (cycleDay >= ovulationDay - 2 && cycleDay <= ovulationDay + 1) phase = "ovulation";
+  else if (cycleDay < ovulationDay - 2) phase = "follicular";
+  else phase = "luteal";
+
+  return { cycleDay, phase, avgCycleLength, cyclesLogged: own.length, lastPeriodStart };
 }
 
 /** Triggers a browser download of a backup JSON string as a dated file. */
@@ -99,6 +163,7 @@ export function emptyDatabase(): Database {
     injectionLogs: [],
     hormones: [],
     symptomLogs: [],
+    periods: [],
     providerQuestions: [],
     supplements: [],
     supplementChecks: [],
@@ -115,7 +180,7 @@ export function emptyDatabase(): Database {
 }
 
 const ARRAY_KEYS = [
-  "profiles", "pets", "injectables", "injectionLogs", "hormones", "symptomLogs",
+  "profiles", "pets", "injectables", "injectionLogs", "hormones", "symptomLogs", "periods",
   "providerQuestions", "supplements", "supplementChecks", "redLight", "coldPlunge",
   "sauna", "toolSessions", "dailyLogs", "labs", "appointments", "wearables", "lifestyle",
 ] as const satisfies readonly (keyof Database)[];

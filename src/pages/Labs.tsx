@@ -148,7 +148,7 @@ export function Labs() {
 
       {tab === "summary" && (
         <Card className="mx-auto max-w-2xl text-center">
-          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
+          <span className="mx-auto mb-4 flex h-14 w-14 -rotate-6 items-center justify-center rounded-2xl bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
             <Sparkle size={22} />
           </span>
           <h3 className="font-display text-xl font-medium">AI lab summaries · coming soon</h3>

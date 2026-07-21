@@ -33,8 +33,8 @@ export function Biohacking() {
 
       <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((t) => (
-          <button key={t.key} onClick={() => setLogging(t.key)} className="card card-hover flex items-center gap-3.5 p-4 text-left">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sage-100 text-sage-500 dark:bg-sage-600/25 dark:text-sage-300">
+          <button key={t.key} onClick={() => setLogging(t.key)} className="group card card-hover flex items-center gap-3.5 p-4 text-left">
+            <span className="flex h-10 w-10 shrink-0 -rotate-6 items-center justify-center rounded-xl bg-sage-100 text-sage-500 transition-transform group-hover:rotate-0 dark:bg-sage-600/25 dark:text-sage-300">
               <Activity size={17} />
             </span>
             <span className="min-w-0 flex-1">

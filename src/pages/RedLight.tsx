@@ -34,7 +34,7 @@ export function RedLight() {
       />
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Stat label="This week" value={`${week} session${week === 1 ? "" : "s"}`} detail="last 7 days" tone="champagne" />
+        <Stat label="This week" value={`${week} session${week === 1 ? "" : "s"}`} detail="last 7 days" tone="champagne" hero />
         <Stat label="All time" value={String(sessions.length)} detail="sessions logged" />
         <Stat label="Last session" value={sessions[0] ? fmtDate(sessions[0].date) : "—"} detail={sessions[0]?.bodyArea || ""} />
       </div>

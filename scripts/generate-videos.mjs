@@ -5,12 +5,19 @@
 // Requires a full (non-stripped) ffmpeg with libx264 — the ffmpeg bundled with
 // playwright-core is a stripped build. `pip install imageio-ffmpeg` gets one;
 // set FFMPEG_BIN below to its path if it differs from the default.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { seed as baseSeed } from "./fixtures/demo-seed.mjs";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, rmSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const FFMPEG_BIN = "/usr/local/lib/python3.11/dist-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2";
-const OUT_DIR = "/home/user/peptide-os-pro/marketing/videos";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+// Override with FFMPEG_BIN=/path/to/ffmpeg if your system's default ffmpeg
+// lacks libx264 (e.g. the stripped build bundled with playwright-core).
+const FFMPEG_BIN = process.env.FFMPEG_BIN || "ffmpeg";
+const OUT_DIR = join(ROOT, "marketing/videos");
 const VDIR = "/tmp/biohacker-video-frames";
 const APP_URL = "http://localhost:4173";
 
@@ -19,37 +26,10 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 const S = "p-ava";
 
 function seedFor(mode) {
-  const base = {
-    version: 1,
-    settings: {
-      theme: "light", activeProfileId: S,
-      onboarding: { completed: true, mainGoal: "Feel like myself again", peptides: true, glp1: true, hrt: true, menopause: true, supplements: true, redLight: true, coldPlunge: true, sauna: true, labs: true, wearables: true, pets: true, household: true, aesthetic: "cream" },
-      cloud: { provider: "local", email: "", connected: false }, calculatorAcknowledged: true, lastBackupAt: day(1),
-    },
-    profiles: [{ id: S, kind: "self", name: "Ava", emoji: "🌿", createdAt: day(90) }],
-    pets: [],
-    injectables: [
-      { id: "inj1", profileId: S, name: "Tirzepatide", category: "GLP-1", goal: "Metabolic journey", provider: "Dr. Reyes", startDate: day(60), endDate: "", vialSize: "", storage: "Refrigerated", reconstitution: "", providerDose: "per provider", units: "", schedule: "Weekly · Sunday", injectionSite: "", sideEffects: "", notes: "", refillReminder: day(-9), inventory: "3 pens", active: true, createdAt: day(60) },
-      { id: "inj2", profileId: S, name: "BPC-157", category: "Peptide", goal: "Recovery", provider: "Clinic", startDate: day(30), endDate: "", vialSize: "5 mg vial", storage: "Fridge", reconstitution: "2 mL BAC", providerDose: "per provider", units: "", schedule: "Daily", injectionSite: "", sideEffects: "", notes: "", refillReminder: "", inventory: "2 vials", active: true, createdAt: day(30) },
-    ],
-    injectionLogs: [{ id: uid(), profileId: S, protocolId: "inj1", date: day(2), site: "abd-ul", doseTaken: "per provider", feltAfter: "steady", notes: "" }],
-    hormones: [
-      { id: uid(), profileId: S, name: "Progesterone", form: "Pill", providerDose: "per provider", schedule: "Nightly", provider: "Dr. Reyes", startDate: day(120), refillReminder: day(-20), labDate: day(-30), providerNotes: "Recheck 3mo", notes: "", active: true, createdAt: day(120) },
-      { id: uid(), profileId: S, name: "Estradiol (Estrogen)", form: "Patch", providerDose: "per provider", schedule: "Twice weekly", provider: "Dr. Reyes", startDate: day(120), refillReminder: "", labDate: "", providerNotes: "", notes: "", active: true, createdAt: day(120) },
-    ],
-    symptomLogs: Array.from({ length: 12 }, (_, i) => ({ id: uid(), profileId: S, date: day(11 - i), symptoms: { hotFlashes: Math.max(0, 3 - Math.floor(i / 4)), sleepChanges: Math.max(0, 3 - Math.floor(i / 5)), brainFog: i % 3 === 0 ? 2 : 1, fatigue: Math.max(0, 2 - Math.floor(i / 6)) }, cycleDay: "", flow: "", notes: "" })),
-    providerQuestions: [{ id: uid(), profileId: S, question: "Could my 3am waking be progesterone timing?", context: "", asked: false, answer: "", createdAt: new Date().toISOString() }],
-    supplements: [["Magnesium Glycinate", "Minerals", "Thorne", "bedtime"], ["Omega-3 (EPA/DHA)", "Longevity", "Nordic Naturals", "morning"], ["Creatine Monohydrate", "Fitness & recovery", "Momentous", "morning"], ["Vitamin D3 + K2", "Vitamins", "Pure Encapsulations", "morning"], ["L-Theanine", "Stress", "NOW Foods", "evening"]].map(([name, category, brand, st], i) => ({ id: "s" + i, profileId: S, name, category, brand, product: "", barcode: "", dose: "per label", form: "capsule", stacks: [st], withFood: st === "morning" ? "with" : "", foodNote: "", labelInstructions: "", providerInstructions: "", combineNotes: "", avoidNotes: "", sideEffects: "", inventory: "", reorderReminder: "", active: true, createdAt: day(80) })),
-    supplementChecks: [],
-    redLight: [{ id: uid(), profileId: S, date: day(0), device: "Panel", bodyArea: "Face & chest", wavelength: "660/850", distance: "12 in", duration: "10 min", timeOfDay: "7 am", skinGoal: "glow", recoveryGoal: "", moodBefore: 3, moodAfter: 4, energyBefore: 2, energyAfter: 4, notes: "" }],
-    coldPlunge: [{ id: uid(), profileId: S, date: day(1), temperature: "50", duration: "3", timeOfDay: "6:45 am", breathwork: "box breathing", moodBefore: 2, moodAfter: 5, energyBefore: 2, energyAfter: 5, recovery: "warm walk", personalBest: true, notes: "" }],
-    sauna: [], toolSessions: [{ id: uid(), profileId: S, date: day(0), tool: "sunlight", duration: "10 min", detail: "walk", feeling: 4, notes: "" }],
-    dailyLogs: Array.from({ length: 14 }, (_, i) => ({ id: uid(), profileId: S, date: day(13 - i), mood: [3, 3, 2, 3, 4, 3, 4, 3, 4, 4, 3, 4, 5, 4][i], energy: [2, 3, 3, 2, 3, 4, 3, 4, 4, 3, 4, 4, 4, 5][i], sleepHours: String(6.8 + (i % 4) * 0.4), sleepQuality: [3, 3, 2, 3, 4, 4, 3, 4, 4, 4, 4, 5, 4, 4][i], hrv: String(44 + i), weight: String(168 - i * 0.4).slice(0, 5), steps: "", water: "", protein: "", glucose: "", bloodPressure: "", notes: "", gratitude: "", wins: "" })),
-    labs: [{ id: uid(), profileId: S, panel: "Thyroid", marker: "TSH", value: "2.4", unit: "mIU/L", range: "0.4-4.0", date: day(180), flagged: false, notes: "", fileName: "" }, { id: uid(), profileId: S, panel: "Thyroid", marker: "TSH", value: "1.9", unit: "mIU/L", range: "0.4-4.0", date: day(20), flagged: false, notes: "", fileName: "" }],
-    appointments: [{ id: uid(), profileId: S, date: day(-15), time: "9:30", title: "HRT follow-up", provider: "Dr. Reyes", kind: "provider", notes: "", done: false }],
-    wearables: [{ id: uid(), profileId: S, brand: "Oura", model: "Ring Gen 4", metricFocus: "HRV · sleep", syncNotes: "", active: true }],
-    lifestyle: [],
-  };
+  // Base = the shared demo fixture (single source of truth for the Database
+  // shape). A hand-rolled seed here once drifted from the schema as features
+  // shipped — mode-specific overrides below still apply on top.
+  const base = JSON.parse(JSON.stringify(baseSeed));
   if (mode === "morning") {
     // Lighter dataset for the morning-glance recording — fewer entries, a
     // still-open supplement checklist and injection log so those beats read
@@ -77,7 +57,7 @@ async function recordTourOrRitual(browser, mode) {
   const viewport = mode === "ritual" ? { width: 600, height: 1040 } : { width: 1280, height: 720 };
   const context = await browser.newContext({ viewport, recordVideo: { dir: VDIR, size: viewport }, deviceScaleFactor: 1 });
   const page = await context.newPage();
-  await page.addInitScript((s) => localStorage.setItem("biohacker-os:v1", JSON.stringify(s)), seedFor(mode));
+  await page.addInitScript((s) => { localStorage.setItem("biohacker-os:v1", JSON.stringify(s)); localStorage.setItem("biohacker-os:gate", "1"); }, seedFor(mode));
   const go = async (r) => { await page.goto(APP_URL + "/#/" + r, { waitUntil: "domcontentloaded" }); await page.waitForTimeout(320); };
   const cap = (t, s = "") => page.evaluate(CAP(t, s));
   const hide = () => page.evaluate(HIDECAP);
@@ -131,7 +111,7 @@ async function recordMorningGlance(browser) {
   const viewport = { width: 1080, height: 1080 };
   const context = await browser.newContext({ viewport, recordVideo: { dir: VDIR, size: viewport }, deviceScaleFactor: 1 });
   const page = await context.newPage();
-  await page.addInitScript((s) => localStorage.setItem("biohacker-os:v1", JSON.stringify(s)), seedFor("morning"));
+  await page.addInitScript((s) => { localStorage.setItem("biohacker-os:v1", JSON.stringify(s)); localStorage.setItem("biohacker-os:gate", "1"); }, seedFor("morning"));
 
   // First call does a real navigation (this stalls several seconds in
   // sandboxed environments — see note below); subsequent calls click the
@@ -219,7 +199,7 @@ async function main() {
   if (existsSync(VDIR)) rmSync(VDIR, { recursive: true });
   mkdirSync(VDIR, { recursive: true });
 
-  const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+  const browser = await chromium.launch(chromiumLaunchOptions());
 
   if (mode === "tour" || mode === "all") {
     const rawPath = await recordTourOrRitual(browser, "tour");

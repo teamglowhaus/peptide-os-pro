@@ -31,3 +31,21 @@ yarn-error.log*
 # Intermediate build output for the loose-pages zip — the zip itself is the
 # deliverable and is committed; these per-page PDFs are redundant duplicates.
 /marketing/delivery-pdfs/loose-pages/
+
+# Oversampled intermediate PNGs from scripts/generate-thumbnails.mjs — the
+# downscaled .jpg is the real output; these are just the 2x working copies.
+/marketing/thumbnails/*.png
+
+# The Canva template package zip is a delivered-to-buyer artifact regenerated
+# from scripts/generate-canva-template-assets.mjs + marketing/thumbnails/ —
+# not committed to keep repo size down. Same for the screenshots folder,
+# which is just a duplicate copy of /marketing/thumbnails/ for the zip.
+/marketing/canva-template-package.zip
+/marketing/canva-template-package/product-assets/screenshots/
+
+# One-off "everything to finish the Etsy images" bundle assembled on request —
+# entirely a reorganized duplicate of already-committed files (marketing/
+# thumbnails/, marketing/delivery-pdfs/) plus a couple of generated previews,
+# so it's not committed to avoid doubling repo size with duplicate binaries.
+/marketing/product-assets/
+/marketing/product-assets.zip

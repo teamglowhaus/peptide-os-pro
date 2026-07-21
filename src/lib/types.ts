@@ -132,8 +132,16 @@ export interface SymptomLog {
   profileId: ID;
   date: string;
   symptoms: Record<string, number>; // symptom key -> 0-4 severity
-  cycleDay: string;
   flow: "" | "none" | "spotting" | "light" | "medium" | "heavy";
+  notes: string;
+}
+
+// A logged period start — the source of truth for cycle-day and phase
+// estimates, replacing manual day-number entry with something computed.
+export interface PeriodLog {
+  id: ID;
+  profileId: ID;
+  startDate: string;
   notes: string;
 }
 
@@ -338,6 +346,7 @@ export interface Database {
   injectionLogs: InjectionLog[];
   hormones: HormoneTherapy[];
   symptomLogs: SymptomLog[];
+  periods: PeriodLog[];
   providerQuestions: ProviderQuestion[];
   supplements: Supplement[];
   supplementChecks: SupplementCheck[];

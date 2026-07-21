@@ -28,7 +28,7 @@ export function Sauna() {
       />
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Stat label="This week" value={`${thisWeek} session${thisWeek === 1 ? "" : "s"}`} tone="champagne" />
+        <Stat label="This week" value={`${thisWeek} session${thisWeek === 1 ? "" : "s"}`} tone="champagne" hero />
         <Stat label="All time" value={String(sessions.length)} />
         <Stat label="Last session" value={sessions[0] ? fmtDate(sessions[0].date) : "—"} detail={sessions[0] ? `${sessions[0].kind} · ${sessions[0].temperature}°` : ""} />
       </div>

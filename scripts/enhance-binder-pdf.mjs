@@ -2,11 +2,16 @@
 // Playwright-rendered companion binder PDF, using the data-fillable /
 // data-fillable-id / data-toc-target / data-sheet-page markers in
 // src/pages/Printables.tsx. See docs/printable-companion-guide.md.
-import { chromium } from "/home/user/peptide-os-pro/node_modules/playwright-core/index.mjs";
-import { PDFDocument, PDFName } from "/home/user/peptide-os-pro/node_modules/pdf-lib/dist/pdf-lib.esm.js";
+import { chromium } from "playwright-core";
+import { chromiumLaunchOptions } from "./lib/chromium-launch.mjs";
+import { seed as baseSeed } from "./fixtures/demo-seed.mjs";
+import { PDFDocument, PDFName } from "pdf-lib";
 import { writeFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const OUT = "/home/user/peptide-os-pro/marketing/delivery-pdfs";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const OUT = join(ROOT, "marketing/delivery-pdfs");
 const APP_URL = "http://localhost:4173/#/printables";
 
 // US Letter at 96 CSS px/in -> 72 pt/in
@@ -23,59 +28,25 @@ const MARGIN_IN = 0.3;
 const CONTENT_W_PX = Math.round((PAGE_W_IN - 2 * MARGIN_IN) * 96);
 const CONTENT_H_PX = Math.round((PAGE_H_IN - 2 * MARGIN_IN) * 96);
 
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch(chromiumLaunchOptions());
 const page = await browser.newPage({ viewport: { width: CONTENT_W_PX, height: CONTENT_H_PX } });
 
-await page.addInitScript(() => {
-  localStorage.setItem(
-    "biohacker-os:v1",
-    JSON.stringify({
-      version: 1,
-      settings: {
-        theme: "light",
-        activeProfileId: "x",
-        onboarding: {
-          completed: true,
-          mainGoal: "",
-          peptides: true,
-          glp1: true,
-          hrt: true,
-          menopause: true,
-          supplements: true,
-          redLight: true,
-          coldPlunge: true,
-          sauna: true,
-          labs: true,
-          wearables: true,
-          pets: true,
-          household: true,
-          aesthetic: "cream",
-        },
-        cloud: { provider: "local", email: "", connected: false },
-      },
-      profiles: [{ id: "x", kind: "self", name: "Ava", emoji: "🌿", createdAt: "2026-01-01" }],
-      pets: [],
-      injectables: [],
-      injectionLogs: [],
-      hormones: [],
-      symptomLogs: [],
-      providerQuestions: [],
-      supplements: [],
-      supplementChecks: [],
-      redLight: [],
-      coldPlunge: [],
-      sauna: [],
-      toolSessions: [],
-      dailyLogs: [],
-      labs: [],
-      appointments: [],
-      wearables: [],
-      lifestyle: [],
-    })
-  );
-});
+// Seed from the shared demo fixture — the single source of truth for what a
+// working Database looks like. (A hand-rolled seed here once drifted from the
+// real schema after new features shipped, silently rendering the onboarding
+// screen instead of the Printable Studio and wedging this script.)
+await page.addInitScript(
+  ({ seed }) => {
+    localStorage.setItem("biohacker-os:v1", JSON.stringify(seed));
+    localStorage.setItem("biohacker-os:gate", "1");
+  },
+  { seed: baseSeed }
+);
 
-await page.goto(APP_URL, { waitUntil: "networkidle" });
+await page.goto(APP_URL, { waitUntil: "domcontentloaded" });
+// Fail fast and loudly if the Studio didn't render (e.g. seed drift again) —
+// every later step assumes these page-picker buttons exist.
+await page.waitForSelector('button:has-text("Binder cover page")', { timeout: 15000 });
 await page.waitForTimeout(700);
 
 // Turn off prefill (blank binder) and select all 15 pages.

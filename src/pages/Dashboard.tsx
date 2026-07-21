@@ -1,14 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Syringe, Pill, Flower2, Sun, Snowflake, Flame, FlaskConical, CalendarHeart,
   PawPrint, Moon, HeartPulse, Plus,
 } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid, daysSince, triggerBackupDownload, localDateStr } from "../lib/store";
 import {
-  Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx, BackupBanner,
+  Card, Ring, Sparkline, RatingDots, Button, Modal, Field, Input, Textarea, cx, BackupBanner, Squiggle,
 } from "../components/ui";
 import { STACK_TIMES } from "../data/supplements";
 import type { DailyLog, StackTime } from "../lib/types";
+import { computeStreakInfo, computeBadges } from "../lib/achievements";
+import { BadgeShelf } from "../components/BadgeShelf";
+import { Streamers, StreakToast } from "../components/Streamers";
 
 function emptyLog(profileId: string): DailyLog {
   return {
@@ -105,6 +108,28 @@ export function Dashboard() {
     return possible ? Math.round((earned / possible) * 100) : 0;
   }, [db, pid]);
 
+  const streak = useMemo(() => computeStreakInfo(db, pid, date), [db, pid, date]);
+  const badges = useMemo(() => computeBadges(db, pid, date), [db, pid, date]);
+
+  // Celebrate the moment a streak grows or a new badge unlocks — but only
+  // once per real change, not on every render, by remembering what's
+  // already been celebrated for this profile.
+  const [streamerKey, setStreamerKey] = useState(0);
+  const [celebration, setCelebration] = useState<string | null>(null);
+  useEffect(() => {
+    const storeKey = `biohacker-os:celebrated:${pid}`;
+    let prev: { streak: number; unlocked: string[] } | null = null;
+    try { prev = JSON.parse(localStorage.getItem(storeKey) || "null"); } catch { prev = null; }
+    const unlockedIds = badges.filter((b) => b.unlocked).map((b) => b.id);
+    const freshBadge = badges.find((b) => b.unlocked && !prev?.unlocked.includes(b.id));
+    const streakGrew = streak.current > (prev?.streak ?? 0);
+    if (prev && (freshBadge || streakGrew)) {
+      setStreamerKey((k) => k + 1);
+      setCelebration(freshBadge ? `Badge earned: ${freshBadge.label}` : `${streak.current}-Day Streak!`);
+    }
+    localStorage.setItem(storeKey, JSON.stringify({ streak: streak.current, unlocked: unlockedIds }));
+  }, [badges, streak.current, pid]);
+
   const trendOf = (key: "mood" | "energy" | "sleepQuality"): number[] =>
     byProfile(db.dailyLogs, pid)
       .sort((a, b) => a.date.localeCompare(b.date))
@@ -123,6 +148,8 @@ export function Dashboard() {
 
   return (
     <div>
+      <Streamers burstKey={streamerKey} />
+      <StreakToast message={celebration} />
       <BackupBanner
         daysSince={daysSince(db.settings.lastBackupAt)}
         onExport={() => triggerBackupDownload(exportJson())}
@@ -132,18 +159,27 @@ export function Dashboard() {
           {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
         </p>
         <h1 className="text-[1.9rem] font-medium leading-tight sm:text-4xl">
-          {greeting}, {activeProfile.name === "Me" ? "gorgeous" : activeProfile.name}
+          {greeting},{" "}
+          <span className="relative inline-block">
+            {activeProfile.name === "Me" ? "gorgeous" : activeProfile.name}
+            <Squiggle className="absolute -bottom-1.5 left-0 h-2.5 w-full text-champagne-400" />
+          </span>
         </h1>
         {ob.mainGoal && (
           <p className="mt-2 text-[0.95rem] text-ink-soft">
-            This season's intention: <em className="text-ink">{ob.mainGoal.toLowerCase()}</em>
+            This season's intention:{" "}
+            <span className="handnote text-wine-500 dark:text-wine-300">{ob.mainGoal.toLowerCase()}</span>
           </p>
         )}
       </header>
 
       {/* Score + check-in row */}
       <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
-        <Card className="flex items-center gap-6">
+        <Card className="card-hero relative flex items-center gap-6 overflow-hidden">
+          <div
+            className="pointer-events-none absolute -left-12 -top-12 h-44 w-44 rounded-full bg-gold-400/25 blur-3xl dark:bg-gold-500/15"
+            aria-hidden
+          />
           <Ring value={score} size={148} label="Biohacker Score" />
           <div className="max-w-[190px]">
             <p className="font-display text-lg font-medium text-ink-strong">
@@ -184,6 +220,10 @@ export function Dashboard() {
             </div>
           </div>
         </Card>
+      </div>
+
+      <div className="mt-4">
+        <BadgeShelf streak={streak} badges={badges} />
       </div>
 
       {/* Today's protocol */}
@@ -377,8 +417,8 @@ function ProtocolCard({
     champagne: "bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200",
   };
   return (
-    <button onClick={() => (window.location.hash = `/${route}`)} className="card card-hover p-5 text-left">
-      <span className={cx("mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full", tones[tone])}>
+    <button onClick={() => (window.location.hash = `/${route}`)} className="group card card-hover p-5 text-left">
+      <span className={cx("mb-3 inline-flex h-9 w-9 -rotate-6 items-center justify-center rounded-xl transition-transform group-hover:rotate-0", tones[tone])}>
         {icon}
       </span>
       <p className="font-semibold text-ink-strong">{title}</p>
@@ -397,9 +437,9 @@ function SessionQuickCard({
   icon: React.ReactNode; label: string; route: string; doneToday: boolean;
 }) {
   return (
-    <button onClick={() => (window.location.hash = `/${route}`)} className="card card-hover flex items-center gap-4 p-5 text-left">
+    <button onClick={() => (window.location.hash = `/${route}`)} className="group card card-hover flex items-center gap-4 p-5 text-left">
       <span className={cx(
-        "flex h-9 w-9 items-center justify-center rounded-full",
+        "flex h-9 w-9 -rotate-6 items-center justify-center rounded-xl transition-transform group-hover:rotate-0",
         doneToday ? "bg-sage-400 text-white" : "bg-sunken text-ink-faint"
       )}>
         {icon}
