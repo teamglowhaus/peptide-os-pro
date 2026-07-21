@@ -155,7 +155,7 @@ installable like an app, no App Store needed)
 • Hormones & Menopause suite — HRT log (creams, patches, pellets, troches & more), 20-symptom daily check-in (hot flashes, night sweats, brain fog & more), period & cycle tracking with estimated cycle day + phase and flow log (estimates from what you log — not a fertility or contraception tool), trend charts to bring to your provider, "ask my provider" list
 • Supplement Sanctuary — 84-item library, 25 categories, 48 seed brands, morning/afternoon/evening/bedtime stacks, inventory & reorder reminders, CSV import/export
 • Biohacking tools — red light, cold plunge, sauna, HRV, CGM, breathwork, PEMF + 20 more
-• Beauty Studio — 30-entry treatment library (chemical peels, microneedling, LED masks, gua sha, dermaplaning & more, in-office and at-home), set your own repeat schedule and get a gentle "your peel is coming up" reminder you can log or skip, plus an ordered morning/evening skincare routine builder (products, amounts, layer order) with daily check-offs and a skin-reaction diary
+• Beauty Studio — 42-entry treatment library (chemical peels, microneedling, Botox, filler, PRP & PRF, Fraxel, CO2, Halo & more lasers, LED masks, gua sha, dermaplaning & more, in-office and at-home), set your own repeat schedule and get a gentle "your peel is coming up" reminder you can log or skip, plus an ordered morning/evening skincare routine builder (products, amounts, layer order) with daily check-offs and a skin-reaction diary
 • Labs & Biomarker Binder with marker-by-marker trend lines
 • 8 daily ritual trackers: nutrition, body, fitness, sleep, beauty, dental, hair, mindset
 • Household profiles (spouse, kids, parents) + full pet wellness binder 🐾
