@@ -12,6 +12,7 @@ import { RedLight } from "./pages/RedLight";
 import { ColdPlunge } from "./pages/ColdPlunge";
 import { Sauna } from "./pages/Sauna";
 import { Labs } from "./pages/Labs";
+import { Beauty } from "./pages/Beauty";
 import { Wearables } from "./pages/Wearables";
 import { Lifestyle } from "./pages/Lifestyle";
 import { Pets } from "./pages/Pets";
@@ -31,6 +32,7 @@ const PAGES: Record<string, React.ComponentType> = {
   coldplunge: ColdPlunge,
   sauna: Sauna,
   labs: Labs,
+  beauty: Beauty,
   wearables: Wearables,
   lifestyle: Lifestyle,
   pets: Pets,
@@ -58,6 +60,7 @@ export default function App() {
       case "coldplunge": return ob.coldPlunge;
       case "sauna": return ob.sauna;
       case "labs": return ob.labs;
+      case "beauty": return ob.beauty !== false;
       case "wearables": return ob.wearables;
       case "pets": return ob.pets;
       case "household": return ob.household;

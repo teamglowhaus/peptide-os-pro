@@ -145,6 +145,61 @@ export interface PeriodLog {
   notes: string;
 }
 
+/* —— Beauty Studio ————————————————————————————————
+   Treatments are episodic events (a peel, microneedling, a facial) with a
+   user-set repeat interval; the interval always comes from the user's own
+   provider, esthetician, or product label — the app never suggests spacing. */
+export interface BeautyTreatment {
+  id: ID;
+  profileId: ID;
+  name: string;
+  kind: "office" | "home";
+  /** Product/strength exactly as the label or provider states it, e.g. "30% glycolic". */
+  product: string;
+  provider: string;
+  /** Repeat interval in days, chosen by the user (their provider's/label's cadence). null = no schedule. */
+  intervalDays: number | null;
+  aftercare: string;
+  notes: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface BeautyLog {
+  id: ID;
+  profileId: ID;
+  treatmentId: ID;
+  date: string;
+  /** true = the user chose "skip" on a due reminder; pushes the next due date without counting as done. */
+  skipped: boolean;
+  /** How skin reacted — the detail estheticians ask about at the next visit. */
+  reaction: string;
+  notes: string;
+}
+
+/** One product step in an ordered AM/PM skincare routine. */
+export interface SkincareStep {
+  id: ID;
+  profileId: ID;
+  routine: "am" | "pm";
+  /** Layer order, 0-based — the sequence products go on. */
+  order: number;
+  product: string;
+  /** Free-text amount: "2 pumps", "pea-size", "3 drops". */
+  amount: string;
+  notes: string;
+  active: boolean;
+}
+
+/** A day's routine completion — plus any issues noticed (redness, purging…). */
+export interface SkincareCheck {
+  id: ID;
+  profileId: ID;
+  date: string;
+  routine: "am" | "pm";
+  issues: string;
+}
+
 export interface ProviderQuestion {
   id: ID;
   profileId: ID;
@@ -313,6 +368,10 @@ export interface OnboardingAnswers {
   sauna: boolean;
   labs: boolean;
   wearables: boolean;
+  /** Beauty Studio: in-office & at-home treatments + daily skincare routines.
+   *  Optional (missing on installs older than this module) — normalizeDatabase
+   *  defaults it on, so existing users discover the new module in their nav. */
+  beauty?: boolean;
   pets: boolean;
   household: boolean;
   aesthetic: "cream" | "sage" | "blush";
@@ -359,4 +418,8 @@ export interface Database {
   appointments: Appointment[];
   wearables: WearableDevice[];
   lifestyle: LifestyleEntry[];
+  beautyTreatments: BeautyTreatment[];
+  beautyLogs: BeautyLog[];
+  skincareSteps: SkincareStep[];
+  skincareChecks: SkincareCheck[];
 }

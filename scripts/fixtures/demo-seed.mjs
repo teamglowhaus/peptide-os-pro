@@ -28,4 +28,27 @@ export const seed = {
   appointments: [{ id: uid(), profileId: S, date: day(-15), time: "9:30", title: "HRT follow-up", provider: "Dr. Reyes", kind: "provider", notes: "", done: false }],
   wearables: [{ id: uid(), profileId: S, brand: "Oura", model: "Ring Gen 4", metricFocus: "HRV · sleep", syncNotes: "", active: true }],
   lifestyle: [],
+  beautyTreatments: [
+    { id: "bt-peel", profileId: S, name: "Chemical peel", kind: "office", product: "30% glycolic", provider: "Glow Aesthetics", intervalDays: 42, aftercare: "SPF religiously · no actives for 72h", notes: "", active: true, createdAt: day(120) },
+    { id: "bt-led", profileId: S, name: "LED mask", kind: "home", product: "Red light · 10 min", provider: "CurrentBody", intervalDays: 7, aftercare: "", notes: "", active: true, createdAt: day(90) },
+    { id: "bt-guasha", profileId: S, name: "Gua sha", kind: "home", product: "With rosehip oil", provider: "", intervalDays: null, aftercare: "", notes: "", active: true, createdAt: day(60) },
+  ],
+  beautyLogs: [
+    { id: uid(), profileId: S, treatmentId: "bt-peel", date: day(41), skipped: false, reaction: "Pink for 2 hours, calm by evening", notes: "" },
+    { id: uid(), profileId: S, treatmentId: "bt-led", date: day(2), skipped: false, reaction: "", notes: "" },
+    { id: uid(), profileId: S, treatmentId: "bt-guasha", date: day(1), skipped: false, reaction: "Depuffed", notes: "" },
+  ],
+  skincareSteps: [
+    { id: "sk-am1", profileId: S, routine: "am", order: 0, product: "Gentle cleanser", amount: "1 pump", notes: "", active: true },
+    { id: "sk-am2", profileId: S, routine: "am", order: 1, product: "Vitamin C serum", amount: "3 drops", notes: "", active: true },
+    { id: "sk-am3", profileId: S, routine: "am", order: 2, product: "Peptide moisturizer", amount: "2 pumps", notes: "", active: true },
+    { id: "sk-am4", profileId: S, routine: "am", order: 3, product: "SPF 50", amount: "two fingers", notes: "", active: true },
+    { id: "sk-pm1", profileId: S, routine: "pm", order: 0, product: "Oil cleanser", amount: "2 pumps", notes: "", active: true },
+    { id: "sk-pm2", profileId: S, routine: "pm", order: 1, product: "Retinal 0.1%", amount: "pea-size", notes: "", active: true },
+    { id: "sk-pm3", profileId: S, routine: "pm", order: 2, product: "Barrier cream", amount: "generous", notes: "", active: true },
+  ],
+  skincareChecks: [
+    { id: uid(), profileId: S, date: day(0), routine: "am", issues: "" },
+    { id: uid(), profileId: S, date: day(1), routine: "pm", issues: "Slight sting after the acid — skipped retinal" },
+  ],
 };

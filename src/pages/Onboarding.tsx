@@ -24,6 +24,7 @@ const MODULE_QUESTIONS: ModuleQuestion[] = [
   { key: "coldPlunge", title: "Cold plunge", sub: "Temps, minutes, personal bests", emoji: "🧊" },
   { key: "sauna", title: "Sauna", sub: "Infrared, traditional, steam", emoji: "🔥" },
   { key: "labs", title: "Labs & biomarkers", sub: "A beautiful binder for your bloodwork", emoji: "🧪" },
+  { key: "beauty", title: "Beauty Studio", sub: "Peels, microneedling, LED & your daily routine", emoji: "✨" },
   { key: "wearables", title: "Wearables", sub: "Oura, WHOOP, Apple Watch & more", emoji: "⌚" },
   { key: "pets", title: "Pet wellness", sub: "Their supplements & vet care too", emoji: "🐾" },
   { key: "household", title: "Household profiles", sub: "Track for the people you love", emoji: "🏡" },
@@ -37,7 +38,7 @@ export function Onboarding() {
   const [answers, setAnswers] = useState<Record<string, boolean>>({
     peptides: true, glp1: false, hrt: true, menopause: true, supplements: true,
     redLight: false, coldPlunge: false, sauna: false, labs: true, wearables: false,
-    pets: false, household: false,
+    beauty: true, pets: false, household: false,
   });
   const [aesthetic, setAesthetic] = useState<"cream" | "sage" | "blush">("cream");
 
@@ -51,8 +52,8 @@ export function Onboarding() {
         peptides: answers.peptides, glp1: answers.glp1, hrt: answers.hrt,
         menopause: answers.menopause, supplements: answers.supplements,
         redLight: answers.redLight, coldPlunge: answers.coldPlunge, sauna: answers.sauna,
-        labs: answers.labs, wearables: answers.wearables, pets: answers.pets,
-        household: answers.household, aesthetic,
+        labs: answers.labs, wearables: answers.wearables, beauty: answers.beauty,
+        pets: answers.pets, household: answers.household, aesthetic,
       };
       if (name.trim()) d.profiles[0].name = name.trim();
     });
