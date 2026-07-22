@@ -591,11 +591,15 @@ function RoutineCard({ routine }: { routine: "am" | "pm" }) {
                 <span className="block truncate text-[0.75rem] text-ink-faint">
                   {swap
                     ? <>tonight only · usually {s.product}</>
-                    : <>
-                        {s.amount}
-                        {pill && <span className={cx("font-semibold text-champagne-600 dark:text-champagne-300", s.amount && "ml-1.5")}>{pill}</span>}
-                        {!isToday && <span className="ml-1.5 italic">not today</span>}
-                      </>}
+                    : isToday
+                      ? <>
+                          {s.amount}
+                          {pill && <span className={cx("font-semibold text-champagne-600 dark:text-champagne-300", s.amount && "ml-1.5")}>{pill}</span>}
+                        </>
+                      : <>
+                          <span className="italic">not today</span>
+                          {pill && <span className="ml-1.5 font-semibold text-champagne-600 dark:text-champagne-300">{pill}</span>}
+                        </>}
                 </span>
               </span>
               <span className="flex shrink-0 opacity-0 transition-opacity group-hover/step:opacity-100 focus-within:opacity-100">
