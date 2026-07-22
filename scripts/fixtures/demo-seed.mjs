@@ -39,16 +39,43 @@ export const seed = {
     { id: uid(), profileId: S, treatmentId: "bt-guasha", date: day(1), skipped: false, reaction: "Depuffed", notes: "" },
   ],
   skincareSteps: [
-    { id: "sk-am1", profileId: S, routine: "am", order: 0, product: "Gentle cleanser", amount: "1 pump", notes: "", active: true },
-    { id: "sk-am2", profileId: S, routine: "am", order: 1, product: "Vitamin C serum", amount: "3 drops", notes: "", active: true },
-    { id: "sk-am3", profileId: S, routine: "am", order: 2, product: "Peptide moisturizer", amount: "2 pumps", notes: "", active: true },
-    { id: "sk-am4", profileId: S, routine: "am", order: 3, product: "SPF 50", amount: "two fingers", notes: "", active: true },
-    { id: "sk-pm1", profileId: S, routine: "pm", order: 0, product: "Oil cleanser", amount: "2 pumps", notes: "", active: true },
-    { id: "sk-pm2", profileId: S, routine: "pm", order: 1, product: "Retinal 0.1%", amount: "pea-size", notes: "", active: true },
-    { id: "sk-pm3", profileId: S, routine: "pm", order: 2, product: "Barrier cream", amount: "generous", notes: "", active: true },
+    { id: "sk-am1", profileId: S, routine: "am", order: 0, product: "Gentle cleanser", amount: "1 pump", notes: "", active: true, days: [] },
+    { id: "sk-am2", profileId: S, routine: "am", order: 1, product: "Vitamin C serum", amount: "3 drops", notes: "", active: true, days: [] },
+    { id: "sk-am3", profileId: S, routine: "am", order: 2, product: "Peptide moisturizer", amount: "2 pumps", notes: "", active: true, days: [] },
+    { id: "sk-am4", profileId: S, routine: "am", order: 3, product: "SPF 50", amount: "two fingers", notes: "", active: true, days: [] },
+    { id: "sk-pm1", profileId: S, routine: "pm", order: 0, product: "Oil cleanser", amount: "2 pumps", notes: "", active: true, days: [] },
+    { id: "sk-pm2", profileId: S, routine: "pm", order: 1, product: "Retinal 0.1%", amount: "pea-size", notes: "", active: true, days: [1, 3, 5] },
+    { id: "sk-pm3", profileId: S, routine: "pm", order: 2, product: "Azelaic acid 10%", amount: "thin layer", notes: "", active: true, days: [0, 2, 4] },
+    { id: "sk-pm4", profileId: S, routine: "pm", order: 3, product: "Barrier cream", amount: "generous", notes: "", active: true, days: [] },
   ],
+  // Three weeks of realistic adherence: AM mostly complete, PM with a few
+  // partial nights, one one-night swap, and dated issues — so the history
+  // grid and timeline read like a real month of skin.
   skincareChecks: [
-    { id: uid(), profileId: S, date: day(0), routine: "am", issues: "" },
-    { id: uid(), profileId: S, date: day(1), routine: "pm", issues: "Slight sting after the acid — skipped retinal" },
+    ...Array.from({ length: 21 }, (_, i) => {
+      const o = 20 - i;
+      if (o === 0 || o % 9 === 4) return null; // today added below as partial; odd fully-missed days
+      const partial = o % 6 === 2;
+      return { id: uid(), profileId: S, date: day(o), routine: "am",
+        doneStepIds: partial ? ["sk-am1", "sk-am3"] : ["sk-am1", "sk-am2", "sk-am3", "sk-am4"],
+        swaps: [], issues: "" };
+    }).filter(Boolean),
+    ...Array.from({ length: 21 }, (_, i) => {
+      const o = 20 - i;
+      if (o % 7 === 3) return null;
+      const all = ["sk-pm1", "sk-pm2", "sk-pm3", "sk-pm4"];
+      return { id: uid(), profileId: S, date: day(o), routine: "pm",
+        doneStepIds: o % 5 === 1 ? ["sk-pm1", "sk-pm4"] : all,
+        swaps: o === 6 ? [{ stepId: "sk-pm2", product: "Bakuchiol serum" }] : [],
+        issues: o === 6 ? "Skin felt raw after the peel — rested the retinal" : o === 13 ? "Slight sting after the acid" : "" };
+    }).filter(Boolean),
+    { id: uid(), profileId: S, date: day(0), routine: "am", doneStepIds: ["sk-am1", "sk-am2", "sk-am3"], swaps: [], issues: "" },
+  ],
+  skincareEvents: [
+    { id: uid(), profileId: S, date: day(34), routine: "am", text: "Routine set up — 4 steps" },
+    { id: uid(), profileId: S, date: day(34), routine: "pm", text: "Routine set up — 3 steps" },
+    { id: uid(), profileId: S, date: day(24), routine: "pm", text: "Added Azelaic acid 10% · Su · Tu · Th" },
+    { id: uid(), profileId: S, date: day(17), routine: "pm", text: "Retinal 0.1% now M · W · F" },
+    { id: uid(), profileId: S, date: day(9), routine: "am", text: "Swapped Niacinamide serum → Vitamin C serum" },
   ],
 };

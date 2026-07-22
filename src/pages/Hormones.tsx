@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Plus, Flower2, Trash2, Pencil, MessageCircleQuestion, Check, Droplet } from "lucide-react";
+import { Plus, Flower2, Trash2, Pencil, MessageCircleQuestion, Check, Droplet, FileHeart } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid, computeCycleInfo, CYCLE_PHASE_LABEL } from "../lib/store";
 import {
   PageHeader, Card, Button, Modal, Field, Input, Textarea, Select, Tabs, EmptyState,
@@ -385,6 +385,17 @@ function ProviderQuestions() {
 
   return (
     <div className="mx-auto max-w-2xl">
+      <Card className="card-hero mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="font-display text-lg font-medium text-ink-strong">Appointment coming up?</p>
+          <p className="mt-0.5 text-[0.85rem] text-ink-soft">
+            One tap builds a visit report — therapies, symptom patterns, cycle, labs, and these questions.
+          </p>
+        </div>
+        <Button onClick={() => (window.location.hash = "/report")}>
+          <FileHeart size={15} /> Build my visit report
+        </Button>
+      </Card>
       <Card>
         <p className="mb-1 font-display text-lg font-medium">Questions for my provider</p>
         <p className="mb-4 text-[0.85rem] text-ink-soft">
