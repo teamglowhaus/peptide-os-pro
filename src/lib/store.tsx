@@ -181,6 +181,7 @@ export function emptyDatabase(): Database {
     beautyLogs: [],
     skincareSteps: [],
     skincareChecks: [],
+    skincareEvents: [],
   };
 }
 
@@ -188,7 +189,7 @@ const ARRAY_KEYS = [
   "profiles", "pets", "injectables", "injectionLogs", "hormones", "symptomLogs", "periods",
   "providerQuestions", "supplements", "supplementChecks", "redLight", "coldPlunge",
   "sauna", "toolSessions", "dailyLogs", "labs", "appointments", "wearables", "lifestyle",
-  "beautyTreatments", "beautyLogs", "skincareSteps", "skincareChecks",
+  "beautyTreatments", "beautyLogs", "skincareSteps", "skincareChecks", "skincareEvents",
 ] as const satisfies readonly (keyof Database)[];
 
 /**

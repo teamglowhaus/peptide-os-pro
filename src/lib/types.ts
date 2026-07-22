@@ -189,15 +189,41 @@ export interface SkincareStep {
   amount: string;
   notes: string;
   active: boolean;
+  /** Days of week this step applies (0=Sun … 6=Sat), e.g. retinol Mon/Wed/Fri.
+   *  Missing or empty = every day. Older installs have no field — daily. */
+  days?: number[];
 }
 
-/** A day's routine completion — plus any issues noticed (redness, purging…). */
+/** One product substituted for a single day, without touching the routine. */
+export interface SkincareSwap {
+  stepId: ID;
+  /** What was actually used instead, e.g. "Bakuchiol (skin felt raw)". */
+  product: string;
+}
+
+/** A day's routine record: which steps were checked off, one-day product
+ *  swaps, and any issues noticed (redness, purging…).
+ *  Older installs recorded only "routine done" with no step detail —
+ *  a record with no doneStepIds field means the whole routine was done. */
 export interface SkincareCheck {
   id: ID;
   profileId: ID;
   date: string;
   routine: "am" | "pm";
   issues: string;
+  doneStepIds?: ID[];
+  swaps?: SkincareSwap[];
+}
+
+/** A dated change to a routine — added/removed/swapped a product — so the
+ *  user can look back and see exactly what they were using in any week. */
+export interface SkincareEvent {
+  id: ID;
+  profileId: ID;
+  date: string;
+  routine: "am" | "pm";
+  /** Human sentence, e.g. "Swapped Vitamin C serum → Azelaic acid". */
+  text: string;
 }
 
 export interface ProviderQuestion {
@@ -422,4 +448,5 @@ export interface Database {
   beautyLogs: BeautyLog[];
   skincareSteps: SkincareStep[];
   skincareChecks: SkincareCheck[];
+  skincareEvents: SkincareEvent[];
 }

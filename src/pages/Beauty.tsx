@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import {
   Gem, Plus, Trash2, Pencil, Sparkles, Sunrise, Moon, ArrowUp, ArrowDown, Check,
-  CalendarClock, SkipForward,
+  CalendarClock, SkipForward, ArrowLeftRight, ListOrdered,
 } from "lucide-react";
 import { useStore, byProfile, today, fmtDate, uid, addDays, daysSince } from "../lib/store";
 import {
@@ -9,7 +9,7 @@ import {
   EmptyState, Stat, Disclaimer, cx, useForm,
 } from "../components/ui";
 import { BEAUTY_LIBRARY } from "../data/beauty";
-import type { BeautyTreatment, BeautyLog, SkincareStep } from "../lib/types";
+import type { BeautyTreatment, BeautyLog, SkincareStep, SkincareCheck, Database } from "../lib/types";
 
 function blankTreatment(profileId: string): BeautyTreatment {
   return {
@@ -415,13 +415,45 @@ function TreatmentHistory({ treatments }: { treatments: BeautyTreatment[] }) {
   );
 }
 
-/* —— Daily skincare: ordered AM/PM product layers, checked off daily ———— */
+/* —— Daily skincare: ordered AM/PM product layers with per-step checks ——
+   AM ends in SPF ("protect"), PM ends in actives/occlusives ("repair") —
+   the thinnest-to-thickest layering convention dermatology guides teach.
+   The app never dictates that order; it just makes the user's own order
+   effortless to read: numbered steps, per-day scheduling (retinol M·W·F),
+   one-night swaps, and a dated history of every change. */
+
+const DAY_LABELS = ["Su", "M", "Tu", "W", "Th", "F", "Sa"] as const;
+
+function dayOfWeek(iso: string): number {
+  return new Date(iso + "T12:00:00").getDay();
+}
+
+/** Does this step apply on the given date? No days set = every day. */
+function appliesOn(s: SkincareStep, iso: string): boolean {
+  return !s.days?.length || s.days.includes(dayOfWeek(iso));
+}
+
+/** "M · W · F" — null when the step is daily (or all 7 days picked). */
+function daysLabel(days?: number[]): string | null {
+  if (!days?.length || days.length === 7) return null;
+  return [...days].sort((a, b) => a - b).map((d) => DAY_LABELS[d]).join(" · ");
+}
+
+/** Drop a day's check record once it holds nothing worth keeping. */
+function pruneCheck(d: Database, c: SkincareCheck) {
+  if (!c.doneStepIds?.length && !c.issues && !c.swaps?.length) {
+    d.skincareChecks = d.skincareChecks.filter((x) => x.id !== c.id);
+  }
+}
 
 function SkincareRoutines() {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <RoutineCard routine="am" />
-      <RoutineCard routine="pm" />
+    <div className="space-y-4">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <RoutineCard routine="am" />
+        <RoutineCard routine="pm" />
+      </div>
+      <RoutineHistory />
     </div>
   );
 }
@@ -430,23 +462,40 @@ function RoutineCard({ routine }: { routine: "am" | "pm" }) {
   const { db, update, activeProfile } = useStore();
   const pid = activeProfile.id;
   const date = today();
-  const [adding, setAdding] = useState(false);
-  const [product, setProduct] = useState("");
-  const [amount, setAmount] = useState("");
+  const [editingStep, setEditingStep] = useState<SkincareStep | null>(null);
+  const [swapping, setSwapping] = useState<SkincareStep | null>(null);
+  const [setup, setSetup] = useState(false);
 
   const steps = byProfile(db.skincareSteps, pid)
     .filter((s) => s.routine === routine && s.active)
     .sort((a, b) => a.order - b.order);
+  const todayIds = steps.filter((s) => appliesOn(s, date)).map((s) => s.id);
   const check = db.skincareChecks.find((c) => c.profileId === pid && c.date === date && c.routine === routine);
+  // Pre-upgrade records have no doneStepIds — "Done today" meant the whole routine.
+  const doneIds = check ? (check.doneStepIds ?? todayIds) : [];
+  const doneCount = todayIds.filter((id) => doneIds.includes(id)).length;
+  const allDone = todayIds.length > 0 && doneCount === todayIds.length;
 
-  const addStep = () => {
-    if (!product.trim()) return;
+  const withCheck = (fn: (c: SkincareCheck) => void) =>
     update((d) => {
-      const max = Math.max(-1, ...d.skincareSteps.filter((s) => s.profileId === pid && s.routine === routine).map((s) => s.order));
-      d.skincareSteps.push({ id: uid(), profileId: pid, routine, order: max + 1, product: product.trim(), amount: amount.trim(), notes: "", active: true });
+      let c = d.skincareChecks.find((x) => x.profileId === pid && x.date === date && x.routine === routine);
+      if (!c) {
+        c = { id: uid(), profileId: pid, date, routine, issues: "", doneStepIds: [] };
+        d.skincareChecks.push(c);
+      }
+      if (!c.doneStepIds) c.doneStepIds = [...todayIds];
+      fn(c);
+      pruneCheck(d, c);
     });
-    setProduct(""); setAmount(""); setAdding(false);
-  };
+
+  const toggleStep = (id: string) =>
+    withCheck((c) => {
+      c.doneStepIds = c.doneStepIds!.includes(id) ? c.doneStepIds!.filter((x) => x !== id) : [...c.doneStepIds!, id];
+    });
+
+  const toggleAll = () => withCheck((c) => { c.doneStepIds = allDone ? [] : [...todayIds]; });
+
+  const setIssues = (issues: string) => withCheck((c) => { c.issues = issues; });
 
   const move = (id: string, dir: -1 | 1) =>
     update((d) => {
@@ -457,83 +506,129 @@ function RoutineCard({ routine }: { routine: "am" | "pm" }) {
       const a = own[i].order; own[i].order = own[j].order; own[j].order = a;
     });
 
-  const toggleDone = () =>
+  const removeStep = (s: SkincareStep) =>
     update((d) => {
-      const existing = d.skincareChecks.find((c) => c.profileId === pid && c.date === date && c.routine === routine);
-      if (existing) d.skincareChecks = d.skincareChecks.filter((c) => c.id !== existing.id);
-      else d.skincareChecks.push({ id: uid(), profileId: pid, date, routine, issues: "" });
+      const x = d.skincareSteps.find((y) => y.id === s.id);
+      if (x) x.active = false;
+      d.skincareEvents.push({ id: uid(), profileId: pid, date, routine, text: `Removed ${s.product}` });
     });
 
-  const setIssues = (issues: string) =>
-    update((d) => {
-      const existing = d.skincareChecks.find((c) => c.profileId === pid && c.date === date && c.routine === routine);
-      if (existing) existing.issues = issues;
-      else d.skincareChecks.push({ id: uid(), profileId: pid, date, routine, issues });
-    });
+  const label = routine === "am" ? "Morning" : "Evening";
 
   return (
     <Card>
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-1 flex items-center justify-between gap-2">
         <p className="flex items-center gap-2.5 font-display text-lg font-medium">
           <span className="flex h-8 w-8 -rotate-6 items-center justify-center rounded-xl bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
             {routine === "am" ? <Sunrise size={16} /> : <Moon size={16} />}
           </span>
-          {routine === "am" ? "Morning routine" : "Evening routine"}
+          {label}
+          <span className="handnote mt-0.5 text-[0.82rem] font-normal text-ink-faint">
+            {routine === "am" ? "protect" : "repair"}
+          </span>
         </p>
-        {steps.length > 0 && (
+        {todayIds.length > 0 && (
           <button
-            onClick={toggleDone}
+            onClick={toggleAll}
             className={cx(
               "btn-ink flex items-center gap-1.5 border-2 px-3 py-1.5 text-[0.8rem] font-semibold transition-all",
-              check
+              allDone
                 ? "border-sage-500 bg-sage-400 text-white"
                 : "border-line-strong text-ink-soft hover:border-sage-400 hover:bg-sage-100/50 dark:hover:bg-sage-600/20"
             )}
           >
-            <Check size={13} strokeWidth={3} /> {check ? "Done today" : "Mark done"}
+            <Check size={13} strokeWidth={3} />
+            {allDone ? "Done today" : doneCount > 0 ? `${doneCount} of ${todayIds.length}` : "Check all"}
           </button>
         )}
       </div>
-
-      {steps.length === 0 && !adding && (
-        <p className="handnote mb-3 text-[0.85rem] text-ink-faint">
-          Build your {routine === "am" ? "morning" : "evening"} layers in the order they go on…
+      {steps.length > 0 && (
+        <p className="mb-3 text-[0.75rem] text-ink-faint">
+          {todayIds.length === steps.length
+            ? `${steps.length} step${steps.length === 1 ? "" : "s"}, in the order they go on`
+            : `${todayIds.length} of ${steps.length} steps tonight’s date calls for`}
         </p>
       )}
 
+      {steps.length === 0 && (
+        <div className="py-2">
+          <p className="handnote mb-3 text-[0.85rem] text-ink-faint">
+            Have your {label.toLowerCase()} program mapped out? Enter every product in the order
+            it goes on — then check them off as you go, night after night.
+          </p>
+          <Button variant="soft" onClick={() => setSetup(true)}>
+            <ListOrdered size={15} /> Set up my {label.toLowerCase()} routine
+          </Button>
+        </div>
+      )}
+
       <ol className="space-y-1.5">
-        {steps.map((s, i) => (
-          <li key={s.id} className="input-ink group/step flex items-center gap-3 border border-line bg-raised px-3 py-2">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-champagne-200/60 text-[0.72rem] font-bold text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
-              {i + 1}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-[0.9rem] font-medium text-ink">{s.product}</span>
-              {s.amount && <span className="block text-[0.75rem] text-ink-faint">{s.amount}</span>}
-            </span>
-            <span className="flex shrink-0 opacity-0 transition-opacity group-hover/step:opacity-100">
-              <button onClick={() => move(s.id, -1)} disabled={i === 0} aria-label="Move up" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-ink disabled:opacity-30"><ArrowUp size={14} /></button>
-              <button onClick={() => move(s.id, 1)} disabled={i === steps.length - 1} aria-label="Move down" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-ink disabled:opacity-30"><ArrowDown size={14} /></button>
-              <button
-                onClick={() => update((d) => { const x = d.skincareSteps.find((y) => y.id === s.id); if (x) x.active = false; })}
-                aria-label="Remove step" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-blush-500"
-              ><Trash2 size={14} /></button>
-            </span>
-          </li>
-        ))}
+        {steps.map((s, i) => {
+          const isToday = appliesOn(s, date);
+          const done = isToday && doneIds.includes(s.id);
+          const swap = check?.swaps?.find((w) => w.stepId === s.id);
+          const pill = daysLabel(s.days);
+          return (
+            <li
+              key={s.id}
+              className={cx(
+                "input-ink group/step flex items-center gap-2.5 border border-line bg-raised px-3 py-2 transition-opacity",
+                !isToday && "opacity-55"
+              )}
+            >
+              <span className={cx(
+                "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-bold",
+                done
+                  ? "bg-sage-400 text-white"
+                  : "bg-champagne-200/60 text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200"
+              )}>
+                {i + 1}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className={cx("block truncate text-[0.9rem] font-medium", done ? "text-ink-faint line-through decoration-sage-400/70" : "text-ink")}>
+                  {swap ? swap.product : s.product}
+                </span>
+                <span className="block truncate text-[0.75rem] text-ink-faint">
+                  {swap
+                    ? <>tonight only · usually {s.product}</>
+                    : <>
+                        {s.amount}
+                        {pill && <span className={cx("font-semibold text-champagne-600 dark:text-champagne-300", s.amount && "ml-1.5")}>{pill}</span>}
+                        {!isToday && <span className="ml-1.5 italic">not today</span>}
+                      </>}
+                </span>
+              </span>
+              <span className="flex shrink-0 opacity-0 transition-opacity group-hover/step:opacity-100 focus-within:opacity-100">
+                <button onClick={() => setSwapping(s)} aria-label="Swap product" title="Swap this product — for today or for good" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-ink"><ArrowLeftRight size={14} /></button>
+                <button onClick={() => setEditingStep(s)} aria-label="Edit step" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-ink"><Pencil size={14} /></button>
+                <button onClick={() => move(s.id, -1)} disabled={i === 0} aria-label="Move up" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-ink disabled:opacity-30"><ArrowUp size={14} /></button>
+                <button onClick={() => move(s.id, 1)} disabled={i === steps.length - 1} aria-label="Move down" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-ink disabled:opacity-30"><ArrowDown size={14} /></button>
+                <button onClick={() => removeStep(s)} aria-label="Remove step" className="rounded-full p-1.5 text-ink-faint hover:bg-sunken hover:text-blush-500"><Trash2 size={14} /></button>
+              </span>
+              {isToday ? (
+                <button
+                  onClick={() => toggleStep(s.id)}
+                  aria-label={done ? `Uncheck ${s.product}` : `Check off ${s.product}`}
+                  className={cx(
+                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all",
+                    done
+                      ? "border-sage-500 bg-sage-400 text-white"
+                      : "border-line-strong text-transparent hover:border-sage-400 hover:text-sage-400"
+                  )}
+                >
+                  <Check size={14} strokeWidth={3.5} />
+                </button>
+              ) : (
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center text-ink-faint/50" title={`Scheduled ${pill ?? ""}`}>—</span>
+              )}
+            </li>
+          );
+        })}
       </ol>
 
-      {adding ? (
-        <div className="mt-3 space-y-2">
-          <Input autoFocus value={product} onChange={(e) => setProduct(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addStep()} placeholder="Product name — e.g. Vitamin C serum" />
-          <div className="flex gap-2">
-            <Input value={amount} onChange={(e) => setAmount(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addStep()} placeholder="Amount — 2 pumps · pea-size · 3 drops" />
-            <Button variant="soft" onClick={addStep}><Plus size={15} /></Button>
-          </div>
-        </div>
-      ) : (
+      {steps.length > 0 && (
         <button
-          onClick={() => setAdding(true)}
+          onClick={() => setEditingStep({ id: "", profileId: pid, routine, order: 0, product: "", amount: "", notes: "", active: true })}
           className="mt-3 flex items-center gap-1.5 rounded-full px-2 py-1 text-[0.82rem] font-semibold text-champagne-600 hover:bg-sunken dark:text-champagne-300"
         >
           <Plus size={14} /> Add a step
@@ -544,6 +639,297 @@ function RoutineCard({ routine }: { routine: "am" | "pm" }) {
         <Field label="Any issues today?" className="mt-4" hint="Redness, stinging, breakouts — patterns show up when you write them down.">
           <Input value={check?.issues ?? ""} onChange={(e) => setIssues(e.target.value)} placeholder="e.g. slight sting after the acid — skipped retinol" />
         </Field>
+      )}
+
+      {editingStep && <StepEditor routine={routine} initial={editingStep} onClose={() => setEditingStep(null)} />}
+      {swapping && <SwapModal step={swapping} onClose={() => setSwapping(null)} />}
+      {setup && <RoutineSetupModal routine={routine} onClose={() => setSetup(false)} />}
+    </Card>
+  );
+}
+
+/** Add or edit one step — product, amount, and which days it applies. */
+function StepEditor({ routine, initial, onClose }: { routine: "am" | "pm"; initial: SkincareStep; onClose: () => void }) {
+  const { update, activeProfile } = useStore();
+  const pid = activeProfile.id;
+  const isNew = !initial.id;
+  const [product, setProduct] = useState(initial.product);
+  const [amount, setAmount] = useState(initial.amount);
+  const [days, setDays] = useState<number[]>(initial.days ?? []);
+
+  const toggleDay = (d: number) =>
+    setDays((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d].sort((a, b) => a - b)));
+
+  const save = () => {
+    const p = product.trim();
+    if (!p) return;
+    const normDays = days.length === 7 ? [] : days;
+    update((d) => {
+      if (isNew) {
+        const max = Math.max(-1, ...d.skincareSteps.filter((s) => s.profileId === pid && s.routine === routine).map((s) => s.order));
+        d.skincareSteps.push({ id: uid(), profileId: pid, routine, order: max + 1, product: p, amount: amount.trim(), notes: "", active: true, days: normDays });
+        d.skincareEvents.push({ id: uid(), profileId: pid, date: today(), routine, text: `Added ${p}${daysLabel(normDays) ? ` · ${daysLabel(normDays)}` : ""}` });
+      } else {
+        const s = d.skincareSteps.find((x) => x.id === initial.id);
+        if (!s) return;
+        if (s.product !== p) d.skincareEvents.push({ id: uid(), profileId: pid, date: today(), routine, text: `Swapped ${s.product} → ${p}` });
+        else if (daysLabel(s.days) !== daysLabel(normDays))
+          d.skincareEvents.push({ id: uid(), profileId: pid, date: today(), routine, text: `${p} now ${daysLabel(normDays) ?? "every day"}` });
+        s.product = p; s.amount = amount.trim(); s.days = normDays;
+      }
+    });
+    onClose();
+  };
+
+  return (
+    <Modal open onClose={onClose} title={isNew ? "Add a step" : `Edit ${initial.product}`}>
+      <div className="space-y-4">
+        <Field label="Product">
+          <Input autoFocus value={product} onChange={(e) => setProduct(e.target.value)} onKeyDown={(e) => e.key === "Enter" && save()} placeholder="e.g. Vitamin C serum" />
+        </Field>
+        <Field label="Amount" hint="How much goes on — 2 pumps · pea-size · 3 drops.">
+          <Input value={amount} onChange={(e) => setAmount(e.target.value)} onKeyDown={(e) => e.key === "Enter" && save()} placeholder="e.g. pea-size" />
+        </Field>
+        <Field label="Which days?" hint="Leave all unpicked for every day — or pick days for actives you rotate, like retinol on Mon · Wed · Fri.">
+          <div className="flex flex-wrap gap-1.5">
+            {DAY_LABELS.map((l, i) => (
+              <Chip key={i} active={days.includes(i)} onClick={() => toggleDay(i)}>{l}</Chip>
+            ))}
+          </div>
+        </Field>
+      </div>
+      <div className="mt-6 flex justify-end gap-2">
+        <Button variant="ghost" onClick={onClose}>Cancel</Button>
+        <Button onClick={save} disabled={!product.trim()}>{isNew ? "Add step" : "Save"}</Button>
+      </div>
+    </Modal>
+  );
+}
+
+/** Swap a product out — for just today, or from now on. Both are dated. */
+function SwapModal({ step, onClose }: { step: SkincareStep; onClose: () => void }) {
+  const { update, activeProfile } = useStore();
+  const pid = activeProfile.id;
+  const date = today();
+  const [product, setProduct] = useState("");
+
+  const swapToday = () => {
+    const p = product.trim();
+    if (!p) return;
+    update((d) => {
+      let c = d.skincareChecks.find((x) => x.profileId === pid && x.date === date && x.routine === step.routine);
+      if (!c) {
+        c = { id: uid(), profileId: pid, date, routine: step.routine, issues: "", doneStepIds: [] };
+        d.skincareChecks.push(c);
+      }
+      c.swaps = [...(c.swaps ?? []).filter((w) => w.stepId !== step.id), { stepId: step.id, product: p }];
+    });
+    onClose();
+  };
+
+  const swapForever = () => {
+    const p = product.trim();
+    if (!p) return;
+    update((d) => {
+      const s = d.skincareSteps.find((x) => x.id === step.id);
+      if (!s) return;
+      d.skincareEvents.push({ id: uid(), profileId: pid, date, routine: step.routine, text: `Swapped ${s.product} → ${p}` });
+      s.product = p;
+    });
+    onClose();
+  };
+
+  return (
+    <Modal open onClose={onClose} title={`Swap out ${step.product}`}>
+      <Field label="Using instead" hint="Product resting? Trying something new? Either way it goes on the record with today’s date.">
+        <Input autoFocus value={product} onChange={(e) => setProduct(e.target.value)} placeholder="e.g. Bakuchiol serum" />
+      </Field>
+      <div className="mt-6 flex flex-wrap justify-end gap-2">
+        <Button variant="ghost" onClick={onClose}>Cancel</Button>
+        <Button variant="soft" onClick={swapToday} disabled={!product.trim()} title="One-night swap — your routine stays as it is">Just today</Button>
+        <Button onClick={swapForever} disabled={!product.trim()} title="Updates the routine and dates the change in your history">From now on</Button>
+      </div>
+    </Modal>
+  );
+}
+
+/** Enter a whole mapped-out program at once — every step, in order. */
+function RoutineSetupModal({ routine, onClose }: { routine: "am" | "pm"; onClose: () => void }) {
+  const { update, activeProfile } = useStore();
+  const pid = activeProfile.id;
+  type Row = { product: string; amount: string; days: number[] };
+  const [rows, setRows] = useState<Row[]>([{ product: "", amount: "", days: [] }, { product: "", amount: "", days: [] }, { product: "", amount: "", days: [] }]);
+
+  const setRow = (i: number, patch: Partial<Row>) =>
+    setRows((prev) => prev.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  const toggleRowDay = (i: number, d: number) =>
+    setRow(i, { days: rows[i].days.includes(d) ? rows[i].days.filter((x) => x !== d) : [...rows[i].days, d].sort((a, b) => a - b) });
+
+  const filled = rows.filter((r) => r.product.trim());
+  const save = () => {
+    if (!filled.length) return;
+    update((db) => {
+      const max = Math.max(-1, ...db.skincareSteps.filter((s) => s.profileId === pid && s.routine === routine).map((s) => s.order));
+      filled.forEach((r, i) => {
+        db.skincareSteps.push({
+          id: uid(), profileId: pid, routine, order: max + 1 + i,
+          product: r.product.trim(), amount: r.amount.trim(), notes: "", active: true,
+          days: r.days.length === 7 ? [] : r.days,
+        });
+      });
+      db.skincareEvents.push({
+        id: uid(), profileId: pid, date: today(), routine,
+        text: `Routine set up — ${filled.length} step${filled.length === 1 ? "" : "s"}`,
+      });
+    });
+    onClose();
+  };
+
+  return (
+    <Modal open onClose={onClose} title={`Your ${routine === "am" ? "morning" : "evening"} program`} wide>
+      <p className="mb-4 text-[0.85rem] text-ink-soft">
+        Enter each product in the order it goes on — step 1 first. Pick days only for
+        products you rotate; everything else is daily.
+      </p>
+      <div className="space-y-3">
+        {rows.map((r, i) => (
+          <div key={i} className="input-ink border border-line bg-raised p-3">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-champagne-200/60 text-[0.72rem] font-bold text-champagne-600 dark:bg-champagne-600/25 dark:text-champagne-200">
+                {i + 1}
+              </span>
+              <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
+                <Input value={r.product} onChange={(e) => setRow(i, { product: e.target.value })} placeholder={i === 0 ? "e.g. Gentle cleanser" : "Product"} />
+                <Input value={r.amount} onChange={(e) => setRow(i, { amount: e.target.value })} placeholder="Amount — 1 pump · pea-size" />
+                <div className="flex flex-wrap gap-1 sm:col-span-2">
+                  {DAY_LABELS.map((l, d) => (
+                    <Chip key={d} active={r.days.includes(d)} onClick={() => toggleRowDay(i, d)}>{l}</Chip>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={() => setRows((prev) => [...prev, { product: "", amount: "", days: [] }])}
+        className="mt-3 flex items-center gap-1.5 rounded-full px-2 py-1 text-[0.82rem] font-semibold text-champagne-600 hover:bg-sunken dark:text-champagne-300"
+      >
+        <Plus size={14} /> Another step
+      </button>
+      <div className="mt-6 flex justify-end gap-2">
+        <Button variant="ghost" onClick={onClose}>Cancel</Button>
+        <Button onClick={save} disabled={!filled.length}>
+          Save {filled.length > 0 ? `${filled.length} step${filled.length === 1 ? "" : "s"}` : "routine"}
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
+/* —— Routine history: the look-back that shows what worked ————————— */
+
+type HistoryEntry = { date: string; routine: "am" | "pm"; text: string; kind: "change" | "swap" | "issue" };
+
+function RoutineHistory() {
+  const { db, activeProfile } = useStore();
+  const pid = activeProfile.id;
+  const steps = byProfile(db.skincareSteps, pid);
+  const checks = byProfile(db.skincareChecks, pid);
+  const events = byProfile(db.skincareEvents, pid);
+
+  // 4-week completion grid, oldest week on top, today in the last cell.
+  const gridDays = useMemo(() => Array.from({ length: 28 }, (_, i) => addDays(today(), i - 27)), []);
+
+  const statusFor = (date: string, routine: "am" | "pm"): "full" | "part" | "none" => {
+    const c = checks.find((x) => x.date === date && x.routine === routine);
+    if (!c) return "none";
+    if (!c.doneStepIds) return "full"; // pre-upgrade record: whole routine done
+    const applicable = steps.filter((s) => s.routine === routine && s.active && appliesOn(s, date));
+    const done = applicable.filter((s) => c.doneStepIds!.includes(s.id)).length;
+    if (applicable.length > 0 && done >= applicable.length) return "full";
+    return done > 0 || c.issues || c.swaps?.length ? "part" : "none";
+  };
+
+  const entries = useMemo<HistoryEntry[]>(() => {
+    const out: HistoryEntry[] = events.map((e) => ({ date: e.date, routine: e.routine, text: e.text, kind: "change" }));
+    for (const c of checks) {
+      for (const w of c.swaps ?? []) {
+        const s = steps.find((x) => x.id === w.stepId);
+        out.push({ date: c.date, routine: c.routine, text: `Used ${w.product} instead of ${s?.product ?? "the usual"} — that day only`, kind: "swap" });
+      }
+      if (c.issues) out.push({ date: c.date, routine: c.routine, text: c.issues, kind: "issue" });
+    }
+    return out.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 40);
+  }, [events, checks, steps]);
+
+  if (steps.filter((s) => s.active).length === 0 && entries.length === 0) return null;
+
+  return (
+    <Card>
+      <p className="mb-1 font-display text-lg font-medium">Your routine, over time</p>
+      <p className="mb-4 text-[0.8rem] text-ink-soft">
+        Four weeks at a glance, and every dated change below it — so you can look back
+        and see what you were using when your skin was at its best.
+      </p>
+
+      <div className="mb-1 grid grid-cols-7 gap-1 text-center">
+        {gridDays.slice(0, 7).map((d) => (
+          <span key={d} className="text-[0.65rem] font-semibold uppercase tracking-wide text-ink-faint">
+            {DAY_LABELS[dayOfWeek(d)]}
+          </span>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {gridDays.map((d) => {
+          const am = statusFor(d, "am");
+          const pm = statusFor(d, "pm");
+          const isToday = d === today();
+          const dot = (s: "full" | "part" | "none") =>
+            s === "full" ? "bg-sage-400" : s === "part" ? "bg-champagne-400" : "border border-line-strong bg-transparent";
+          return (
+            <div
+              key={d}
+              title={`${fmtDate(d)} — AM ${am === "none" ? "—" : am === "full" ? "done" : "partial"} · PM ${pm === "none" ? "—" : pm === "full" ? "done" : "partial"}`}
+              className={cx(
+                "flex flex-col items-center gap-1 rounded-lg py-1.5",
+                isToday ? "bg-champagne-200/40 ring-1 ring-champagne-400 dark:bg-champagne-600/15" : "bg-sunken/50"
+              )}
+            >
+              <span className={cx("text-[0.62rem] tabular-nums", isToday ? "font-bold text-ink" : "text-ink-faint")}>
+                {Number(d.slice(8))}
+              </span>
+              <span className={cx("h-1.5 w-1.5 rounded-full", dot(am))} title="AM" />
+              <span className={cx("h-1.5 w-1.5 rounded-full", dot(pm))} title="PM" />
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.7rem] text-ink-faint">
+        <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-sage-400" /> all steps</span>
+        <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-champagne-400" /> some steps</span>
+        <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full border border-line-strong" /> nothing logged</span>
+        <span>top dot AM · bottom dot PM</span>
+      </p>
+
+      {entries.length > 0 && (
+        <ol className="mt-5 space-y-0 border-l-2 border-line pl-4">
+          {entries.map((e, i) => (
+            <li key={i} className="relative pb-3.5 last:pb-0">
+              <span
+                className={cx(
+                  "absolute -left-[1.42rem] top-1 h-2.5 w-2.5 rounded-full border-2 border-card",
+                  e.kind === "change" ? "bg-champagne-400" : e.kind === "swap" ? "bg-blush-300" : "bg-sage-400"
+                )}
+              />
+              <p className="text-[0.72rem] font-semibold uppercase tracking-wide text-ink-faint">
+                {fmtDate(e.date)} · {e.routine === "am" ? "Morning" : "Evening"}
+                {e.kind === "issue" && " · noted"}
+              </p>
+              <p className="text-[0.87rem] text-ink">{e.text}</p>
+            </li>
+          ))}
+        </ol>
       )}
     </Card>
   );
